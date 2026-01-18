@@ -1022,18 +1022,11 @@ export default function App() {
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="flex w-full flex-col gap-6 lg:w-72">
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/80 p-6 shadow-lg">
-              <p className="text-xs uppercase tracking-[0.3em] text-text-muted">
-                {t('ui.appName', 'Gear List Editor')}
-              </p>
-              <h2 className="mt-3 text-lg font-semibold text-text-primary">
-                {t('ui.sidebar.title', 'Safe offline workspace')}
+              <h2 className="title-shadow text-xl font-semibold text-text-primary">
+                <span className="block truncate whitespace-nowrap">
+                  {t('ui.appName', 'Gear List Creator')}
+                </span>
               </h2>
-              <p className="mt-2 text-sm text-text-secondary">
-                {t(
-                  'ui.sidebar.description',
-                  'Tabs keep your workflow focused while autosave runs in the background.'
-                )}
-              </p>
             </div>
 
             <nav className="flex flex-col gap-2">
@@ -1057,7 +1050,7 @@ export default function App() {
             </nav>
 
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
+              <h3 className="title-shadow text-sm font-semibold uppercase tracking-wide text-text-secondary">
                 {t('language.label', 'Language')}
               </h3>
               <label className="mt-3 flex flex-col gap-2 text-sm text-text-secondary">
@@ -1080,7 +1073,7 @@ export default function App() {
             </div>
 
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
+              <h3 className="title-shadow text-sm font-semibold uppercase tracking-wide text-text-secondary">
                 {t('theme.label', 'Theme')}
               </h3>
               <div className="mt-3 grid gap-2">
@@ -1109,7 +1102,7 @@ export default function App() {
             </div>
 
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
-              <h2 className="text-lg font-semibold text-text-primary">
+              <h2 className="title-shadow text-lg font-semibold text-text-primary">
                 {t('backup.title', 'Save, share, restore')}
               </h2>
               <p className="text-sm text-text-secondary">
@@ -1176,7 +1169,7 @@ export default function App() {
                   <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
                     {t('project.active.label', 'Active project')}
                   </span>
-                  <span className="text-lg font-semibold text-text-primary">
+                  <span className="title-shadow text-lg font-semibold text-text-primary">
                     {resolveDisplayName(
                       activeProject.name,
                       { index: Math.max(activeProjectIndex, 0) + 1 },
@@ -1221,7 +1214,7 @@ export default function App() {
                 <div className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary">
+                      <h2 className="title-shadow text-xl font-semibold text-text-primary">
                         {t('dashboard.quickActions.title', 'Dashboard quick actions')}
                       </h2>
                       <p className="text-sm text-text-secondary">
@@ -1290,7 +1283,7 @@ export default function App() {
                   className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
                 >
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold text-text-primary">
+                    <h2 className="title-shadow text-xl font-semibold text-text-primary">
                       {t('project.dashboard.title', 'Project dashboard')}
                     </h2>
                     <p className="text-sm text-text-secondary">
@@ -1368,7 +1361,7 @@ export default function App() {
                 <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary">
+                      <h2 className="title-shadow text-xl font-semibold text-text-primary">
                         {t('project.list.title', 'Active projects')}
                       </h2>
                       <p className="text-sm text-text-secondary">
@@ -1414,7 +1407,7 @@ export default function App() {
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
-                                <h3 className="text-lg font-semibold text-text-primary">
+                                <h3 className="title-shadow text-lg font-semibold text-text-primary">
                                   {resolveDisplayName(
                                     project.name,
                                     { index: projectIndex + 1 },
@@ -1484,7 +1477,7 @@ export default function App() {
               <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-text-primary">
+                    <h2 className="title-shadow text-xl font-semibold text-text-primary">
                       {t('project.workspace.title', 'Active project workspace')}
                     </h2>
                     <p className="text-sm text-text-secondary">
@@ -1567,7 +1560,7 @@ export default function App() {
                       className="flex flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h3 className="text-lg font-semibold text-text-primary">
+                        <h3 className="title-shadow text-lg font-semibold text-text-primary">
                           {t('categories.title', 'Categories')}
                         </h3>
                         <span className="text-xs text-text-muted">
@@ -1795,7 +1788,7 @@ export default function App() {
                     </div>
 
                     <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-4">
-                      <h3 className="text-lg font-semibold text-text-primary">
+                      <h3 className="title-shadow text-lg font-semibold text-text-primary">
                         {t('project.notes.title', 'Project notes')}
                       </h3>
                       <p className="text-sm text-text-secondary">
@@ -1833,7 +1826,7 @@ export default function App() {
                 className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
               >
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-semibold text-text-primary">
+                  <h2 className="title-shadow text-xl font-semibold text-text-primary">
                     {t('template.management.title', 'Template management')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1951,7 +1944,7 @@ export default function App() {
             {activeTab === 'help' ? (
               <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-lg font-semibold text-text-primary">
+                  <h2 className="title-shadow text-lg font-semibold text-text-primary">
                     {t('help.title', 'Help & documentation')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1965,7 +1958,7 @@ export default function App() {
                       open={index === 0}
                       className="rounded-xl border border-surface-sunken bg-surface-muted/60 px-4 py-3"
                     >
-                      <summary className="cursor-pointer text-sm font-semibold text-text-primary">
+                      <summary className="title-shadow cursor-pointer text-sm font-semibold text-text-primary">
                         {section.title}
                       </summary>
                       <p className="mt-2 text-sm text-text-secondary">{section.description}</p>
@@ -1978,7 +1971,7 @@ export default function App() {
                   ))}
                 </div>
                 <div className="mt-5 border-t border-surface-sunken pt-4">
-                  <h3 className="text-base font-semibold text-text-primary">
+                  <h3 className="title-shadow text-base font-semibold text-text-primary">
                     {t('offline.title', 'Offline workflow')}
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -1994,7 +1987,7 @@ export default function App() {
                   </p>
                 </div>
                 <div className="mt-5 border-t border-surface-sunken pt-4">
-                  <h3 className="text-base font-semibold text-text-primary">
+                  <h3 className="title-shadow text-base font-semibold text-text-primary">
                     {t('documentation.title', 'Documentation')}
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -2009,7 +2002,9 @@ export default function App() {
                         key={section.title}
                         className="rounded-xl border border-surface-sunken bg-surface-muted/60 px-4 py-3"
                       >
-                        <h4 className="text-sm font-semibold text-text-primary">{section.title}</h4>
+                        <h4 className="title-shadow text-sm font-semibold text-text-primary">
+                          {section.title}
+                        </h4>
                         <p className="mt-1 text-xs text-text-secondary">{section.description}</p>
                         <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-text-secondary">
                           {section.items.map((item) => (

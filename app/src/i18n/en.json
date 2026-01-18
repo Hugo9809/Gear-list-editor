@@ -34,12 +34,12 @@
     }
   },
   "ui": {
-    "appName": "Gear List Editor",
+    "appName": "Gear List Creator",
     "gearList": "Gear list",
     "emptyValue": "—",
     "sidebar": {
-      "title": "Safe offline workspace",
-      "description": "Tabs keep your workflow focused while autosave runs in the background."
+      "title": "Offline gear planning, always protected",
+      "description": "Tabs keep you focused while autosave and local backups protect every change."
     }
   },
   "theme": {

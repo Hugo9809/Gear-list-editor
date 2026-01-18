@@ -34,12 +34,12 @@
     }
   },
   "ui": {
-    "appName": "Equipmentlisten-Editor",
+    "appName": "Gear List Creator",
     "gearList": "Equipmentliste",
     "emptyValue": "—",
     "sidebar": {
-      "title": "Sicherer Offline-Arbeitsbereich",
-      "description": "Tabs halten deinen Workflow fokussiert, während Autosave im Hintergrund läuft."
+      "title": "Offline planen, dauerhaft geschützt",
+      "description": "Tabs halten den Fokus, während Autosave und lokale Backups jede Änderung schützen."
     },
     "hero": {
       "title": "Projektfertige Equipmentlisten mit Offline-Schutz.",

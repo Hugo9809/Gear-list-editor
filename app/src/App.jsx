@@ -217,7 +217,7 @@ const TypeaheadInput = ({
       />
       {isOpen && filteredSuggestions.length > 0 && (
         <div
-          className={`absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-surface-sunken bg-surface-input text-left text-sm text-text-primary shadow-xl ${
+          className={`absolute z-20 mt-2 w-full overflow-hidden ui-dropdown ${
             listClassName || ''
           }`}
         >
@@ -1005,7 +1005,7 @@ export default function App() {
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="flex w-full flex-col gap-6 lg:w-72">
-            <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/80 p-6 shadow-lg">
+            <div className="ui-tile bg-surface-elevated/80 p-6">
               <h1 className="text-[1.35rem] font-semibold text-text-primary title-shadow tracking-tight whitespace-nowrap">
                 {t('ui.appName', 'Gear List Creator')}
               </h1>
@@ -1019,10 +1019,8 @@ export default function App() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`rounded-xl px-4 py-2 text-left text-sm font-semibold transition ${
-                      isActive
-                        ? 'bg-brand text-brand-foreground'
-                        : 'border border-surface-sunken text-text-primary hover:border-brand'
+                    className={`ui-button w-full text-left ${
+                      isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
                     }`}
                   >
                     {tab.label}
@@ -1031,7 +1029,7 @@ export default function App() {
               })}
             </nav>
 
-            <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
+            <div className="ui-tile bg-surface-elevated/70 p-5">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">
                 {t('language.label', 'Language')}
               </h3>
@@ -1040,7 +1038,7 @@ export default function App() {
                 <select
                   value={locale}
                   onChange={handleLocaleChange}
-                  className="rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                  className="ui-select"
                 >
                   {locales.map((option) => (
                     <option key={option.code} value={option.code}>
@@ -1054,7 +1052,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
+            <div className="ui-tile bg-surface-elevated/70 p-5">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">
                 {t('theme.label', 'Theme')}
               </h3>
@@ -1067,10 +1065,8 @@ export default function App() {
                       type="button"
                       onClick={() => setTheme(themeOption.id)}
                       aria-pressed={isActive}
-                      className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
-                        isActive
-                          ? 'bg-brand text-brand-foreground'
-                          : 'border border-surface-sunken text-text-primary hover:border-brand'
+                      className={`ui-button text-left ${
+                        isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
                       }`}
                     >
                       {themeOption.label}
@@ -1083,7 +1079,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
+            <div className={`ui-tile p-4 text-sm ${statusClasses}`} aria-live="polite">
               {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
             </div>
           </aside>
@@ -1091,7 +1087,7 @@ export default function App() {
           <main className="flex flex-1 flex-col gap-6">
             {activeProject && activeTab === 'project' ? (
               <>
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
+                <div className="ui-tile flex flex-wrap items-center justify-between gap-4 bg-surface-elevated/80 px-5 py-4">
                   <div className="flex min-w-[200px] flex-col gap-1">
                     <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
                       {t('project.active.label', 'Active project')}
@@ -1111,31 +1107,27 @@ export default function App() {
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-3 text-sm">
-                    <button
-                      type="button"
-                      onClick={exportProject}
-                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                    >
+                    <button type="button" onClick={exportProject} className="ui-button ui-button-outline">
                       {t('project.actions.export', 'Export project')}
                     </button>
                     <button
                       type="button"
                       onClick={exportPdf}
-                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                      className="ui-button ui-button-outline"
                     >
                       {t('project.actions.exportPdf', 'Export PDF')}
                     </button>
                     <button
                       type="button"
                       onClick={shareData}
-                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                      className="ui-button ui-button-outline"
                     >
                       {t('backup.actions.shareClipboard', 'Share via clipboard')}
                     </button>
                     <button
                       type="button"
                       onClick={saveTemplateFromProject}
-                      className="rounded-full bg-brand px-4 py-2 font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                      className="ui-button ui-button-primary"
                     >
                       {t('template.actions.saveFromProject', 'Save as template')}
                     </button>
@@ -1147,7 +1139,7 @@ export default function App() {
 
             {activeTab === 'dashboard' ? (
               <>
-                <div className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
+                <div className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                       <h2 className="text-xl font-semibold text-text-primary title-shadow">
@@ -1166,7 +1158,7 @@ export default function App() {
                         <select
                           value={selectedTemplateId}
                           onChange={(event) => setSelectedTemplateId(event.target.value)}
-                          className="rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                          className="ui-select"
                         >
                           {templates.length === 0 ? (
                             <option value="">
@@ -1189,9 +1181,9 @@ export default function App() {
                         type="button"
                         onClick={handleLoadTemplate}
                         disabled={!selectedTemplateId}
-                        className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                        className={`ui-button ${
                           selectedTemplateId
-                            ? 'bg-brand text-brand-foreground hover:bg-brand-hover'
+                            ? 'ui-button-primary'
                             : 'cursor-not-allowed bg-surface-sunken text-text-muted'
                         }`}
                       >
@@ -1200,7 +1192,7 @@ export default function App() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                        className="ui-button ui-button-outline"
                       >
                         {t('project.actions.importProject', 'Import project')}
                       </button>
@@ -1216,7 +1208,7 @@ export default function App() {
 
                 <form
                   onSubmit={addProject}
-                  className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
+                  className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6"
                 >
                   <div className="flex flex-col gap-2">
                     <h2 className="text-xl font-semibold text-text-primary title-shadow">
@@ -1238,7 +1230,7 @@ export default function App() {
                           setProjectDraft((prev) => ({ ...prev, name: event.target.value }))
                         }
                         placeholder={t('project.placeholders.name', 'e.g. October studio shoot')}
-                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                        className="ui-input ui-input-lg"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1249,7 +1241,7 @@ export default function App() {
                           setProjectDraft((prev) => ({ ...prev, client: event.target.value }))
                         }
                         placeholder={t('project.placeholders.client', 'Client, agency, or show')}
-                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                        className="ui-input ui-input-lg"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1260,7 +1252,7 @@ export default function App() {
                         onChange={(event) =>
                           setProjectDraft((prev) => ({ ...prev, shootDate: event.target.value }))
                         }
-                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                        className="ui-input ui-input-lg"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1271,7 +1263,7 @@ export default function App() {
                           setProjectDraft((prev) => ({ ...prev, location: event.target.value }))
                         }
                         placeholder={t('project.placeholders.location', 'Studio, city, or venue')}
-                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                        className="ui-input ui-input-lg"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
@@ -1282,19 +1274,19 @@ export default function App() {
                           setProjectDraft((prev) => ({ ...prev, contact: event.target.value }))
                         }
                         placeholder={t('project.placeholders.contact', 'Producer or department contact')}
-                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                        className="ui-input ui-input-lg"
                       />
                     </label>
                   </div>
                   <button
                     type="submit"
-                    className="inline-flex w-fit items-center justify-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                    className="ui-button ui-button-primary w-fit px-5"
                   >
                     {t('project.actions.create', 'Create project')}
                   </button>
                 </form>
 
-                <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
+                <div className="ui-tile bg-surface-elevated/60 p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <h2 className="text-xl font-semibold text-text-primary title-shadow">
@@ -1334,7 +1326,7 @@ export default function App() {
                         return (
                           <div
                             key={project.id}
-                            className="flex h-full flex-col gap-4 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4 transition"
+                            className="ui-panel flex h-full flex-col gap-4 bg-surface-muted/60 p-4 transition"
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
@@ -1372,14 +1364,14 @@ export default function App() {
                               <button
                                 type="button"
                                 onClick={() => openProject(project.id)}
-                                className="rounded-lg bg-brand px-3 py-1 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                                className="ui-button ui-button-primary px-3 py-1 text-xs"
                               >
                                 {t('project.actions.open', 'Open')}
                               </button>
                               <button
                                 type="button"
                                 onClick={() => deleteProject(project.id)}
-                                className="rounded-lg border border-surface-sunken px-3 py-1 text-xs font-semibold text-text-primary transition hover:border-status-error hover:text-status-error"
+                                className="ui-button ui-button-danger px-3 py-1 text-xs"
                               >
                                 {t('project.actions.archive', 'Archive')}
                               </button>
@@ -1394,7 +1386,7 @@ export default function App() {
             ) : null}
 
             {activeTab === 'project' ? (
-              <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
+              <div className="ui-tile bg-surface-elevated/60 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <h2 className="text-xl font-semibold text-text-primary title-shadow">
@@ -1420,14 +1412,14 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setActiveTab('dashboard')}
-                      className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                      className="ui-button ui-button-outline"
                     >
                       {t('project.actions.backToDashboard', 'Back to dashboard')}
                     </button>
                     <button
                       type="button"
                       onClick={exportPdf}
-                      className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                      className="ui-button ui-button-primary"
                     >
                       {t('project.actions.exportPdf', 'Export PDF')}
                     </button>
@@ -1446,7 +1438,7 @@ export default function App() {
                             STORAGE_MESSAGE_KEYS.defaults.project
                           )}
                           onChange={(event) => updateProjectField('name', event.target.value)}
-                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                          className="ui-input ui-input-lg"
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1454,7 +1446,7 @@ export default function App() {
                         <input
                           value={activeProject.client}
                           onChange={(event) => updateProjectField('client', event.target.value)}
-                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                          className="ui-input ui-input-lg"
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1463,7 +1455,7 @@ export default function App() {
                           type="date"
                           value={activeProject.shootDate}
                           onChange={(event) => updateProjectField('shootDate', event.target.value)}
-                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                          className="ui-input ui-input-lg"
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1471,7 +1463,7 @@ export default function App() {
                         <input
                           value={activeProject.location}
                           onChange={(event) => updateProjectField('location', event.target.value)}
-                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                          className="ui-input ui-input-lg"
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
@@ -1479,14 +1471,14 @@ export default function App() {
                         <input
                           value={activeProject.contact}
                           onChange={(event) => updateProjectField('contact', event.target.value)}
-                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                          className="ui-input ui-input-lg"
                         />
                       </label>
                     </div>
 
                     <form
                       onSubmit={addCategory}
-                      className="flex flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
+                      className="ui-panel flex flex-col gap-3 bg-surface-muted/60 p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <h3 className="text-lg font-semibold text-text-primary title-shadow">
@@ -1504,11 +1496,11 @@ export default function App() {
                             'categories.placeholder',
                             'Add a category (e.g. Camera, Lighting)'
                           )}
-                          className="flex-1 rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                          className="ui-input flex-1"
                         />
                         <button
                           type="submit"
-                          className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                          className="ui-button ui-button-primary"
                         >
                           {t('categories.actions.add', 'Add category')}
                         </button>
@@ -1527,7 +1519,7 @@ export default function App() {
                         activeProject.categories.map((category, categoryIndex) => (
                           <div
                             key={category.id}
-                            className="flex flex-col gap-4 rounded-2xl border border-l-4 border-surface-sunken border-l-brand bg-surface-elevated/80 p-4 shadow-sm"
+                            className="ui-tile flex flex-col gap-4 border-l-4 border-l-brand bg-surface-elevated/80 p-4"
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
                               <div className="flex flex-1 flex-col gap-3">
@@ -1540,7 +1532,7 @@ export default function App() {
                                   onChange={(event) =>
                                     updateCategoryField(category.id, 'name', event.target.value)
                                   }
-                                  className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-lg font-semibold text-text-primary focus:border-brand focus:outline-none"
+                                  className="ui-input px-3 py-2 text-lg font-semibold"
                                 />
                                 <textarea
                                   value={category.notes}
@@ -1552,13 +1544,13 @@ export default function App() {
                                     'Category notes or rental references'
                                   )}
                                   rows={2}
-                                  className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                                  className="ui-textarea px-3 py-2"
                                 />
                               </div>
                               <button
                                 type="button"
                                 onClick={() => removeCategory(category.id)}
-                                className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-secondary transition hover:border-status-error hover:text-status-error"
+                                className="ui-button ui-button-danger px-3 py-2 text-xs uppercase tracking-wide"
                               >
                                 {t('categories.actions.remove', 'Remove category')}
                               </button>
@@ -1566,7 +1558,7 @@ export default function App() {
 
                             <form
                               onSubmit={(event) => addItemToCategory(event, category.id)}
-                              className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-base/90 p-3 md:grid-cols-[3fr_2fr_auto]"
+                              className="ui-panel grid gap-3 bg-surface-base/90 p-3 md:grid-cols-[3fr_2fr_auto]"
                             >
                               <div className="flex items-center gap-2">
                                 <input
@@ -1576,7 +1568,7 @@ export default function App() {
                                   onChange={(event) =>
                                     updateDraftItem(category.id, 'quantity', event.target.value)
                                   }
-                                  className="w-20 rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                  className="ui-input w-20"
                                 />
                                 <span className="text-sm font-semibold text-text-muted">×</span>
                                 <div className="min-w-0 flex-1">
@@ -1591,7 +1583,7 @@ export default function App() {
                                     label={t('items.fields.name', 'Item name')}
                                     unitFallback={t('items.suggestion.unitFallback')}
                                     detailsFallback={t('items.suggestion.detailsFallback')}
-                                    inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                                    inputClassName="ui-input px-3 py-2"
                                   />
                                 </div>
                               </div>
@@ -1599,11 +1591,11 @@ export default function App() {
                                 value={(itemDrafts[category.id] || emptyItemDraft).details}
                                 onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
                                 placeholder={t('items.fields.details', 'Details / notes')}
-                                className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                                className="ui-input px-3 py-2"
                               />
                               <button
                                 type="submit"
-                                className="rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                                className="ui-button ui-button-primary text-xs"
                               >
                                 {t('items.actions.add', 'Add')}
                               </button>
@@ -1618,7 +1610,7 @@ export default function App() {
                                 category.items.map((item, itemIndex) => (
                                   <div
                                     key={item.id}
-                                    className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_1fr_auto]"
+                                    className="ui-panel grid gap-3 bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_1fr_auto]"
                                   >
                                     <div className="flex items-center gap-2">
                                       <input
@@ -1626,14 +1618,14 @@ export default function App() {
                                         min="1"
                                         value={item.quantity}
                                         onChange={(event) =>
-                                          updateItemField(
-                                            category.id,
-                                            item.id,
-                                            'quantity',
-                                            event.target.value
-                                          )
-                                        }
-                                        className="w-20 rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                        updateItemField(
+                                          category.id,
+                                          item.id,
+                                          'quantity',
+                                          event.target.value
+                                        )
+                                      }
+                                        className="ui-input w-20"
                                       />
                                       <span className="text-sm font-semibold text-text-muted">×</span>
                                       <div className="min-w-0 flex-1">
@@ -1656,7 +1648,7 @@ export default function App() {
                                           detailsFallback={t(
                                             'items.suggestion.detailsFallback'
                                           )}
-                                          inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                          inputClassName="ui-input px-3 py-2"
                                         />
                                       </div>
                                     </div>
@@ -1670,7 +1662,7 @@ export default function App() {
                                           event.target.value
                                         )
                                       }
-                                      className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                      className="ui-input px-3 py-2"
                                     />
                                     <select
                                       value={item.status}
@@ -1682,7 +1674,7 @@ export default function App() {
                                           event.target.value
                                         )
                                       }
-                                      className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                      className="ui-select"
                                     >
                                       <option value="needed">
                                         {t('status.labels.needed', 'Needed')}
@@ -1700,7 +1692,7 @@ export default function App() {
                                     <button
                                       type="button"
                                       onClick={() => removeItem(category.id, item.id)}
-                                      className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-secondary transition hover:border-status-error hover:text-status-error"
+                                      className="ui-button ui-button-danger px-3 py-2 text-xs uppercase tracking-wide"
                                     >
                                       {t('items.actions.remove', 'Remove')}
                                     </button>
@@ -1713,7 +1705,7 @@ export default function App() {
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-4">
+                    <div className="ui-tile bg-surface-elevated/60 p-4">
                       <h3 className="text-lg font-semibold text-text-primary title-shadow">
                         {t('project.notes.title', 'Project notes')}
                       </h3>
@@ -1731,7 +1723,7 @@ export default function App() {
                           'Crew notes, pickup info, or return instructions'
                         )}
                         rows={4}
-                        className="mt-3 w-full rounded-xl border border-surface-sunken bg-surface-input px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                        className="ui-textarea mt-3 rounded-xl"
                       />
                     </div>
                   </div>
@@ -1749,7 +1741,7 @@ export default function App() {
             {activeTab === 'templates' ? (
               <form
                 onSubmit={handleTemplateSubmit}
-                className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
+                className="ui-tile bg-surface-elevated/60 p-6"
               >
                 <div className="flex flex-col gap-2">
                   <h2 className="text-xl font-semibold text-text-primary title-shadow">
@@ -1771,7 +1763,7 @@ export default function App() {
                         setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))
                       }
                       placeholder={t('template.placeholders.name', 'e.g. Standard documentary kit')}
-                      className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                      className="ui-input ui-input-lg"
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -1782,13 +1774,13 @@ export default function App() {
                         setTemplateDraft((prev) => ({ ...prev, description: event.target.value }))
                       }
                       placeholder={t('template.placeholders.description', 'Key details or usage')}
-                      className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                      className="ui-input ui-input-lg"
                     />
                   </label>
                 </div>
                 <button
                   type="submit"
-                  className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                  className="ui-button ui-button-primary mt-4 w-fit px-5"
                 >
                   {t('template.actions.saveCurrent', 'Save current project as template')}
                 </button>
@@ -1805,7 +1797,7 @@ export default function App() {
                     templates.map((template, templateIndex) => (
                       <div
                         key={template.id}
-                        className="flex h-full flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
+                        className="ui-panel flex h-full flex-col gap-3 bg-surface-muted/60 p-4"
                       >
                         <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
                           {t('template.fields.shortName', 'Name')}
@@ -1818,7 +1810,7 @@ export default function App() {
                             onChange={(event) =>
                               updateTemplateField(template.id, 'name', event.target.value)
                             }
-                            className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                            className="ui-input px-3 py-2"
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
@@ -1828,7 +1820,7 @@ export default function App() {
                             onChange={(event) =>
                               updateTemplateField(template.id, 'description', event.target.value)
                             }
-                            className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                            className="ui-input px-3 py-2"
                           />
                         </label>
                         <div className="text-xs text-text-muted">
@@ -1848,14 +1840,14 @@ export default function App() {
                           <button
                             type="button"
                             onClick={() => applyTemplateToProject(template.id)}
-                            className="rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                            className="ui-button ui-button-primary px-3 py-2 text-xs"
                           >
                             {t('template.actions.apply', 'Apply to active project')}
                           </button>
                           <button
                             type="button"
                             onClick={() => removeTemplate(template.id)}
-                            className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold text-text-primary transition hover:border-status-error hover:text-status-error"
+                            className="ui-button ui-button-danger px-3 py-2 text-xs"
                           >
                             {t('template.actions.remove', 'Remove')}
                           </button>
@@ -1868,7 +1860,7 @@ export default function App() {
             ) : null}
 
             {activeTab === 'help' ? (
-              <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
+              <section className="ui-tile bg-surface-elevated/70 p-6">
                 <div className="flex flex-col gap-2">
                   <h2 className="text-lg font-semibold text-text-primary title-shadow">
                     {t('help.title', 'Help & documentation')}
@@ -1882,7 +1874,7 @@ export default function App() {
                     <details
                       key={section.title}
                       open={index === 0}
-                      className="rounded-xl border border-surface-sunken bg-surface-muted/60 px-4 py-3"
+                      className="ui-panel bg-surface-muted/60 px-4 py-3"
                     >
                       <summary className="cursor-pointer text-sm font-semibold text-text-primary title-shadow">
                         {section.title}
@@ -1926,7 +1918,7 @@ export default function App() {
                     {documentationSections.map((section) => (
                       <div
                         key={section.title}
-                        className="rounded-xl border border-surface-sunken bg-surface-muted/60 px-4 py-3"
+                        className="ui-panel bg-surface-muted/60 px-4 py-3"
                       >
                         <h4 className="text-sm font-semibold text-text-primary title-shadow">
                           {section.title}

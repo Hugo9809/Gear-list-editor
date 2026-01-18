@@ -20,7 +20,6 @@
       "saveNow": "Jetzt speichern",
       "exportProject": "Projekt exportieren",
       "exportPdf": "PDF exportieren",
-      "shareBackup": "Backup kopieren",
       "downloadBackup": "Backup herunterladen",
       "restoreData": "Daten wiederherstellen",
       "importBackup": "Backup importieren"
@@ -61,14 +60,13 @@
     }
   },
   "backup": {
-    "title": "Speichern, teilen, wiederherstellen",
+    "title": "Speichern, sichern, wiederherstellen",
     "description": "Deine Daten bleiben auf dem Gerät. Sofort speichern, Offline-Backups erstellen und bei Bedarf wiederherstellen, wenn du Geräte wechselst. Geräte-Backups werden alle 30 Minuten aktualisiert, auch im Leerlauf.",
     "actions": {
       "saveNow": "Jetzt speichern",
       "download": "Backup herunterladen",
       "import": "Backup-Datei importieren",
-      "restoreDevice": "Vom Geräte-Backup wiederherstellen",
-      "shareClipboard": "Über Zwischenablage teilen"
+      "restoreDevice": "Vom Geräte-Backup wiederherstellen"
     }
   },
   "dashboard": {
@@ -308,9 +306,6 @@
     "backupDownloaded": "Backup heruntergeladen. Bitte sicher aufbewahren.",
     "restoredFromSource": "Aus {source} wiederhergestellt.",
     "importComplete": "Import abgeschlossen. Vorhandene Daten wurden beibehalten.",
-    "sharedToClipboard": "Deine Equipmentliste wurde zum Teilen in die Zwischenablage kopiert.",
-    "clipboardBlocked": "Zwischenablage-Zugriff blockiert. Nutze stattdessen den Backup-Download.",
-    "clipboardUnavailable": "Teilen über die Zwischenablage ist nicht verfügbar. Nutze stattdessen den Backup-Download.",
     "empty": "Statusupdates erscheinen hier, um die Datensicherheit zu bestätigen.",
     "labels": {
       "needed": "Benötigt",
@@ -330,7 +325,7 @@
           "Projekt anlegen, damit es sofort lokal gespeichert wird, auch offline.",
           "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
           "Alle-Projekte-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
-          "Im Projekt-Arbeitsbereich oben exportieren, PDF erstellen oder teilen.",
+          "Im Projekt-Arbeitsbereich oben exportieren oder PDF erstellen.",
           "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben."
         ]
       },
@@ -365,7 +360,7 @@
       "Backup auf einem anderen Gerät importieren, um Listen sicher zu kombinieren.",
       "„Vom Geräte-Backup wiederherstellen“ nutzen, wenn Speicher repariert werden muss."
     ],
-    "footer": "Backups bleiben auf dem Gerät, sofern du sie nicht exportierst oder teilst."
+    "footer": "Backups bleiben auf dem Gerät, sofern du sie nicht exportierst."
   },
   "documentation": {
     "title": "Dokumentation",
@@ -382,13 +377,12 @@
         ]
       },
       {
-        "title": "Teilen und Export",
-        "description": "Teilen ohne Online-Abhängigkeit oder externe Dienste.",
+        "title": "Export und Übergabe",
+        "description": "Export ohne Online-Abhängigkeit oder externe Dienste.",
         "items": [
-          "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
           "Projekt-Export lädt nur das aktive Projekt für sichere Übergaben herunter.",
           "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
-          "Aktionen im Projekt-Arbeitsbereich halten Exporte und Teilen direkt an der Liste."
+          "Aktionen im Projekt-Arbeitsbereich halten Exporte direkt an der Liste."
         ]
       },
       {

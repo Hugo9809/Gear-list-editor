@@ -1114,100 +1114,102 @@ export default function App() {
           </aside>
 
           <main className="flex flex-1 flex-col gap-6">
-            {activeProject && activeTab !== 'help' ? (
-              <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
-                <div className="flex min-w-[200px] flex-col gap-1">
-                  <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
-                    {t('project.active.label', 'Active project')}
-                  </span>
-                  <span className="text-lg font-semibold text-text-primary">
-                    {resolveDisplayName(
-                      activeProject.name,
-                      { index: Math.max(activeProjectIndex, 0) + 1 },
-                      'project.untitled'
-                    )}
-                  </span>
-                  <span className="text-xs text-text-secondary">
-                    {t(
-                      'project.active.helper',
-                      'Export the current list or save it as a reusable template.'
-                    )}
-                  </span>
+            {activeProject && activeTab !== 'help' && activeTab !== 'dashboard' ? (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
+                  <div className="flex min-w-[200px] flex-col gap-1">
+                    <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
+                      {t('project.active.label', 'Active project')}
+                    </span>
+                    <span className="text-lg font-semibold text-text-primary">
+                      {resolveDisplayName(
+                        activeProject.name,
+                        { index: Math.max(activeProjectIndex, 0) + 1 },
+                        'project.untitled'
+                      )}
+                    </span>
+                    <span className="text-xs text-text-secondary">
+                      {t(
+                        'project.active.helper',
+                        'Export the current list or save it as a reusable template.'
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-3 text-sm">
+                    <button
+                      type="button"
+                      onClick={exportProject}
+                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    >
+                      {t('project.actions.export', 'Export project')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={shareData}
+                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    >
+                      {t('backup.actions.shareClipboard', 'Share via clipboard')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={exportPdf}
+                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    >
+                      {t('project.actions.exportPdf', 'Export PDF')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={saveTemplateFromProject}
+                      className="rounded-full bg-brand px-4 py-2 font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                    >
+                      {t('template.actions.saveFromProject', 'Save as template')}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-3 text-sm">
-                  <button
-                    type="button"
-                    onClick={exportProject}
-                    className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                  >
-                    {t('project.actions.export', 'Export project')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={shareData}
-                    className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                  >
-                    {t('backup.actions.shareClipboard', 'Share via clipboard')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={exportPdf}
-                    className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                  >
-                    {t('project.actions.exportPdf', 'Export PDF')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={saveTemplateFromProject}
-                    className="rounded-full bg-brand px-4 py-2 font-semibold text-brand-foreground transition hover:bg-brand-hover"
-                  >
-                    {t('template.actions.saveFromProject', 'Save as template')}
-                  </button>
-                </div>
-              </div>
-            ) : null}
 
-            <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
-              <h2 className="text-lg font-semibold text-text-primary">
-                {t('backup.title', 'Save, share, restore')}
-              </h2>
-              <p className="text-sm text-text-secondary">
-                {t(
-                  'backup.description',
-                  'Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices. Device backups refresh every 30 minutes, even while idle.'
-                )}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={downloadBackup}
-                  className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
-                >
-                  {t('backup.actions.download', 'Download backup')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                >
-                  {t('backup.actions.import', 'Import backup file')}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="application/json"
-                  className="hidden"
-                  onChange={handleImport}
-                />
-                <button
-                  type="button"
-                  onClick={restoreFromDeviceBackup}
-                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                >
-                  {t('backup.actions.restoreDevice', 'Restore from device backup')}
-                </button>
-              </div>
-            </section>
+                <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
+                  <h2 className="text-lg font-semibold text-text-primary">
+                    {t('backup.title', 'Save, share, restore')}
+                  </h2>
+                  <p className="text-sm text-text-secondary">
+                    {t(
+                      'backup.description',
+                      'Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices. Device backups refresh every 30 minutes, even while idle.'
+                    )}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={downloadBackup}
+                      className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                    >
+                      {t('backup.actions.download', 'Download backup')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    >
+                      {t('backup.actions.import', 'Import backup file')}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="application/json"
+                      className="hidden"
+                      onChange={handleImport}
+                    />
+                    <button
+                      type="button"
+                      onClick={restoreFromDeviceBackup}
+                      className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    >
+                      {t('backup.actions.restoreDevice', 'Restore from device backup')}
+                    </button>
+                  </div>
+                </section>
+              </>
+            ) : null}
 
             {activeTab === 'dashboard' ? (
               <>

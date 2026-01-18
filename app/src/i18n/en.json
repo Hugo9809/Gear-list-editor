@@ -241,6 +241,36 @@
   "units": {
     "pcs": "pcs"
   },
+  "defaults": {
+    "untitled_item": "Untitled item {index}",
+    "untitled_category": "Category {index}",
+    "untitled_project": "Untitled project {index}",
+    "untitled_template": "Template {index}",
+    "imported_project": "Imported gear list",
+    "imported_category": "General gear"
+  },
+  "errors": {
+    "payload_invalid": "Backup payload is missing or invalid.",
+    "projects_invalid": "Projects must be an array.",
+    "templates_invalid": "Templates must be an array.",
+    "history_invalid": "History must be an object when provided.",
+    "version_invalid": "Version must be numeric when provided."
+  },
+  "warnings": {
+    "storage_locations_unavailable": "Some storage locations could not be updated. Your latest data is still preserved in other backups.",
+    "autosave_storage_error": "Autosave encountered a storage error. Your data is still safe in memory.",
+    "indexeddb_unavailable": "IndexedDB was unavailable. Checking device backups instead.",
+    "import_invalid": "Import failed. Please choose a valid backup file.",
+    "no_device_backup": "No device backup was found yet."
+  },
+  "sources": {
+    "empty": "Empty",
+    "indexeddb": "IndexedDB",
+    "device_backup_latest": "Device backup (latest)",
+    "device_backup_previous": "Device backup (previous)",
+    "legacy_local_backup": "Legacy local backup",
+    "device_backup": "Device backup"
+  },
   "status": {
     "loading": "Loading your saved gear list...",
     "autosaveComplete": "Autosave complete. Your project dashboard is safe.",

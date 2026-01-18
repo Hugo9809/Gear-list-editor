@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
-import { createId, createStorageService } from './data/storage.js';
+import { createId, createStorageService, STORAGE_MESSAGE_KEYS } from './data/storage.js';
 import { getDictionary, translate, useI18n } from './i18n/index.js';
 
 const emptyItemDraft = {
@@ -30,21 +30,30 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
+const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
+const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWith('defaults.');
+
+const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel, projectIndex = 0) => {
   const t =
     typeof dictionaryOrT === 'function'
       ? dictionaryOrT
       : (key, fallback, variables) =>
           translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
+  const resolveLabel = (value, variables) =>
+    typeof value === 'string' && value.startsWith('defaults.')
+      ? t(value, undefined, variables)
+      : value || '';
   const categoriesHtml = project.categories
-    .map((category) => {
+    .map((category, categoryIndex) => {
       const rows = category.items
         .map(
-          (item) => `
+          (item, itemIndex) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
               <td>${escapeHtml(item.unit || t('units.pcs'))}</td>
-              <td>${escapeHtml(item.name)}</td>
+              <td>${escapeHtml(
+                resolveLabel(item.name, { index: itemIndex + 1 }) || t('defaults.untitled_item', undefined, { index: itemIndex + 1 })
+              )}</td>
               <td>${escapeHtml(item.details)}</td>
               <td>${escapeHtml(getStatusLabel(item.status))}</td>
             </tr>
@@ -53,7 +62,10 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
         .join('');
       return `
         <section>
-          <h3>${escapeHtml(category.name)}</h3>
+          <h3>${escapeHtml(
+            resolveLabel(category.name, { index: categoryIndex + 1 }) ||
+              t('defaults.untitled_category', undefined, { index: categoryIndex + 1 })
+          )}</h3>
           <table>
             <thead>
               <tr>
@@ -83,7 +95,10 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>${escapeHtml(project.name)} - ${escapeHtml(t('ui.gearList'))}</title>
+        <title>${escapeHtml(
+          resolveLabel(project.name, { index: projectIndex + 1 }) ||
+            t('defaults.untitled_project', undefined, { index: projectIndex + 1 })
+        )} - ${escapeHtml(t('ui.gearList'))}</title>
         <style>
           body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -138,7 +153,10 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
       </head>
       <body>
         <header>
-          <h1>${escapeHtml(project.name)}</h1>
+          <h1>${escapeHtml(
+            resolveLabel(project.name, { index: projectIndex + 1 }) ||
+              t('defaults.untitled_project', undefined, { index: projectIndex + 1 })
+          )}</h1>
           <div class="meta">
             <div><strong>${escapeHtml(t('project.print.labels.client'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
             <div><strong>${escapeHtml(t('project.print.labels.date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
@@ -247,6 +265,45 @@ export default function App() {
   const storageRef = useRef(null);
   const tRef = useRef(t);
 
+  const resolveDisplayName = useCallback(
+    (value, variables, fallbackKey) => {
+      if (typeof value !== 'string' || !value.trim()) {
+        return fallbackKey ? t(fallbackKey, undefined, variables) : '';
+      }
+      if (isDefaultLabelKey(value)) {
+        return t(value, undefined, variables);
+      }
+      return value;
+    },
+    [t]
+  );
+
+  const resolveStorageMessage = useCallback(
+    (message, variables) => {
+      if (!message) {
+        return '';
+      }
+      if (typeof message === 'string' && (message.startsWith('warnings.') || message.startsWith('errors.'))) {
+        return t(message, undefined, variables);
+      }
+      return message;
+    },
+    [t]
+  );
+
+  const resolveStorageSource = useCallback(
+    (source) => {
+      if (!source) {
+        return '';
+      }
+      if (typeof source === 'string' && source.startsWith('sources.')) {
+        return t(source);
+      }
+      return source;
+    },
+    [t]
+  );
+
   useEffect(() => {
     tRef.current = t;
   }, [t]);
@@ -262,7 +319,12 @@ export default function App() {
         const tCurrent = tRef.current;
         setLastSaved(payload.lastSaved);
         if (warnings?.length) {
-          setStatus(warnings[0]);
+          const warning = warnings[0];
+          setStatus(
+            typeof warning === 'string' && (warning.startsWith('warnings.') || warning.startsWith('errors.'))
+              ? tCurrent(warning)
+              : warning
+          );
           return;
         }
         if (reason === 'autosave') {
@@ -282,7 +344,14 @@ export default function App() {
           );
         }
       },
-      onWarning: (message) => setStatus(message)
+      onWarning: (message) => {
+        const tCurrent = tRef.current;
+        setStatus(
+          typeof message === 'string' && (message.startsWith('warnings.') || message.startsWith('errors.'))
+            ? tCurrent(message)
+            : message
+        );
+      }
     });
   }
 
@@ -300,13 +369,14 @@ export default function App() {
       setLastSaved(result.state.lastSaved);
       setTheme(result.state.theme || 'light');
       if (result.warnings.length > 0) {
-        setStatus(result.warnings[0]);
+        setStatus(resolveStorageMessage(result.warnings[0]));
       } else {
+        const localizedSource = resolveStorageSource(result.source);
         setStatus(
-          result.source === 'Empty'
+          result.source === STORAGE_MESSAGE_KEYS.sources.empty
             ? t('status.noSavedData', 'No saved data yet. Start a project and autosave will protect it.')
             : t('status.loadedFromSource', 'Loaded safely from {source}.', {
-                source: result.source
+                source: localizedSource
               })
         );
       }
@@ -360,12 +430,19 @@ export default function App() {
     () => projects.find((project) => project.id === activeProjectId) || projects[0] || null,
     [projects, activeProjectId]
   );
+  const activeProjectIndex = useMemo(
+    () => projects.findIndex((project) => project.id === activeProject?.id),
+    [activeProject?.id, projects]
+  );
 
-  const itemSuggestions = useMemo(() => history.items || [], [history.items]);
+  const itemSuggestions = useMemo(
+    () => (history.items || []).filter((entry) => !DEFAULT_NAME_KEYS.has(entry.name)),
+    [history.items]
+  );
 
   const rememberItem = (item) => {
     const name = item.name.trim();
-    if (!name) {
+    if (!name || DEFAULT_NAME_KEYS.has(name)) {
       return;
     }
     setHistory((prev) => {
@@ -392,7 +469,7 @@ export default function App() {
 
   const rememberCategory = (name) => {
     const trimmed = name.trim();
-    if (!trimmed) {
+    if (!trimmed || DEFAULT_NAME_KEYS.has(trimmed)) {
       return;
     }
     setHistory((prev) => {
@@ -740,7 +817,9 @@ export default function App() {
       return;
     }
     printWindow.document.open();
-    printWindow.document.write(buildPrintableHtml(activeProject, dictionary, getStatusLabel));
+    printWindow.document.write(
+      buildPrintableHtml(activeProject, dictionary, getStatusLabel, Math.max(activeProjectIndex, 0))
+    );
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -802,10 +881,14 @@ export default function App() {
     setActiveProjectId(result.state.activeProjectId);
     setLastSaved(result.state.lastSaved);
     if (result.warnings.length > 0) {
-      setStatus(result.warnings[0]);
+      setStatus(resolveStorageMessage(result.warnings[0]));
       return;
     }
-    setStatus(t('status.restoredFromSource', 'Restored from {source}.', { source: result.source }));
+    setStatus(
+      t('status.restoredFromSource', 'Restored from {source}.', {
+        source: resolveStorageSource(result.source)
+      })
+    );
   };
 
   const handleImport = (event) => {
@@ -827,7 +910,7 @@ export default function App() {
       setHistory(state.history);
       setActiveProjectId(state.activeProjectId);
       if (warnings.length > 0) {
-        setStatus(warnings[0]);
+        setStatus(resolveStorageMessage(warnings[0]));
       } else {
         setStatus(t('status.importComplete', 'Import complete. Existing data was preserved.'));
       }
@@ -845,7 +928,7 @@ export default function App() {
       lastSaved
     });
     if (result?.warnings?.length) {
-      setStatus(result.warnings[0]);
+      setStatus(resolveStorageMessage(result.warnings[0]));
     }
   };
 
@@ -1125,7 +1208,11 @@ export default function App() {
                     {t('project.active.label', 'Active project')}
                   </span>
                   <span className="text-lg font-semibold text-text-primary">
-                    {activeProject.name || t('project.untitled', 'Untitled project')}
+                    {resolveDisplayName(
+                      activeProject.name,
+                      { index: Math.max(activeProjectIndex, 0) + 1 },
+                      'project.untitled'
+                    )}
                   </span>
                   <span className="text-xs text-text-secondary">
                     {t(
@@ -1188,9 +1275,13 @@ export default function App() {
                               {t('template.library.emptyOption', 'No templates saved')}
                             </option>
                           ) : (
-                            templates.map((template) => (
+                            templates.map((template, templateIndex) => (
                               <option key={template.id} value={template.id}>
-                                {template.name}
+                                {resolveDisplayName(
+                                  template.name,
+                                  { index: templateIndex + 1 },
+                                  STORAGE_MESSAGE_KEYS.defaults.template
+                                )}
                               </option>
                             ))
                           )}
@@ -1337,7 +1428,7 @@ export default function App() {
                         )}
                       </div>
                     ) : (
-                      projects.map((project) => {
+                      projects.map((project, projectIndex) => {
                         const isActive = project.id === activeProject?.id;
                         const itemTotal = project.categories.reduce(
                           (sum, category) => sum + category.items.length,
@@ -1354,7 +1445,13 @@ export default function App() {
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
-                                <h3 className="text-lg font-semibold text-text-primary">{project.name}</h3>
+                                <h3 className="text-lg font-semibold text-text-primary">
+                                  {resolveDisplayName(
+                                    project.name,
+                                    { index: projectIndex + 1 },
+                                    STORAGE_MESSAGE_KEYS.defaults.project
+                                  )}
+                                </h3>
                                 <p className="text-xs text-text-secondary">
                                   {project.client || t('project.client.empty', 'Client not set')} ·{' '}
                                   {project.shootDate || t('project.shootDate.empty', 'Date not set')}
@@ -1452,7 +1549,11 @@ export default function App() {
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
                         {t('project.fields.name', 'Project name')}
                         <input
-                          value={activeProject.name}
+                          value={resolveDisplayName(
+                            activeProject.name,
+                            { index: Math.max(activeProjectIndex, 0) + 1 },
+                            STORAGE_MESSAGE_KEYS.defaults.project
+                          )}
                           onChange={(event) => updateProjectField('name', event.target.value)}
                           className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
                         />
@@ -1532,7 +1633,7 @@ export default function App() {
                           )}
                         </div>
                       ) : (
-                        activeProject.categories.map((category) => (
+                        activeProject.categories.map((category, categoryIndex) => (
                           <div
                             key={category.id}
                             className="flex flex-col gap-4 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
@@ -1540,7 +1641,11 @@ export default function App() {
                             <div className="flex flex-wrap items-start justify-between gap-3">
                               <div className="flex flex-1 flex-col gap-3">
                                 <input
-                                  value={category.name}
+                                  value={resolveDisplayName(
+                                    category.name,
+                                    { index: categoryIndex + 1 },
+                                    STORAGE_MESSAGE_KEYS.defaults.category
+                                  )}
                                   onChange={(event) =>
                                     updateCategoryField(category.id, 'name', event.target.value)
                                   }
@@ -1620,13 +1725,17 @@ export default function App() {
                                   {t('items.empty', 'No items yet. Add the first item above.')}
                                 </div>
                               ) : (
-                                category.items.map((item) => (
+                                category.items.map((item, itemIndex) => (
                                   <div
                                     key={item.id}
                                     className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-muted/70 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
                                   >
                                     <TypeaheadInput
-                                      value={item.name}
+                                      value={resolveDisplayName(
+                                        item.name,
+                                        { index: itemIndex + 1 },
+                                        STORAGE_MESSAGE_KEYS.defaults.item
+                                      )}
                                       onChange={(value) =>
                                         updateItemField(category.id, item.id, 'name', value)
                                       }
@@ -1805,7 +1914,7 @@ export default function App() {
                       )}
                     </div>
                   ) : (
-                    templates.map((template) => (
+                    templates.map((template, templateIndex) => (
                       <div
                         key={template.id}
                         className="flex h-full flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
@@ -1813,7 +1922,11 @@ export default function App() {
                         <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
                           {t('template.fields.shortName', 'Name')}
                           <input
-                            value={template.name}
+                            value={resolveDisplayName(
+                              template.name,
+                              { index: templateIndex + 1 },
+                              STORAGE_MESSAGE_KEYS.defaults.template
+                            )}
                             onChange={(event) =>
                               updateTemplateField(template.id, 'name', event.target.value)
                             }

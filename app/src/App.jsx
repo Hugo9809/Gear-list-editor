@@ -1006,33 +1006,32 @@ export default function App() {
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="flex w-full flex-col gap-6 lg:w-72">
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/80 p-6 shadow-lg">
-              <h1 className="text-[1.35rem] font-semibold text-text-primary title-shadow tracking-tight whitespace-nowrap">
+              <h1 className="w-full text-[1.5rem] font-medium text-brand title-shadow tracking-tight">
                 {t('ui.appName', 'Gear List Creator')}
               </h1>
+              <nav className="mt-4 flex flex-col gap-2">
+                {navigationTabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`rounded-xl px-4 py-2 text-left text-sm font-semibold transition ${
+                        isActive
+                          ? 'bg-brand text-brand-foreground'
+                          : 'border border-surface-sunken text-text-primary hover:border-brand'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
 
-            <nav className="flex flex-col gap-2">
-              {navigationTabs.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`rounded-xl px-4 py-2 text-left text-sm font-semibold transition ${
-                      isActive
-                        ? 'bg-brand text-brand-foreground'
-                        : 'border border-surface-sunken text-text-primary hover:border-brand'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-brand title-shadow">
                 {t('language.label', 'Language')}
               </h3>
               <label className="mt-3 flex flex-col gap-2 text-sm text-text-secondary">
@@ -1055,7 +1054,7 @@ export default function App() {
             </div>
 
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-brand title-shadow">
                 {t('theme.label', 'Theme')}
               </h3>
               <div className="mt-3 grid gap-2">
@@ -1096,7 +1095,7 @@ export default function App() {
                     <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
                       {t('project.active.label', 'Active project')}
                     </span>
-                    <span className="text-lg font-semibold text-text-primary title-shadow">
+                    <span className="text-lg font-semibold text-brand title-shadow">
                       {resolveDisplayName(
                         activeProject.name,
                         { index: Math.max(activeProjectIndex, 0) + 1 },
@@ -1143,7 +1142,7 @@ export default function App() {
                 </div>
 
                 <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
-                  <h2 className="text-lg font-semibold text-text-primary title-shadow">
+                  <h2 className="text-lg font-semibold text-brand title-shadow">
                     {t('backup.title', 'Save, share, restore')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1198,7 +1197,7 @@ export default function App() {
                 <div className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                      <h2 className="text-xl font-semibold text-brand title-shadow">
                         {t('dashboard.quickActions.title', 'Dashboard quick actions')}
                       </h2>
                       <p className="text-sm text-text-secondary">
@@ -1267,7 +1266,7 @@ export default function App() {
                   className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
                 >
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                    <h2 className="text-xl font-semibold text-brand title-shadow">
                       {t('project.dashboard.title', 'Project dashboard')}
                     </h2>
                     <p className="text-sm text-text-secondary">
@@ -1345,7 +1344,7 @@ export default function App() {
                 <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                      <h2 className="text-xl font-semibold text-brand title-shadow">
                         {t('project.list.title', 'Projects')}
                       </h2>
                       <p className="text-sm text-text-secondary">
@@ -1386,7 +1385,7 @@ export default function App() {
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
-                                <h3 className="text-lg font-semibold text-text-primary title-shadow">
+                                <h3 className="text-lg font-semibold text-brand title-shadow">
                                   {resolveDisplayName(
                                     project.name,
                                     { index: projectIndex + 1 },
@@ -1445,7 +1444,7 @@ export default function App() {
               <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                    <h2 className="text-xl font-semibold text-brand title-shadow">
                       {t('project.workspace.title', 'Active project workspace')}
                     </h2>
                     <p className="text-sm text-text-secondary">
@@ -1537,7 +1536,7 @@ export default function App() {
                       className="flex flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h3 className="text-lg font-semibold text-text-primary title-shadow">
+                        <h3 className="text-lg font-semibold text-brand title-shadow">
                           {t('categories.title', 'Categories')}
                         </h3>
                         <span className="text-xs text-text-muted">
@@ -1762,7 +1761,7 @@ export default function App() {
                     </div>
 
                     <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-4">
-                      <h3 className="text-lg font-semibold text-text-primary title-shadow">
+                      <h3 className="text-lg font-semibold text-brand title-shadow">
                         {t('project.notes.title', 'Project notes')}
                       </h3>
                       <p className="text-sm text-text-secondary">
@@ -1800,7 +1799,7 @@ export default function App() {
                 className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
               >
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                  <h2 className="text-xl font-semibold text-brand title-shadow">
                     {t('template.management.title', 'Template management')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1918,7 +1917,7 @@ export default function App() {
             {activeTab === 'help' ? (
               <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-lg font-semibold text-text-primary title-shadow">
+                  <h2 className="text-lg font-semibold text-brand title-shadow">
                     {t('help.title', 'Help & documentation')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1932,7 +1931,7 @@ export default function App() {
                       open={index === 0}
                       className="rounded-xl border border-surface-sunken bg-surface-muted/60 px-4 py-3"
                     >
-                      <summary className="cursor-pointer text-sm font-semibold text-text-primary title-shadow">
+                      <summary className="cursor-pointer text-sm font-semibold text-brand title-shadow">
                         {section.title}
                       </summary>
                       <p className="mt-2 text-sm text-text-secondary">{section.description}</p>
@@ -1945,7 +1944,7 @@ export default function App() {
                   ))}
                 </div>
                 <div className="mt-5 border-t border-surface-sunken pt-4">
-                  <h3 className="text-base font-semibold text-text-primary title-shadow">
+                  <h3 className="text-base font-semibold text-brand title-shadow">
                     {t('offline.title', 'Offline workflow')}
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -1961,7 +1960,7 @@ export default function App() {
                   </p>
                 </div>
                 <div className="mt-5 border-t border-surface-sunken pt-4">
-                  <h3 className="text-base font-semibold text-text-primary title-shadow">
+                  <h3 className="text-base font-semibold text-brand title-shadow">
                     {t('documentation.title', 'Documentation')}
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -1976,7 +1975,7 @@ export default function App() {
                         key={section.title}
                         className="rounded-xl border border-surface-sunken bg-surface-muted/60 px-4 py-3"
                       >
-                        <h4 className="text-sm font-semibold text-text-primary title-shadow">
+                        <h4 className="text-sm font-semibold text-brand title-shadow">
                           {section.title}
                         </h4>
                         <p className="mt-1 text-xs text-text-secondary">{section.description}</p>

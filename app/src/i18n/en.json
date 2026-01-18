@@ -56,6 +56,21 @@
     "quickActions": {
       "title": "All Projects quick actions",
       "description": "Load trusted templates or bring a project backup back into your local library."
+    },
+    "autoBackups": {
+      "title": "Auto backups",
+      "description": "Review the on-device auto backups created by autosave.",
+      "count": {
+        "one": "{count} auto backup available.",
+        "other": "{count} auto backups available."
+      },
+      "empty": "No auto backups yet. Create or edit a project and autosave will create them.",
+      "lastSaved": "Last saved: {time}",
+      "lastSavedEmpty": "Not saved yet",
+      "projects": {
+        "one": "{count} project in this backup.",
+        "other": "{count} projects in this backup."
+      }
     }
   },
   "project": {
@@ -306,6 +321,12 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage full backups, imports, and device resets without leaving offline mode.",
+    "autoBackups": {
+      "title": "Dashboard auto backups",
+      "description": "Control whether device auto backups appear in the project dashboard.",
+      "toggle": "Show auto backups",
+      "helper": "Keep this on to verify that autosave is generating device backups while you work offline."
+    },
     "backup": {
       "title": "Full backup controls",
       "description": "Download a full backup or import one to merge it safely with your local data.",
@@ -338,6 +359,7 @@
           "All Projects actions handle imports, restores, and device backups.",
           "Use the project workspace header for export, PDF, and share actions.",
           "Templates live in the Templates tab and can be added without overwriting gear.",
+          "Enable “Show auto backups” in Settings to reveal device backups on the dashboard.",
           "Settings contains full backups, imports, and the factory reset option."
         ]
       },
@@ -407,6 +429,7 @@
           "Import backups to merge rather than overwrite your current data.",
           "Restore from device backup if storage needs recovery.",
           "Settings provides full backups, imports, restores, and factory reset controls.",
+          "Turn on dashboard auto backups in Settings to review recent device backups.",
           "All Projects quick actions keep imports and restores close to your projects.",
           "Templates are managed in the Templates tab and never overwrite your data."
         ]

@@ -66,6 +66,21 @@
     "quickActions": {
       "title": "Alle-Projekte-Schnellaktionen",
       "description": "Vertrauenswürdige Vorlagen laden oder ein Projekt-Backup in deine lokale Bibliothek zurückholen."
+    },
+    "autoBackups": {
+      "title": "Automatische Backups",
+      "description": "Überprüfe die geräteinternen Auto-Backups, die durch Autosave erstellt werden.",
+      "count": {
+        "one": "{count} Auto-Backup verfügbar.",
+        "other": "{count} Auto-Backups verfügbar."
+      },
+      "empty": "Noch keine Auto-Backups. Erstelle oder bearbeite ein Projekt, damit Autosave sie anlegt.",
+      "lastSaved": "Zuletzt gespeichert: {time}",
+      "lastSavedEmpty": "Noch nicht gespeichert",
+      "projects": {
+        "one": "{count} Projekt in diesem Backup.",
+        "other": "{count} Projekte in diesem Backup."
+      }
     }
   },
   "project": {
@@ -316,6 +331,12 @@
   "settings": {
     "title": "Einstellungen",
     "subtitle": "Verwalte vollständige Backups, Importe und Geräte-Resets ohne den Offline-Modus zu verlassen.",
+    "autoBackups": {
+      "title": "Dashboard-Auto-Backups",
+      "description": "Steuere, ob Geräte-Auto-Backups im Projekt-Dashboard angezeigt werden.",
+      "toggle": "Auto-Backups anzeigen",
+      "helper": "Lass dies aktiviert, um zu prüfen, ob Autosave im Offline-Betrieb Geräte-Backups erstellt."
+    },
     "backup": {
       "title": "Vollständige Backup-Steuerung",
       "description": "Lade ein vollständiges Backup herunter oder importiere eines, um es sicher mit deinen lokalen Daten zu verbinden.",
@@ -348,6 +369,7 @@
           "Alle-Projekte-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
           "Im Projekt-Arbeitsbereich oben exportieren, PDF erstellen oder teilen.",
           "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben.",
+          "Aktiviere „Auto-Backups anzeigen“ in den Einstellungen, um Geräte-Backups im Dashboard zu sehen.",
           "In den Einstellungen findest du vollständige Backups, Importe und den Werksreset."
         ]
       },
@@ -417,6 +439,7 @@
           "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
           "Bei Problemen vom Geräte-Backup wiederherstellen.",
           "Einstellungen bieten vollständige Backups, Importe, Wiederherstellungen und Werksreset-Steuerungen.",
+          "Dashboard-Auto-Backups in den Einstellungen aktivieren, um aktuelle Geräte-Backups zu prüfen.",
           "Alle-Projekte-Aktionen halten Importe und Wiederherstellung nah an deinen Projekten.",
           "Vorlagen werden im Vorlagen-Tab verwaltet und überschreiben keine Daten."
         ]

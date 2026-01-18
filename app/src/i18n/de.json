@@ -84,5 +84,29 @@
         ]
       }
     ]
+  },
+  "printable": {
+    "table": {
+      "qty": "Menge",
+      "unit": "Einheit",
+      "item": "Item",
+      "details": "Details",
+      "status": "Status",
+      "empty": "Keine Items aufgeführt."
+    },
+    "meta": {
+      "client": "Kunde",
+      "date": "Datum",
+      "location": "Ort",
+      "contact": "Kontakt"
+    },
+    "notes": {
+      "label": "Projekt-Notizen",
+      "empty": "Keine Notizen hinzugefügt."
+    }
+  },
+  "typeahead": {
+    "unitFallback": "Stk.",
+    "detailsFallback": "Keine Details gespeichert"
   }
 }

@@ -84,5 +84,29 @@
         ]
       }
     ]
+  },
+  "printable": {
+    "table": {
+      "qty": "Qty",
+      "unit": "Unit",
+      "item": "Item",
+      "details": "Details",
+      "status": "Status",
+      "empty": "No items listed."
+    },
+    "meta": {
+      "client": "Client",
+      "date": "Date",
+      "location": "Location",
+      "contact": "Contact"
+    },
+    "notes": {
+      "label": "Project notes",
+      "empty": "No notes added."
+    }
+  },
+  "typeahead": {
+    "unitFallback": "pcs",
+    "detailsFallback": "No details saved"
   }
 }

@@ -30,7 +30,28 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildPrintableHtml = (project) => {
+const buildPrintableHtml = (project, dictionaryOrT) => {
+  const resolveText = (key, fallback) => {
+    if (typeof dictionaryOrT === 'function') {
+      return dictionaryOrT(key, fallback);
+    }
+    return translate(dictionaryOrT, key, fallback);
+  };
+  const labels = {
+    qty: resolveText('printable.table.qty', 'Qty'),
+    unit: resolveText('printable.table.unit', 'Unit'),
+    item: resolveText('printable.table.item', 'Item'),
+    details: resolveText('printable.table.details', 'Details'),
+    status: resolveText('printable.table.status', 'Status'),
+    emptyItems: resolveText('printable.table.empty', 'No items listed.'),
+    client: resolveText('printable.meta.client', 'Client'),
+    date: resolveText('printable.meta.date', 'Date'),
+    location: resolveText('printable.meta.location', 'Location'),
+    contact: resolveText('printable.meta.contact', 'Contact'),
+    notesLabel: resolveText('printable.notes.label', 'Project notes'),
+    notesEmpty: resolveText('printable.notes.empty', 'No notes added.'),
+    unitFallback: resolveText('typeahead.unitFallback', 'pcs')
+  };
   const categoriesHtml = project.categories
     .map((category) => {
       const rows = category.items
@@ -38,7 +59,7 @@ const buildPrintableHtml = (project) => {
           (item) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
-              <td>${escapeHtml(item.unit || 'pcs')}</td>
+              <td>${escapeHtml(item.unit || labels.unitFallback)}</td>
               <td>${escapeHtml(item.name)}</td>
               <td>${escapeHtml(item.details)}</td>
               <td>${escapeHtml(item.status)}</td>
@@ -52,15 +73,15 @@ const buildPrintableHtml = (project) => {
           <table>
             <thead>
               <tr>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Item</th>
-                <th>Details</th>
-                <th>Status</th>
+                <th>${escapeHtml(labels.qty)}</th>
+                <th>${escapeHtml(labels.unit)}</th>
+                <th>${escapeHtml(labels.item)}</th>
+                <th>${escapeHtml(labels.details)}</th>
+                <th>${escapeHtml(labels.status)}</th>
               </tr>
             </thead>
             <tbody>
-              ${rows || '<tr><td colspan="5">No items listed.</td></tr>'}
+              ${rows || `<tr><td colspan="5">${escapeHtml(labels.emptyItems)}</td></tr>`}
             </tbody>
           </table>
         </section>
@@ -130,15 +151,15 @@ const buildPrintableHtml = (project) => {
         <header>
           <h1>${escapeHtml(project.name)}</h1>
           <div class="meta">
-            <div><strong>Client:</strong> ${escapeHtml(project.client || '—')}</div>
-            <div><strong>Date:</strong> ${escapeHtml(project.shootDate || '—')}</div>
-            <div><strong>Location:</strong> ${escapeHtml(project.location || '—')}</div>
-            <div><strong>Contact:</strong> ${escapeHtml(project.contact || '—')}</div>
+            <div><strong>${escapeHtml(labels.client)}:</strong> ${escapeHtml(project.client || '—')}</div>
+            <div><strong>${escapeHtml(labels.date)}:</strong> ${escapeHtml(project.shootDate || '—')}</div>
+            <div><strong>${escapeHtml(labels.location)}:</strong> ${escapeHtml(project.location || '—')}</div>
+            <div><strong>${escapeHtml(labels.contact)}:</strong> ${escapeHtml(project.contact || '—')}</div>
           </div>
         </header>
         ${categoriesHtml}
         <div class="notes">
-          <strong>Project notes:</strong> ${escapeHtml(project.notes || 'No notes added.')}
+          <strong>${escapeHtml(labels.notesLabel)}:</strong> ${escapeHtml(project.notes || labels.notesEmpty)}
         </div>
       </body>
     </html>
@@ -153,9 +174,12 @@ const TypeaheadInput = ({
   placeholder,
   inputClassName,
   listClassName,
-  label
+  label,
+  t
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const unitFallback = t?.('typeahead.unitFallback', 'pcs') ?? 'pcs';
+  const detailsFallback = t?.('typeahead.detailsFallback', 'No details saved') ?? 'No details saved';
   const filteredSuggestions = useMemo(() => {
     const normalized = value.trim().toLowerCase();
     const sorted = [...suggestions].sort((a, b) =>
@@ -201,7 +225,7 @@ const TypeaheadInput = ({
             >
               <span className="font-medium text-white">{suggestion.name}</span>
               <span className="text-xs text-slate-400">
-                {suggestion.unit || 'pcs'} · {suggestion.details || 'No details saved'}
+                {suggestion.unit || unitFallback} · {suggestion.details || detailsFallback}
               </span>
             </button>
           ))}
@@ -675,7 +699,8 @@ export default function App() {
       return;
     }
     printWindow.document.open();
-    printWindow.document.write(buildPrintableHtml(activeProject));
+    const dictionary = getDictionary(locale);
+    printWindow.document.write(buildPrintableHtml(activeProject, dictionary));
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -1125,6 +1150,7 @@ export default function App() {
                               suggestions={itemSuggestions}
                               placeholder="Item name"
                               label="Item name"
+                              t={t}
                               inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                             />
                             <input
@@ -1176,6 +1202,7 @@ export default function App() {
                                     suggestions={itemSuggestions}
                                     placeholder="Item name"
                                     label="Item name"
+                                    t={t}
                                     inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                                   />
                                   <input

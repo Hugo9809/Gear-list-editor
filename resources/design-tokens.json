@@ -1,0 +1,124 @@
+{
+    "meta": {
+        "brand_name": "Cine Power Planner",
+        "description": "Core design tokens for UI implementation."
+    },
+    "colors": {
+        "primary": {
+            "DEFAULT": "#001589",
+            "hover": "#00106a",
+            "active": "#000a4b",
+            "dark": "#000835",
+            "foreground": "#FFFFFF"
+        },
+        "secondary": {
+            "DEFAULT": "#ff69b4",
+            "hover": "#f255a8",
+            "active": "#d1308a",
+            "foreground": "#18181B"
+        },
+        "surface": {
+            "app_bg": "#f5f7fa",
+            "base": "#ffffff",
+            "elevated": "#ffffff",
+            "muted": "#f0f0f0",
+            "sunken": "#e8e8e8",
+            "input": "#ffffff",
+            "inverse": "#1a1a2e"
+        },
+        "text": {
+            "primary": "#1a1a1a",
+            "secondary": "#666666",
+            "muted": "#999999",
+            "inverse": "#ffffff",
+            "link": "#001589"
+        },
+        "status": {
+            "success": "#28a745",
+            "success_bg": "#d4edda",
+            "warning": "#ffc107",
+            "warning_bg": "#fff3cd",
+            "error": "#dc3545",
+            "error_bg": "#f8d7da",
+            "info": "#17a2b8",
+            "info_bg": "#d1ecf1"
+        },
+        "project_palette": {
+            "blue": "#2196f3",
+            "green": "#4caf50",
+            "orange": "#ff9800",
+            "purple": "#9c27b0",
+            "red": "#f44336",
+            "pink": "#e91e63",
+            "teal": "#009688",
+            "indigo": "#3f51b5"
+        }
+    },
+    "typography": {
+        "font_family_base": [
+            "Ubuntu",
+            "-apple-system",
+            "BlinkMacSystemFont",
+            "Segoe UI",
+            "Roboto",
+            "Helvetica Neue",
+            "Arial",
+            "sans-serif"
+        ],
+        "font_family_mono": [
+            "SF Mono",
+            "Monaco",
+            "Cascadia Code",
+            "Consolas",
+            "monospace"
+        ],
+        "font_weight_bold": "700",
+        "font_weight_semibold": "600",
+        "font_weight_medium": "500",
+        "font_weight_normal": "400",
+        "line_heights": {
+            "tight": "1.25",
+            "normal": "1.5",
+            "relaxed": "1.75"
+        }
+    },
+    "ui": {
+        "border_radius": {
+            "sm": "4px",
+            "md": "8px",
+            "lg": "12px",
+            "xl": "16px",
+            "full": "9999px"
+        },
+        "spacing_scale": {
+            "xs": "4px",
+            "sm": "8px",
+            "md": "16px",
+            "lg": "24px",
+            "xl": "32px",
+            "2xl": "48px",
+            "3xl": "64px"
+        },
+        "shadows": {
+            "xs": "0 1px 2px rgba(0, 0, 0, 0.04)",
+            "sm": "0 1px 3px rgba(0, 0, 0, 0.08)",
+            "md": "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "lg": "0 10px 15px rgba(0, 0, 0, 0.12)",
+            "xl": "0 20px 25px rgba(0, 0, 0, 0.15)"
+        },
+        "z_index": {
+            "dropdown": 100,
+            "sticky": 200,
+            "fixed": 300,
+            "modal_backdrop": 400,
+            "modal": 500,
+            "popover": 600,
+            "tooltip": 700
+        },
+        "transitions": {
+            "fast": "150ms ease",
+            "normal": "250ms ease",
+            "slow": "350ms ease"
+        }
+    }
+}

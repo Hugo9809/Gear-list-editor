@@ -17,7 +17,8 @@
         "items": [
           "Projekt benennen und Kunde, Ort oder Kontakt ergänzen.",
           "Neue Projekte werden sofort lokal gespeichert.",
-          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben."
+          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben.",
+          "Im Dashboard Vorlagen laden oder Projekte importieren, ohne gespeichertes Equipment zu verlieren."
         ]
       },
       {
@@ -81,7 +82,8 @@
         "items": [
           "Backup-Dateien für Langzeitablage oder Gerätewechsel speichern.",
           "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
-          "Bei Problemen vom Geräte-Backup wiederherstellen."
+          "Bei Problemen vom Geräte-Backup wiederherstellen.",
+          "Dashboard-Aktionen halten Vorlagen und Importe nah an deinen Projekten."
         ]
       }
     ]

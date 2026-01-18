@@ -1,6 +1,7 @@
 {
   "meta": {
-    "label": "English"
+    "label": "English",
+    "title": "Gear list editor"
   },
   "language": {
     "label": "Language",

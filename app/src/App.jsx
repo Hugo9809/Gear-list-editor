@@ -230,6 +230,11 @@ export default function App() {
   const storageRef = useRef(null);
   const { locale, locales, setLocale, t } = useI18n();
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.title = t('meta.title', 'Gear list editor');
+  }, [locale, t]);
+
   if (!storageRef.current) {
     storageRef.current = createStorageService({
       onSaved: (payload, { reason, warnings }) => {

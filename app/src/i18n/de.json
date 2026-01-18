@@ -1,6 +1,7 @@
 {
   "meta": {
-    "label": "Deutsch"
+    "label": "Deutsch",
+    "title": "Equipmentlisten-Editor"
   },
   "language": {
     "label": "Sprache",

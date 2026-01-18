@@ -1,75 +1,69 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
-
-const STORAGE_KEY = 'gear-list-editor.data';
-const BACKUP_KEY = 'gear-list-editor.backup';
-
-const createId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
-};
-
-const emptyState = {
-  items: [],
-  notes: '',
-  lastSaved: null
-};
-
-const safeParse = (value) => {
-  if (!value) {
-    return null;
-  }
-  try {
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-};
-
-const normalizeItems = (items) => {
-  if (!Array.isArray(items)) {
-    return [];
-  }
-  return items
-    .filter((item) => item && typeof item.name === 'string')
-    .map((item) => ({
-      id: createId(),
-      name: item.name.trim(),
-      quantity: Number.isFinite(Number(item.quantity)) ? Number(item.quantity) : 1
-    }))
-    .filter((item) => item.name.length > 0);
-};
-
-const loadStoredState = () => {
-  const stored = safeParse(localStorage.getItem(STORAGE_KEY));
-  if (!stored) {
-    return emptyState;
-  }
-  return {
-    items: normalizeItems(stored.items),
-    notes: typeof stored.notes === 'string' ? stored.notes : '',
-    lastSaved: stored.lastSaved || null
-  };
-};
+import { createId, createStorageService } from './data/storage.js';
 
 export default function App() {
-  const [items, setItems] = useState(() => loadStoredState().items);
-  const [notes, setNotes] = useState(() => loadStoredState().notes);
-  const [lastSaved, setLastSaved] = useState(() => loadStoredState().lastSaved);
-  const [status, setStatus] = useState('');
+  const [items, setItems] = useState([]);
+  const [notes, setNotes] = useState('');
+  const [lastSaved, setLastSaved] = useState(null);
+  const [status, setStatus] = useState('Loading your saved gear list...');
+  const [isHydrated, setIsHydrated] = useState(false);
   const fileInputRef = useRef(null);
+  const storageRef = useRef(null);
+
+  if (!storageRef.current) {
+    storageRef.current = createStorageService({
+      onSaved: (payload, { reason, warnings }) => {
+        setLastSaved(payload.lastSaved);
+        if (warnings?.length) {
+          setStatus(warnings[0]);
+          return;
+        }
+        if (reason === 'autosave') {
+          setStatus('Autosave complete. Your updates are protected.');
+        } else if (reason === 'explicit') {
+          setStatus('Saved safely to device storage and backups.');
+        } else if (reason === 'rehydrate') {
+          setStatus('Storage repaired and redundancies refreshed.');
+        }
+      },
+      onWarning: (message) => setStatus(message)
+    });
+  }
 
   useEffect(() => {
-    const payload = {
-      items,
-      notes,
-      lastSaved: new Date().toISOString()
+    let mounted = true;
+    const load = async () => {
+      const result = await storageRef.current.loadState();
+      if (!mounted) {
+        return;
+      }
+      setItems(result.state.items);
+      setNotes(result.state.notes);
+      setLastSaved(result.state.lastSaved);
+      if (result.warnings.length > 0) {
+        setStatus(result.warnings[0]);
+      } else {
+        setStatus(
+          result.source === 'Empty'
+            ? 'No saved data yet. Start adding gear and autosave will protect it.'
+            : `Loaded safely from ${result.source}.`
+        );
+      }
+      setIsHydrated(true);
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    localStorage.setItem(BACKUP_KEY, JSON.stringify(payload));
-    setLastSaved(payload.lastSaved);
-  }, [items, notes]);
+    load();
+    return () => {
+      mounted = false;
+      storageRef.current?.dispose();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+    storageRef.current.scheduleAutosave({ items, notes, lastSaved });
+  }, [items, notes, isHydrated]);
 
   const itemCount = useMemo(() => items.length, [items]);
 
@@ -87,7 +81,7 @@ export default function App() {
 
     setItems((prev) => [...prev, { id: createId(), name, quantity }]);
     event.target.reset();
-    setStatus('Item added and saved locally.');
+    setStatus('Item added. Autosave will secure it immediately.');
   };
 
   const updateItem = (id, field, value) => {
@@ -101,45 +95,38 @@ export default function App() {
           : item
       )
     );
-    setStatus('Changes saved automatically.');
+    setStatus('Changes queued for autosave.');
   };
 
   const removeItem = (id) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
-    setStatus('Item removed. Data is still backed up locally.');
+    setStatus('Item removed. Backups remain available.');
   };
 
   const downloadBackup = () => {
-    const payload = {
-      items,
-      notes,
-      lastSaved: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-      type: 'application/json'
-    });
+    const { json, fileName } = storageRef.current.exportBackup({ items, notes, lastSaved });
+    const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `gear-list-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    setStatus('Backup downloaded. Keep it somewhere safe.');
+    setStatus('Backup downloaded. Store it somewhere safe.');
   };
 
-  const restoreFromLocalBackup = () => {
-    const backup = safeParse(localStorage.getItem(BACKUP_KEY));
-    if (!backup) {
-      setStatus('No local backup found yet.');
+  const restoreFromDeviceBackup = async () => {
+    const result = await storageRef.current.restoreFromBackup();
+    setItems(result.state.items);
+    setNotes(result.state.notes);
+    setLastSaved(result.state.lastSaved);
+    if (result.warnings.length > 0) {
+      setStatus(result.warnings[0]);
       return;
     }
-    const restoredItems = normalizeItems(backup.items);
-    const restoredNotes = typeof backup.notes === 'string' ? backup.notes : '';
-    setItems(restoredItems);
-    setNotes(restoredNotes);
-    setStatus('Restored from the latest local backup.');
+    setStatus(`Restored from ${result.source}.`);
   };
 
   const handleImport = (event) => {
@@ -149,28 +136,35 @@ export default function App() {
     }
     const reader = new FileReader();
     reader.onload = () => {
-      const imported = safeParse(reader.result);
-      if (!imported) {
-        setStatus('Import failed. Please choose a valid backup file.');
-        return;
+      const { state, warnings } = storageRef.current.importBackup(reader.result, {
+        items,
+        notes,
+        lastSaved
+      });
+      setItems(state.items);
+      setNotes(state.notes);
+      if (warnings.length > 0) {
+        setStatus(warnings[0]);
+      } else {
+        setStatus('Import complete. Existing data was preserved.');
       }
-      const importedItems = normalizeItems(imported.items);
-      const importedNotes = typeof imported.notes === 'string' ? imported.notes : '';
-      setItems((prev) => [...prev, ...importedItems]);
-      if (importedNotes) {
-        setNotes((prev) => `${prev}\n${importedNotes}`.trim());
-      }
-      setStatus('Import complete. Existing data was preserved.');
     };
     reader.readAsText(file);
     event.target.value = '';
   };
 
+  const saveNow = async () => {
+    const result = await storageRef.current.saveNow({ items, notes, lastSaved });
+    if (result?.warnings?.length) {
+      setStatus(result.warnings[0]);
+    }
+  };
+
   const shareData = async () => {
-    const payload = JSON.stringify({ items, notes, lastSaved }, null, 2);
+    const { json } = storageRef.current.exportBackup({ items, notes, lastSaved });
     if (navigator.clipboard?.writeText) {
       try {
-        await navigator.clipboard.writeText(payload);
+        await navigator.clipboard.writeText(json);
         setStatus('Copied your gear list to the clipboard for sharing.');
         return;
       } catch {
@@ -193,12 +187,14 @@ export default function App() {
           <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
             <h1 className="text-3xl font-semibold text-white">Keep every item safe, synced, and backed up.</h1>
             <p className="max-w-3xl text-base text-slate-300">
-              This offline-first workspace saves every edit automatically in your browser. Export a backup or
-              restore from local storage any time to protect your data. No information leaves your device.
+              This offline-first workspace saves every edit in IndexedDB and mirrors backups to your device
+              storage. Export a backup or restore from device storage any time to protect your data. No
+              information leaves your device.
             </p>
             <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
               <span className="rounded-full border border-slate-700 px-3 py-1">Autosave active</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Local backups enabled</span>
+              <span className="rounded-full border border-slate-700 px-3 py-1">IndexedDB primary</span>
+              <span className="rounded-full border border-slate-700 px-3 py-1">Device backups (OPFS)</span>
               <span className="rounded-full border border-slate-700 px-3 py-1">Share without external links</span>
             </div>
           </div>
@@ -295,7 +291,7 @@ export default function App() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
               <h2 className="text-xl font-semibold text-white">Notes & instructions</h2>
               <p className="text-sm text-slate-400">
-                Add context for your crew. Notes are saved, backed up, and included in exports.
+                Add context for your crew. Notes are saved to IndexedDB, backed up on-device, and included in exports.
               </p>
               <textarea
                 value={notes}
@@ -311,9 +307,17 @@ export default function App() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
               <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
               <p className="text-sm text-slate-400">
-                Your data stays on-device. Use these tools to create extra copies or share safely.
+                Your data stays on-device. Use these tools to save instantly, create extra copies, or restore
+                from device backups.
               </p>
               <div className="mt-4 flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={saveNow}
+                  className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
+                >
+                  Save now
+                </button>
                 <button
                   type="button"
                   onClick={downloadBackup}
@@ -337,10 +341,10 @@ export default function App() {
                 />
                 <button
                   type="button"
-                  onClick={restoreFromLocalBackup}
+                  onClick={restoreFromDeviceBackup}
                   className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
                 >
-                  Restore from local backup
+                  Restore from device backup
                 </button>
                 <button
                   type="button"
@@ -359,10 +363,11 @@ export default function App() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
               <h2 className="text-lg font-semibold text-white">Help & documentation</h2>
               <ul className="mt-3 flex flex-col gap-3 text-sm text-slate-300">
-                <li>Autosave runs after every change to keep your list safe.</li>
-                <li>Download backups before large edits or when sharing with your team.</li>
-                <li>Imported items are appended to protect existing data from overwrites.</li>
-                <li>Translations are ready for future additions without changing your stored data.</li>
+                <li>Autosave writes to IndexedDB first and mirrors device backups for redundancy.</li>
+                <li>Use “Save now” before big edits or shutdowns for immediate protection.</li>
+                <li>Download backups for sharing or archiving offline.</li>
+                <li>Imported items are appended so existing data is never overwritten.</li>
+                <li>Restore pulls from the most recent device backup available.</li>
               </ul>
             </div>
           </aside>

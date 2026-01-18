@@ -23,5 +23,6 @@ If you need a non-Node development strategy, you can serve the built static file
 
 ## Data safety and offline use
 
-The app is designed to keep all data local, autosave after every change, and maintain local backups. Backup export,
-import, and restore are built in so your data stays protected even without network access.
+The app keeps all data local, autosaves after every change to IndexedDB, and mirrors redundant backups to the
+Origin Private File System (OPFS). Backup export, import, and restore are built in so your data stays protected
+even without network access.

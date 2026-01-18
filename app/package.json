@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:root": "vite build --outDir .. --base=/Gear-list-editor/",
     "preview": "vite preview",
     "validate-storage": "node scripts/validateStorage.mjs"
   },

@@ -27,6 +27,16 @@ The GitHub Pages workflow builds the app with `npm run build` and publishes the 
 Because Pages serves this repo under a base path, the build must include `--base=/<repo-name>/` (for example,
 `/Gear-list-editor/`). Update the base path if the repository name changes or if you deploy from a fork.
 
+If your Pages site is configured to deploy directly from the `main` branch (root), build the static files into
+the repository root with:
+
+```bash
+cd app
+npm run build:root
+```
+
+This creates a root-level `index.html` and `assets/` folder so Pages serves the app instead of the README.
+
 ## Data safety and offline use
 
 The app keeps all data local, autosaves after every change to IndexedDB, and mirrors redundant backups to the

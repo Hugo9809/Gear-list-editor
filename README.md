@@ -41,7 +41,8 @@ This creates a root-level `index.html` and `assets/` folder so Pages serves the 
 
 The app keeps all data local, autosaves after every change to IndexedDB, and mirrors redundant backups to the
 Origin Private File System (OPFS). Backup export, import, and restore are built in so your data stays protected
-even without network access.
+even without network access. Theme preferences (bright, dark, pink-light, pink-dark) are stored locally and
+included in offline backups.
 
 ## GitHub Pages base path
 

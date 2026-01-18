@@ -33,7 +33,7 @@ const escapeHtml = (value) =>
 const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
 const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWith('defaults.');
 
-const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel, projectIndex = 0) => {
+const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => {
   const t =
     typeof dictionaryOrT === 'function'
       ? dictionaryOrT
@@ -55,7 +55,6 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel, projectIndex
                 resolveLabel(item.name, { index: itemIndex + 1 }) || t('defaults.untitled_item', undefined, { index: itemIndex + 1 })
               )}</td>
               <td>${escapeHtml(item.details)}</td>
-              <td>${escapeHtml(getStatusLabel(item.status))}</td>
             </tr>
           `
         )
@@ -73,13 +72,12 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel, projectIndex
                 <th>${escapeHtml(t('items.print.headers.unit'))}</th>
                 <th>${escapeHtml(t('items.print.headers.item'))}</th>
                 <th>${escapeHtml(t('items.print.headers.details'))}</th>
-                <th>${escapeHtml(t('items.print.headers.status'))}</th>
               </tr>
             </thead>
             <tbody>
               ${
                 rows ||
-                `<tr><td colspan="5">${escapeHtml(
+                `<tr><td colspan="4">${escapeHtml(
                   t('items.print.empty')
                 )}</td></tr>`
               }
@@ -838,7 +836,7 @@ export default function App() {
     }
     printWindow.document.open();
     printWindow.document.write(
-      buildPrintableHtml(activeProject, dictionary, getStatusLabel, Math.max(activeProjectIndex, 0))
+      buildPrintableHtml(activeProject, dictionary, Math.max(activeProjectIndex, 0))
     );
     printWindow.document.close();
     printWindow.focus();
@@ -998,11 +996,6 @@ export default function App() {
       )
     );
   };
-
-  const getStatusLabel = useCallback(
-    (value) => t(`status.labels.${value}`, value),
-    [t]
-  );
 
   const statusClasses = status
     ? 'border border-brand/40 bg-brand/10 text-brand'
@@ -1713,7 +1706,7 @@ export default function App() {
                                 category.items.map((item, itemIndex) => (
                                   <div
                                     key={item.id}
-                                    className="ui-panel grid gap-3 bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_1fr_auto]"
+                                    className="ui-panel grid gap-3 bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_auto]"
                                   >
                                     <div className="flex items-center gap-2">
                                       <input
@@ -1767,31 +1760,6 @@ export default function App() {
                                       }
                                       className="ui-input px-3 py-2"
                                     />
-                                    <select
-                                      value={item.status}
-                                      onChange={(event) =>
-                                        updateItemField(
-                                          category.id,
-                                          item.id,
-                                          'status',
-                                          event.target.value
-                                        )
-                                      }
-                                      className="ui-select"
-                                    >
-                                      <option value="needed">
-                                        {t('status.labels.needed', 'Needed')}
-                                      </option>
-                                      <option value="packed">
-                                        {t('status.labels.packed', 'Packed')}
-                                      </option>
-                                      <option value="missing">
-                                        {t('status.labels.missing', 'Missing')}
-                                      </option>
-                                      <option value="rented">
-                                        {t('status.labels.rented', 'Rented')}
-                                      </option>
-                                    </select>
                                     <button
                                       type="button"
                                       onClick={() => removeItem(category.id, item.id)}

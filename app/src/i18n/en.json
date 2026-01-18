@@ -40,16 +40,6 @@
     "sidebar": {
       "title": "Safe offline workspace",
       "description": "Tabs keep your workflow focused while autosave runs in the background."
-    },
-    "hero": {
-      "title": "Project-ready gear lists with offline protection.",
-      "description": "Build equipment lists that match your production PDFs. Create projects, reuse templates, and export print-ready gear lists without leaving offline mode. Every edit is saved locally with redundant backups."
-    },
-    "badges": {
-      "autosave": "Autosave active",
-      "dashboard": "Project dashboard",
-      "templates": "Template library",
-      "pdf": "PDF export ready"
     }
   },
   "theme": {

@@ -1,3 +1,16 @@
+// @ts-check
+/**
+ * @fileoverview Data normalization and validation utilities.
+ * All data entering the system flows through these functions.
+ */
+
+/** @typedef {import('../types.js').Item} Item */
+/** @typedef {import('../types.js').Category} Category */
+/** @typedef {import('../types.js').Project} Project */
+/** @typedef {import('../types.js').Template} Template */
+/** @typedef {import('../types.js').History} History */
+/** @typedef {import('../types.js').HistoryEntry} HistoryEntry */
+
 export const STORAGE_MESSAGE_KEYS = {
   defaults: {
     item: 'defaults.untitled_item',

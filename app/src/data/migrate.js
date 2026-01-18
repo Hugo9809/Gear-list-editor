@@ -1,3 +1,14 @@
+// @ts-check
+/**
+ * @fileoverview Data migration and schema versioning utilities.
+ * Handles legacy data formats and payload merging.
+ */
+
+/** @typedef {import('../types.js').AppState} AppState */
+/** @typedef {import('../types.js').Project} Project */
+/** @typedef {import('../types.js').Template} Template */
+/** @typedef {import('../types.js').History} History */
+
 import {
   STORAGE_MESSAGE_KEYS,
   createId,

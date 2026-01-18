@@ -1,3 +1,16 @@
+// @ts-check
+/**
+ * @fileoverview React hook for managing project state, item/category edits, and history.
+ */
+
+/** @typedef {import('../../types.js').Project} Project */
+/** @typedef {import('../../types.js').Category} Category */
+/** @typedef {import('../../types.js').Item} Item */
+/** @typedef {import('../../types.js').History} History */
+/** @typedef {import('../../types.js').HistoryEntry} HistoryEntry */
+/** @typedef {import('../../types.js').ItemDraft} ItemDraft */
+/** @typedef {import('../../types.js').ProjectDraft} ProjectDraft */
+
 import { useCallback, useMemo, useState } from 'react';
 import { createId, STORAGE_MESSAGE_KEYS } from '../../data/storage.js';
 

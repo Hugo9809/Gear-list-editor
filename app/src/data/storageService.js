@@ -1,3 +1,17 @@
+// @ts-check
+/**
+ * @fileoverview Central storage service facade for the Gear List Editor.
+ * Handles persistence to IndexedDB (primary), OPFS (backup), and localStorage (legacy).
+ */
+
+/** @typedef {import('../types.js').AppState} AppState */
+/** @typedef {import('../types.js').StorageService} StorageService */
+/** @typedef {import('../types.js').StorageServiceOptions} StorageServiceOptions */
+/** @typedef {import('../types.js').LoadStateResult} LoadStateResult */
+/** @typedef {import('../types.js').SaveResult} SaveResult */
+/** @typedef {import('../types.js').ExportResult} ExportResult */
+/** @typedef {import('../types.js').BackupSummary} BackupSummary */
+
 import { STORAGE_MESSAGE_KEYS, createId, safeParse, validatePayload } from './normalize.js';
 import { createEmptyState, migratePayload, mergePayloads } from './migrate.js';
 import {

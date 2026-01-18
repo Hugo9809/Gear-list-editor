@@ -1,7 +1,7 @@
 {
   "meta": {
     "label": "Deutsch",
-    "title": "Equipmentlisten-Editor"
+    "title": "Gear List Creator"
   },
   "language": {
     "label": "Sprache",
@@ -33,7 +33,7 @@
     }
   },
   "ui": {
-    "appName": "Equipmentlisten-Editor",
+    "appName": "Gear List Creator",
     "gearList": "Equipmentliste",
     "emptyValue": "—",
     "sidebar": {
@@ -133,7 +133,7 @@
       "title": "Arbeitsbereich für das aktive Projekt",
       "summary": "{categories} · {items}",
       "empty": "Wähle ein Projekt, um mit der Bearbeitung zu beginnen.",
-      "emptyState": "Wähle oder erstelle ein Projekt, um den Equipmentlisten-Editor zu öffnen."
+      "emptyState": "Wähle oder erstelle ein Projekt, um den Gear List Creator zu öffnen."
     },
     "notes": {
       "title": "Projekt-Notizen",

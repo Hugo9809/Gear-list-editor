@@ -7,35 +7,64 @@
     "helper": "Saved locally for offline use.",
     "status": "Language updated and saved locally."
   },
+  "navigation": {
+    "sidebar": {
+      "label": "Sidebar",
+      "tabs": {
+        "dashboard": "Dashboard",
+        "project": "Project",
+        "templates": "Templates",
+        "help": "Help"
+      },
+      "helper": "Use the tabs to move between the dashboard, project editor, templates, and help."
+    },
+    "topBar": {
+      "label": "Top bar actions",
+      "actions": {
+        "saveNow": "Save now",
+        "exportPdf": "Export PDF",
+        "downloadBackup": "Download backup",
+        "importBackup": "Import backup",
+        "restoreBackup": "Restore from device backup",
+        "shareClipboard": "Share via clipboard"
+      },
+      "helper": "Actions save, export, and share while staying offline. Autosave still protects every change."
+    },
+    "helpers": {
+      "projectEmpty": "Select or create a project to start editing the gear list.",
+      "projectNotes": "Notes appear in exports and backups for every project.",
+      "templatesEmpty": "No templates yet. Save the active project to build your library."
+    }
+  },
   "help": {
     "title": "Help & documentation",
     "subtitle": "Offline-first guidance for safe gear lists.",
     "sections": [
       {
-        "title": "Start with a protected project",
-        "description": "Create a project first so autosave can protect every edit.",
+        "title": "Follow the dashboard flow",
+        "description": "Dashboard → select or create a project → edit the gear list.",
         "items": [
-          "Name the project and add client, location, or contact details.",
-          "New projects are saved locally the moment they are created.",
-          "Switch projects any time to keep each production separate."
+          "Create a project first so autosave can protect every edit.",
+          "The dashboard keeps each production separate and easy to reopen.",
+          "Open the project tab to update details, categories, and items."
         ]
       },
       {
-        "title": "Build categories and items",
-        "description": "Organize gear by department or case for faster packing.",
+        "title": "Edit the project safely",
+        "description": "Projects stay local and keep notes with every export and backup.",
         "items": [
           "Add categories, then list items with quantity, unit, and status.",
-          "Typeahead remembers previous items so you can reuse details quickly.",
-          "Use project notes for crew instructions, pickup info, or returns."
+          "Project notes are included in exports for crew instructions and pickup details.",
+          "Autosave keeps redundant copies after every change."
         ]
       },
       {
-        "title": "Reuse templates safely",
-        "description": "Templates copy gear without overwriting existing lists.",
+        "title": "Templates and exports",
+        "description": "Templates live in the Templates tab. Exports and backups live in the Project view.",
         "items": [
           "Save the active project as a template whenever you repeat a kit.",
-          "Apply templates to add gear while keeping what is already listed.",
-          "Template usage is tracked so your most-used kits stay visible."
+          "Apply templates to add gear without overwriting existing lists.",
+          "Use the Project top bar and Save, share, restore panel for PDF export, backups, and sharing."
         ]
       }
     ]
@@ -44,7 +73,7 @@
     "title": "Offline workflow",
     "description": "Every feature works without a connection.",
     "steps": [
-      "Create or open a project while offline.",
+      "Open the dashboard and select or create a project while offline.",
       "Use “Save now” before handing off or closing the device.",
       "Download a backup file for transfer or long-term storage.",
       "Import a backup file on another device to merge gear lists safely.",
@@ -58,20 +87,20 @@
     "sections": [
       {
         "title": "Saving and autosave",
-        "description": "Edits are protected immediately and mirrored to backups.",
+        "description": "Autosave starts as soon as a project is created or opened.",
         "items": [
-          "Autosave runs after every change and keeps redundant copies.",
+          "Every change is saved locally and mirrored to redundant backups.",
           "“Save now” forces an immediate sync across local storage locations.",
           "Status updates confirm when saves and repairs are complete."
         ]
       },
       {
-        "title": "Sharing and exports",
-        "description": "Share without leaving offline mode or exposing data online.",
+        "title": "Sharing, exports, and templates",
+        "description": "Exports and templates stay inside the app and remain offline-first.",
         "items": [
-          "Clipboard sharing copies a full backup for quick handoffs.",
-          "PDF export opens a print-ready list for production reference.",
-          "All sharing stays local unless you move files manually."
+          "Use the Project top bar to export a PDF of the active gear list.",
+          "Templates are managed in the Templates tab and can be applied to any project.",
+          "Clipboard sharing copies a full backup for quick handoffs."
         ]
       },
       {

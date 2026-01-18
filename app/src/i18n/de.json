@@ -7,35 +7,64 @@
     "helper": "Lokal gespeichert für die Offline-Nutzung.",
     "status": "Sprache aktualisiert und lokal gespeichert."
   },
+  "navigation": {
+    "sidebar": {
+      "label": "Seitenleiste",
+      "tabs": {
+        "dashboard": "Dashboard",
+        "project": "Projekt",
+        "templates": "Vorlagen",
+        "help": "Hilfe"
+      },
+      "helper": "Nutze die Tabs, um zwischen Dashboard, Projekt-Editor, Vorlagen und Hilfe zu wechseln."
+    },
+    "topBar": {
+      "label": "Aktionen in der oberen Leiste",
+      "actions": {
+        "saveNow": "Jetzt speichern",
+        "exportPdf": "PDF exportieren",
+        "downloadBackup": "Backup herunterladen",
+        "importBackup": "Backup importieren",
+        "restoreBackup": "Vom Geräte-Backup wiederherstellen",
+        "shareClipboard": "Über Zwischenablage teilen"
+      },
+      "helper": "Aktionen speichern, exportieren und teilen offline. Autosave schützt jede Änderung."
+    },
+    "helpers": {
+      "projectEmpty": "Projekt auswählen oder erstellen, um die Equipment-Liste zu bearbeiten.",
+      "projectNotes": "Notizen erscheinen in Exporten und Backups für jedes Projekt.",
+      "templatesEmpty": "Noch keine Vorlagen. Aktives Projekt speichern, um deine Bibliothek aufzubauen."
+    }
+  },
   "help": {
     "title": "Hilfe & Dokumentation",
     "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",
     "sections": [
       {
-        "title": "Mit einem geschützten Projekt starten",
-        "description": "Erstelle zuerst ein Projekt, damit Autosave jede Änderung schützt.",
+        "title": "Dashboard-Workflow folgen",
+        "description": "Dashboard → Projekt auswählen oder erstellen → Equipment-Liste bearbeiten.",
         "items": [
-          "Projekt benennen und Kunde, Ort oder Kontakt ergänzen.",
-          "Neue Projekte werden sofort lokal gespeichert.",
-          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben."
+          "Zuerst ein Projekt erstellen, damit Autosave jede Änderung schützt.",
+          "Das Dashboard hält Produktionen getrennt und leicht wieder zu öffnen.",
+          "Im Projekt-Tab Details, Kategorien und Items pflegen."
         ]
       },
       {
-        "title": "Kategorien und Items aufbauen",
-        "description": "Strukturiere Equipment nach Abteilung oder Case für schnelleres Packen.",
+        "title": "Projekt sicher bearbeiten",
+        "description": "Projekte bleiben lokal und behalten Notizen in jedem Export und Backup.",
         "items": [
           "Kategorien anlegen und Items mit Menge, Einheit und Status erfassen.",
-          "Die Vorschläge merken frühere Items und übernehmen Details schnell.",
-          "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen."
+          "Projekt-Notizen sind in Exporten für Crew-Infos und Abholung enthalten.",
+          "Autosave hält redundante Kopien nach jeder Änderung."
         ]
       },
       {
-        "title": "Vorlagen sicher wiederverwenden",
-        "description": "Vorlagen kopieren Equipment, ohne bestehende Listen zu überschreiben.",
+        "title": "Vorlagen und Exporte",
+        "description": "Vorlagen liegen im Tab Vorlagen. Exporte und Backups findest du im Projektbereich.",
         "items": [
           "Aktives Projekt als Vorlage speichern, wenn ein Kit wiederkehrt.",
           "Vorlagen hinzufügen, ohne vorhandene Einträge zu verlieren.",
-          "Die Nutzung wird gespeichert, damit häufige Kits sichtbar bleiben."
+          "Projekt-Top-Bar und Bereich „Speichern, teilen, wiederherstellen“ für PDF-Export, Backups und Teilen nutzen."
         ]
       }
     ]
@@ -44,7 +73,7 @@
     "title": "Offline-Workflow",
     "description": "Alle Funktionen laufen ohne Verbindung.",
     "steps": [
-      "Projekt offline erstellen oder öffnen.",
+      "Dashboard öffnen und offline ein Projekt auswählen oder erstellen.",
       "„Jetzt speichern“ vor Übergabe oder Schließen des Geräts nutzen.",
       "Backup-Datei für Übergabe oder Langzeitablage herunterladen.",
       "Backup auf einem anderen Gerät importieren, um Listen sicher zu kombinieren.",
@@ -58,20 +87,20 @@
     "sections": [
       {
         "title": "Speichern und Autosave",
-        "description": "Änderungen werden sofort geschützt und in Backups gespiegelt.",
+        "description": "Autosave startet, sobald ein Projekt erstellt oder geöffnet wird.",
         "items": [
-          "Autosave läuft nach jeder Änderung und hält redundante Kopien.",
+          "Jede Änderung wird lokal gespeichert und in redundante Backups gespiegelt.",
           "„Jetzt speichern“ erzwingt eine sofortige Synchronisierung lokal.",
-          "Statusmeldungen bestätigen, wenn Speichern oder Reparatur fertig ist."
+          "Statusmeldungen bestätigen, wenn Speichern oder Reparatur abgeschlossen ist."
         ]
       },
       {
-        "title": "Teilen und Export",
-        "description": "Teilen ohne Online-Abhängigkeit oder externe Dienste.",
+        "title": "Teilen, Exporte und Vorlagen",
+        "description": "Exporte und Vorlagen bleiben in der App und sind offline-first.",
         "items": [
-          "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
-          "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
-          "Teilen bleibt lokal, solange Dateien nicht manuell weitergegeben werden."
+          "Die Projekt-Top-Bar für den PDF-Export der aktiven Equipment-Liste nutzen.",
+          "Vorlagen im Tab Vorlagen verwalten und auf Projekte anwenden.",
+          "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben."
         ]
       },
       {

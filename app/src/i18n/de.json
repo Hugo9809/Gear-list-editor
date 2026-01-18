@@ -338,7 +338,7 @@
         "title": "Kategorien und Items aufbauen",
         "description": "Strukturiere Equipment nach Abteilung oder Case für schnelleres Packen.",
         "items": [
-          "Kategorien anlegen und Items mit Menge, Einheit und Status erfassen.",
+          "Kategorien anlegen und Items mit Menge, Notizen und Status erfassen.",
           "Die Vorschläge merken frühere Items und übernehmen Details schnell.",
           "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen.",
           "Autosave schützt jede Änderung während der Bearbeitung."

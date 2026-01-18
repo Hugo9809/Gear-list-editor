@@ -1575,7 +1575,7 @@ export default function App() {
                         activeProject.categories.map((category, categoryIndex) => (
                           <div
                             key={category.id}
-                            className="flex flex-col gap-4 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
+                            className="flex flex-col gap-4 rounded-2xl border border-l-4 border-surface-sunken border-l-brand bg-surface-elevated/80 p-4 shadow-sm"
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
                               <div className="flex flex-1 flex-col gap-3">
@@ -1588,7 +1588,7 @@ export default function App() {
                                   onChange={(event) =>
                                     updateCategoryField(category.id, 'name', event.target.value)
                                   }
-                                  className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-base text-text-primary focus:border-brand focus:outline-none"
+                                  className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-lg font-semibold text-text-primary focus:border-brand focus:outline-none"
                                 />
                                 <textarea
                                   value={category.notes}
@@ -1614,36 +1614,35 @@ export default function App() {
 
                             <form
                               onSubmit={(event) => addItemToCategory(event, category.id)}
-                              className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-elevated/80 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_auto]"
+                              className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-base/90 p-3 md:grid-cols-[3fr_2fr_auto]"
                             >
-                              <TypeaheadInput
-                                value={(itemDrafts[category.id] || emptyItemDraft).name}
-                                onChange={(value) => updateDraftItem(category.id, 'name', value)}
-                                onSelectSuggestion={(suggestion) =>
-                                  applySuggestionToDraft(category.id, suggestion)
-                                }
-                                suggestions={itemSuggestions}
-                                placeholder={t('items.fields.name', 'Item name')}
-                                label={t('items.fields.name', 'Item name')}
-                                unitFallback={t('items.suggestion.unitFallback')}
-                                detailsFallback={t('items.suggestion.detailsFallback')}
-                                inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
-                              />
-                              <input
-                                type="number"
-                                min="1"
-                                value={(itemDrafts[category.id] || emptyItemDraft).quantity}
-                                onChange={(event) =>
-                                  updateDraftItem(category.id, 'quantity', event.target.value)
-                                }
-                                className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
-                              />
-                              <input
-                                value={(itemDrafts[category.id] || emptyItemDraft).unit}
-                                onChange={(event) => updateDraftItem(category.id, 'unit', event.target.value)}
-                                placeholder={t('items.fields.unit', 'Unit')}
-                                className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
-                              />
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={(itemDrafts[category.id] || emptyItemDraft).quantity}
+                                  onChange={(event) =>
+                                    updateDraftItem(category.id, 'quantity', event.target.value)
+                                  }
+                                  className="w-20 rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                />
+                                <span className="text-sm font-semibold text-text-muted">×</span>
+                                <div className="min-w-0 flex-1">
+                                  <TypeaheadInput
+                                    value={(itemDrafts[category.id] || emptyItemDraft).name}
+                                    onChange={(value) => updateDraftItem(category.id, 'name', value)}
+                                    onSelectSuggestion={(suggestion) =>
+                                      applySuggestionToDraft(category.id, suggestion)
+                                    }
+                                    suggestions={itemSuggestions}
+                                    placeholder={t('items.fields.name', 'Item name')}
+                                    label={t('items.fields.name', 'Item name')}
+                                    unitFallback={t('items.suggestion.unitFallback')}
+                                    detailsFallback={t('items.suggestion.detailsFallback')}
+                                    inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
+                                  />
+                                </div>
+                              </div>
                               <input
                                 value={(itemDrafts[category.id] || emptyItemDraft).details}
                                 onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
@@ -1667,50 +1666,48 @@ export default function App() {
                                 category.items.map((item, itemIndex) => (
                                   <div
                                     key={item.id}
-                                    className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-muted/70 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
+                                    className="grid gap-3 rounded-lg border border-surface-sunken bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_1fr_auto]"
                                   >
-                                    <TypeaheadInput
-                                      value={resolveDisplayName(
-                                        item.name,
-                                        { index: itemIndex + 1 },
-                                        STORAGE_MESSAGE_KEYS.defaults.item
-                                      )}
-                                      onChange={(value) =>
-                                        updateItemField(category.id, item.id, 'name', value)
-                                      }
-                                      onSelectSuggestion={(suggestion) =>
-                                        applySuggestionToItem(category.id, item.id, suggestion)
-                                      }
-                                      suggestions={itemSuggestions}
-                                      placeholder={t('items.fields.name', 'Item name')}
-                                      label={t('items.fields.name', 'Item name')}
-                                      unitFallback={t('items.suggestion.unitFallback')}
-                                      detailsFallback={t(
-                                        'items.suggestion.detailsFallback'
-                                      )}
-                                      inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
-                                    />
-                                    <input
-                                      type="number"
-                                      min="1"
-                                      value={item.quantity}
-                                      onChange={(event) =>
-                                        updateItemField(
-                                          category.id,
-                                          item.id,
-                                          'quantity',
-                                          event.target.value
-                                        )
-                                      }
-                                      className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
-                                    />
-                                    <input
-                                      value={item.unit}
-                                      onChange={(event) =>
-                                        updateItemField(category.id, item.id, 'unit', event.target.value)
-                                      }
-                                      className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
-                                    />
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="number"
+                                        min="1"
+                                        value={item.quantity}
+                                        onChange={(event) =>
+                                          updateItemField(
+                                            category.id,
+                                            item.id,
+                                            'quantity',
+                                            event.target.value
+                                          )
+                                        }
+                                        className="w-20 rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                      />
+                                      <span className="text-sm font-semibold text-text-muted">×</span>
+                                      <div className="min-w-0 flex-1">
+                                        <TypeaheadInput
+                                          value={resolveDisplayName(
+                                            item.name,
+                                            { index: itemIndex + 1 },
+                                            STORAGE_MESSAGE_KEYS.defaults.item
+                                          )}
+                                          onChange={(value) =>
+                                            updateItemField(category.id, item.id, 'name', value)
+                                          }
+                                          onSelectSuggestion={(suggestion) =>
+                                            applySuggestionToItem(category.id, item.id, suggestion)
+                                          }
+                                          suggestions={itemSuggestions}
+                                          placeholder={t('items.fields.name', 'Item name')}
+                                          label={t('items.fields.name', 'Item name')}
+                                          unitFallback={t('items.suggestion.unitFallback')}
+                                          detailsFallback={t(
+                                            'items.suggestion.detailsFallback'
+                                          )}
+                                          inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
+                                        />
+                                      </div>
+                                    </div>
                                     <input
                                       value={item.details}
                                       onChange={(event) =>

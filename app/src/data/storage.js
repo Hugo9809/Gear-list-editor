@@ -1,4 +1,4 @@
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 const DB_NAME = 'gear-list-editor';
 const STORE_NAME = 'state';
 const PRIMARY_KEY = 'primary';
@@ -22,10 +22,29 @@ export const createId = () => {
 
 export const createEmptyState = () => ({
   version: STORAGE_VERSION,
-  items: [],
-  notes: '',
+  projects: [],
+  templates: [],
+  history: {
+    items: [],
+    categories: []
+  },
+  activeProjectId: null,
   lastSaved: null
 });
+
+const normalizeText = (value) => {
+  if (typeof value === 'string') {
+    return value.trim();
+  }
+  if (value === null || value === undefined) {
+    return '';
+  }
+  try {
+    return String(value).trim();
+  } catch {
+    return '';
+  }
+};
 
 const normalizeNotes = (notes) => {
   if (typeof notes === 'string') {
@@ -41,26 +60,123 @@ const normalizeNotes = (notes) => {
   }
 };
 
+const normalizeStatus = (value) => {
+  const normalized = normalizeText(value).toLowerCase();
+  const allowed = new Set(['needed', 'packed', 'missing', 'rented']);
+  return allowed.has(normalized) ? normalized : 'needed';
+};
+
 export const normalizeItems = (items) => {
   if (!Array.isArray(items)) {
     return [];
   }
   return items.map((item, index) => {
-    const rawName =
-      typeof item?.name === 'string'
-        ? item.name
-        : item?.name !== undefined && item?.name !== null
-          ? String(item.name)
-          : '';
-    const name = rawName.trim();
+    const rawName = normalizeText(item?.name);
     const quantityCandidate = item?.quantity ?? item?.qty ?? 1;
     const parsedQuantity = Number(quantityCandidate);
     return {
       id: typeof item?.id === 'string' && item.id ? item.id : createId(),
-      name: name || `Untitled item ${index + 1}`,
-      quantity: Number.isFinite(parsedQuantity) && parsedQuantity > 0 ? parsedQuantity : 1
+      name: rawName || `Untitled item ${index + 1}`,
+      quantity: Number.isFinite(parsedQuantity) && parsedQuantity > 0 ? parsedQuantity : 1,
+      unit: normalizeText(item?.unit),
+      details: normalizeText(item?.details),
+      status: normalizeStatus(item?.status)
     };
   });
+};
+
+const normalizeCategories = (categories) => {
+  if (!Array.isArray(categories)) {
+    return [];
+  }
+  return categories.map((category, index) => {
+    const rawName = normalizeText(category?.name);
+    return {
+      id: typeof category?.id === 'string' && category.id ? category.id : createId(),
+      name: rawName || `Category ${index + 1}`,
+      notes: normalizeNotes(category?.notes),
+      items: normalizeItems(category?.items)
+    };
+  });
+};
+
+const normalizeProject = (project, index) => {
+  const rawName = normalizeText(project?.name);
+  return {
+    id: typeof project?.id === 'string' && project.id ? project.id : createId(),
+    name: rawName || `Untitled project ${index + 1}`,
+    client: normalizeText(project?.client),
+    shootDate: normalizeText(project?.shootDate),
+    location: normalizeText(project?.location),
+    contact: normalizeText(project?.contact),
+    notes: normalizeNotes(project?.notes),
+    categories: normalizeCategories(project?.categories)
+  };
+};
+
+const normalizeTemplate = (template, index) => {
+  const rawName = normalizeText(template?.name);
+  return {
+    id: typeof template?.id === 'string' && template.id ? template.id : createId(),
+    name: rawName || `Template ${index + 1}`,
+    description: normalizeText(template?.description),
+    notes: normalizeNotes(template?.notes),
+    categories: normalizeCategories(template?.categories),
+    lastUsed: normalizeText(template?.lastUsed)
+  };
+};
+
+const normalizeHistory = (history) => {
+  const items = Array.isArray(history?.items) ? history.items : [];
+  const categories = Array.isArray(history?.categories) ? history.categories : [];
+  return {
+    items: items
+      .map((entry) => ({
+        name: normalizeText(entry?.name),
+        unit: normalizeText(entry?.unit),
+        details: normalizeText(entry?.details),
+        lastUsed: normalizeText(entry?.lastUsed)
+      }))
+      .filter((entry) => entry.name),
+    categories: categories.map((entry) => normalizeText(entry)).filter(Boolean)
+  };
+};
+
+const mergeHistoryEntries = (current, incoming) => {
+  const map = new Map();
+  const upsert = (entry) => {
+    const key = entry.name.toLowerCase();
+    if (!map.has(key)) {
+      map.set(key, entry);
+      return;
+    }
+    const existing = map.get(key);
+    map.set(key, {
+      ...existing,
+      ...entry,
+      lastUsed: entry.lastUsed || existing.lastUsed
+    });
+  };
+  current.forEach(upsert);
+  incoming.forEach(upsert);
+  return Array.from(map.values());
+};
+
+const deriveHistoryFromProjects = (projects, baseHistory) => {
+  const items = [];
+  projects.forEach((project) => {
+    project.categories.forEach((category) => {
+      category.items.forEach((item) => {
+        items.push({
+          name: item.name,
+          unit: item.unit,
+          details: item.details,
+          lastUsed: project.shootDate || ''
+        });
+      });
+    });
+  });
+  return mergeHistoryEntries(baseHistory, items);
 };
 
 export const validatePayload = (payload) => {
@@ -69,11 +185,14 @@ export const validatePayload = (payload) => {
     errors.push('Payload is missing or invalid.');
     return { valid: false, errors };
   }
-  if (!Array.isArray(payload.items)) {
-    errors.push('Items must be an array.');
+  if (!Array.isArray(payload.projects)) {
+    errors.push('Projects must be an array.');
   }
-  if (payload.notes !== undefined && payload.notes !== null && typeof payload.notes !== 'string') {
-    errors.push('Notes must be a string when provided.');
+  if (!Array.isArray(payload.templates)) {
+    errors.push('Templates must be an array.');
+  }
+  if (payload.history && typeof payload.history !== 'object') {
+    errors.push('History must be an object when provided.');
   }
   if (payload.version !== undefined && !Number.isFinite(Number(payload.version))) {
     errors.push('Version must be numeric when provided.');
@@ -86,23 +205,46 @@ export const migratePayload = (payload) => {
     return createEmptyState();
   }
   const version = Number.isFinite(Number(payload.version)) ? Number(payload.version) : 0;
-  const items = normalizeItems(payload.items);
-  const notes = normalizeNotes(payload.notes);
-  const lastSaved = typeof payload.lastSaved === 'string' ? payload.lastSaved : null;
+  const legacyItems = normalizeItems(payload.items);
+  const legacyNotes = normalizeNotes(payload.notes);
 
-  if (version <= 0) {
-    return {
-      version: STORAGE_VERSION,
-      items,
-      notes,
-      lastSaved
-    };
+  let projects = Array.isArray(payload.projects) ? payload.projects.map(normalizeProject) : [];
+  if (version <= 1 && legacyItems.length > 0) {
+    const defaultProject = normalizeProject(
+      {
+        name: 'Imported gear list',
+        notes: legacyNotes,
+        categories: [
+          {
+            name: 'General gear',
+            items: legacyItems
+          }
+        ]
+      },
+      0
+    );
+    projects = [defaultProject, ...projects];
   }
+
+  const templates = Array.isArray(payload.templates) ? payload.templates.map(normalizeTemplate) : [];
+  const history = normalizeHistory(payload.history);
+  const mergedHistory = {
+    ...history,
+    items: deriveHistoryFromProjects(projects, history.items)
+  };
+
+  const lastSaved = typeof payload.lastSaved === 'string' ? payload.lastSaved : null;
+  const activeProjectId =
+    typeof payload.activeProjectId === 'string'
+      ? payload.activeProjectId
+      : projects[0]?.id || null;
 
   return {
     version: STORAGE_VERSION,
-    items,
-    notes,
+    projects,
+    templates,
+    history: mergedHistory,
+    activeProjectId,
     lastSaved
   };
 };
@@ -231,39 +373,52 @@ const collectWarnings = (errors) =>
         'Some storage locations could not be updated. Your latest data is still preserved in other backups.'
       ];
 
-const mergeNotes = (first, second) => {
-  const trimmedFirst = first.trim();
-  const trimmedSecond = second.trim();
-  if (!trimmedSecond) {
-    return trimmedFirst;
-  }
-  if (!trimmedFirst) {
-    return trimmedSecond;
-  }
-  if (trimmedFirst.includes(trimmedSecond)) {
-    return trimmedFirst;
-  }
-  return `${trimmedFirst}\n${trimmedSecond}`.trim();
+const mergeProjectArrays = (current, incoming) => {
+  const merged = [...current];
+  const existingIds = new Set(current.map((project) => project.id));
+  incoming.forEach((project) => {
+    if (existingIds.has(project.id)) {
+      merged.push({ ...project, id: createId() });
+    } else {
+      merged.push(project);
+      existingIds.add(project.id);
+    }
+  });
+  return merged;
+};
+
+const mergeTemplates = (current, incoming) => {
+  const merged = [...current];
+  const existingIds = new Set(current.map((template) => template.id));
+  incoming.forEach((template) => {
+    if (existingIds.has(template.id)) {
+      merged.push({ ...template, id: createId() });
+    } else {
+      merged.push(template);
+      existingIds.add(template.id);
+    }
+  });
+  return merged;
 };
 
 export const mergePayloads = (current, incoming) => {
   const base = migratePayload(current);
   const next = migratePayload(incoming);
-  const items = [...base.items];
-  const existingIds = new Set(items.map((item) => item.id));
-  next.items.forEach((item) => {
-    if (existingIds.has(item.id)) {
-      items.push({ ...item, id: createId() });
-    } else {
-      items.push(item);
-      existingIds.add(item.id);
-    }
-  });
+  const projects = mergeProjectArrays(base.projects, next.projects);
+  const templates = mergeTemplates(base.templates, next.templates);
+  const history = {
+    items: mergeHistoryEntries(base.history.items, next.history.items),
+    categories: Array.from(
+      new Set([...(base.history.categories || []), ...(next.history.categories || [])])
+    )
+  };
 
   return {
     ...base,
-    items,
-    notes: mergeNotes(base.notes, next.notes)
+    projects,
+    templates,
+    history,
+    activeProjectId: base.activeProjectId || next.activeProjectId || projects[0]?.id || null
   };
 };
 
@@ -464,8 +619,26 @@ export const createStorageService = (options = {}) => {
 export const validationSamples = () => ({
   validPayload: {
     version: STORAGE_VERSION,
-    items: [{ id: 'sample', name: 'Camera', quantity: 1 }],
-    notes: 'Packed',
+    projects: [
+      {
+        id: 'sample-project',
+        name: 'Demo shoot',
+        client: 'Studio A',
+        categories: [
+          {
+            id: 'cat-1',
+            name: 'Camera',
+            items: [{ id: 'sample-item', name: 'Camera body', quantity: 1, unit: 'pcs', details: 'FX6' }]
+          }
+        ]
+      }
+    ],
+    templates: [],
+    history: {
+      items: [{ name: 'Camera body', unit: 'pcs', details: 'FX6', lastUsed: new Date().toISOString() }],
+      categories: ['Camera']
+    },
+    activeProjectId: 'sample-project',
     lastSaved: new Date().toISOString()
   },
   legacyPayload: {

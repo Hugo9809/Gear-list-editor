@@ -32,17 +32,17 @@ run('valid payload passes validation', () => {
 
 run('legacy payload migrates safely', () => {
   const migrated = migratePayload(legacyPayload);
-  assert(migrated.items.length === 1, 'Expected migrated items');
-  assert(migrated.notes.includes('legacy'), 'Expected notes preserved');
+  assert(migrated.projects.length >= 1, 'Expected migrated project');
+  assert(migrated.projects[0].categories[0].items.length === 1, 'Expected migrated items');
 });
 
 run('normalizeItems preserves quantities', () => {
-  const normalized = normalizeItems([{ name: 'Tripod', quantity: '3' }]);
+  const normalized = normalizeItems([{ name: 'Tripod', quantity: '3', unit: 'pcs', details: 'Heavy duty' }]);
   assert(normalized[0].quantity === 3, 'Expected quantity to normalize to number');
 });
 
 run('mergePayloads preserves both sets', () => {
   const merged = mergePayloads(validPayload, legacyPayload);
-  assert(merged.items.length >= 2, 'Expected items to be merged');
-  assert(merged.notes.length > 0, 'Expected notes to exist');
+  assert(merged.projects.length >= 2, 'Expected projects to be merged');
+  assert(merged.history.items.length > 0, 'Expected history to exist');
 });

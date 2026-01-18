@@ -1362,14 +1362,19 @@ export default function App() {
                             </div>
                             <div className="grid gap-2 text-xs text-text-secondary md:grid-cols-2">
                               <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
-                                {t('categories.label', 'Categories')}{' '}
                                 <span className="font-semibold text-text-primary">
-                                  {project.categories.length}
+                                  {tPlural(
+                                    'categories.count',
+                                    project.categories.length,
+                                    '{count} categories',
+                                    { count: project.categories.length }
+                                  )}
                                 </span>
                               </div>
                               <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
-                                {t('items.label', 'Items')}{' '}
-                                <span className="font-semibold text-text-primary">{itemTotal}</span>
+                                <span className="font-semibold text-text-primary">
+                                  {tPlural('items.count', itemTotal, '{count} items', { count: itemTotal })}
+                                </span>
                               </div>
                             </div>
                             <div className="mt-auto flex flex-wrap gap-2">

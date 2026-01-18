@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { createId, createStorageService } from './data/storage.js';
+import { getDictionary, translate, useI18n } from './i18n/index.js';
 
 const emptyItemDraft = {
   name: '',
@@ -224,6 +225,7 @@ export default function App() {
   const [itemDrafts, setItemDrafts] = useState({});
   const fileInputRef = useRef(null);
   const storageRef = useRef(null);
+  const { locale, locales, setLocale, t } = useI18n();
 
   if (!storageRef.current) {
     storageRef.current = createStorageService({
@@ -769,6 +771,18 @@ export default function App() {
     }
   };
 
+  const handleLocaleChange = (event) => {
+    const nextLocale = event.target.value;
+    setLocale(nextLocale);
+    setStatus(
+      translate(
+        getDictionary(nextLocale),
+        'language.status',
+        'Language updated and saved locally.'
+      )
+    );
+  };
+
   const statusClasses = status
     ? 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
     : 'border border-slate-800 bg-slate-900/40 text-slate-400';
@@ -781,6 +795,10 @@ export default function App() {
     const items = activeProject.categories.reduce((sum, category) => sum + category.items.length, 0);
     return { categories, items };
   }, [activeProject]);
+
+  const helpSections = t('help.sections', []);
+  const documentationSections = t('documentation.sections', []);
+  const offlineSteps = t('offline.steps', []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
@@ -799,6 +817,23 @@ export default function App() {
               <span className="rounded-full border border-slate-700 px-3 py-1">Project dashboard</span>
               <span className="rounded-full border border-slate-700 px-3 py-1">Template library</span>
               <span className="rounded-full border border-slate-700 px-3 py-1">PDF export ready</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+              <label className="flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1">
+                <span>{t('language.label', 'Language')}</span>
+                <select
+                  value={locale}
+                  onChange={handleLocaleChange}
+                  className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
+                >
+                  {locales.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <span>{t('language.helper', 'Saved locally for offline use.')}</span>
             </div>
           </div>
         </header>
@@ -1364,15 +1399,76 @@ export default function App() {
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <h2 className="text-lg font-semibold text-white">Help & documentation</h2>
-              <ul className="mt-3 flex flex-col gap-3 text-sm text-slate-300">
-                <li>Project dashboard keeps every production separate with safe autosaves.</li>
-                <li>Templates let you reuse proven setups without overwriting existing gear lists.</li>
-                <li>Typeahead suggestions remember previous items and restore unit/details instantly.</li>
-                <li>PDF export opens a print-ready layout matching your reference equipment lists.</li>
-                <li>Backups stay on-device and can be shared offline without external links.</li>
-                <li>Theme switcher keeps your bright, dark, pink-light, or pink-dark preference saved locally for offline use.</li>
-              </ul>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-lg font-semibold text-white">
+                  {t('help.title', 'Help & documentation')}
+                </h2>
+                <p className="text-sm text-slate-400">
+                  {t('help.subtitle', 'Offline-first guidance for safe gear lists.')}
+                </p>
+              </div>
+              <div className="mt-4 flex flex-col gap-3">
+                {helpSections.map((section, index) => (
+                  <details
+                    key={section.title}
+                    open={index === 0}
+                    className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
+                  >
+                    <summary className="cursor-pointer text-sm font-semibold text-slate-100">
+                      {section.title}
+                    </summary>
+                    <p className="mt-2 text-sm text-slate-400">{section.description}</p>
+                    <ul className="mt-3 list-disc space-y-1 pl-4 text-sm text-slate-300">
+                      {section.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </details>
+                ))}
+              </div>
+              <div className="mt-5 border-t border-slate-800 pt-4">
+                <h3 className="text-base font-semibold text-white">
+                  {t('offline.title', 'Offline workflow')}
+                </h3>
+                <p className="mt-1 text-sm text-slate-400">
+                  {t('offline.description', 'Every feature works without a connection.')}
+                </p>
+                <ol className="mt-3 list-decimal space-y-1 pl-4 text-sm text-slate-300">
+                  {offlineSteps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+                <p className="mt-3 text-xs text-slate-500">
+                  {t('offline.footer', 'Backups stay on-device unless you export or share them.')}
+                </p>
+              </div>
+              <div className="mt-5 border-t border-slate-800 pt-4">
+                <h3 className="text-base font-semibold text-white">
+                  {t('documentation.title', 'Documentation')}
+                </h3>
+                <p className="mt-1 text-sm text-slate-400">
+                  {t(
+                    'documentation.subtitle',
+                    'Key safety behaviors are automatic, with manual controls when you need them.'
+                  )}
+                </p>
+                <div className="mt-3 grid gap-3">
+                  {documentationSections.map((section) => (
+                    <div
+                      key={section.title}
+                      className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
+                    >
+                      <h4 className="text-sm font-semibold text-slate-100">{section.title}</h4>
+                      <p className="mt-1 text-xs text-slate-400">{section.description}</p>
+                      <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-slate-300">
+                        {section.items.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </aside>
         </section>

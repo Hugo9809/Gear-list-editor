@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "label": "Deutsch"
+  },
+  "language": {
+    "label": "Sprache",
+    "helper": "Lokal gespeichert für die Offline-Nutzung.",
+    "status": "Sprache aktualisiert und lokal gespeichert."
+  },
+  "help": {
+    "title": "Hilfe & Dokumentation",
+    "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",
+    "sections": [
+      {
+        "title": "Mit einem geschützten Projekt starten",
+        "description": "Erstelle zuerst ein Projekt, damit Autosave jede Änderung schützt.",
+        "items": [
+          "Projekt benennen und Kunde, Ort oder Kontakt ergänzen.",
+          "Neue Projekte werden sofort lokal gespeichert.",
+          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben."
+        ]
+      },
+      {
+        "title": "Kategorien und Items aufbauen",
+        "description": "Strukturiere Equipment nach Abteilung oder Case für schnelleres Packen.",
+        "items": [
+          "Kategorien anlegen und Items mit Menge, Einheit und Status erfassen.",
+          "Die Vorschläge merken frühere Items und übernehmen Details schnell.",
+          "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen."
+        ]
+      },
+      {
+        "title": "Vorlagen sicher wiederverwenden",
+        "description": "Vorlagen kopieren Equipment, ohne bestehende Listen zu überschreiben.",
+        "items": [
+          "Aktives Projekt als Vorlage speichern, wenn ein Kit wiederkehrt.",
+          "Vorlagen hinzufügen, ohne vorhandene Einträge zu verlieren.",
+          "Die Nutzung wird gespeichert, damit häufige Kits sichtbar bleiben."
+        ]
+      }
+    ]
+  },
+  "offline": {
+    "title": "Offline-Workflow",
+    "description": "Alle Funktionen laufen ohne Verbindung.",
+    "steps": [
+      "Projekt offline erstellen oder öffnen.",
+      "„Jetzt speichern“ vor Übergabe oder Schließen des Geräts nutzen.",
+      "Backup-Datei für Übergabe oder Langzeitablage herunterladen.",
+      "Backup auf einem anderen Gerät importieren, um Listen sicher zu kombinieren.",
+      "„Vom Geräte-Backup wiederherstellen“ nutzen, wenn Speicher repariert werden muss."
+    ],
+    "footer": "Backups bleiben auf dem Gerät, sofern du sie nicht exportierst oder teilst."
+  },
+  "documentation": {
+    "title": "Dokumentation",
+    "subtitle": "Wichtige Sicherheitsfunktionen laufen automatisch, manuelle Kontrolle bleibt verfügbar.",
+    "sections": [
+      {
+        "title": "Speichern und Autosave",
+        "description": "Änderungen werden sofort geschützt und in Backups gespiegelt.",
+        "items": [
+          "Autosave läuft nach jeder Änderung und hält redundante Kopien.",
+          "„Jetzt speichern“ erzwingt eine sofortige Synchronisierung lokal.",
+          "Statusmeldungen bestätigen, wenn Speichern oder Reparatur fertig ist."
+        ]
+      },
+      {
+        "title": "Teilen und Export",
+        "description": "Teilen ohne Online-Abhängigkeit oder externe Dienste.",
+        "items": [
+          "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
+          "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
+          "Teilen bleibt lokal, solange Dateien nicht manuell weitergegeben werden."
+        ]
+      },
+      {
+        "title": "Backup und Wiederherstellung",
+        "description": "Mehrere Backups schützen deine Daten auf demselben Gerät.",
+        "items": [
+          "Backup-Dateien für Langzeitablage oder Gerätewechsel speichern.",
+          "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
+          "Bei Problemen vom Geräte-Backup wiederherstellen."
+        ]
+      }
+    ]
+  }
+}

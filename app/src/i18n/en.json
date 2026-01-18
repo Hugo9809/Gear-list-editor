@@ -51,8 +51,6 @@
     }
   },
   "backup": {
-    "title": "Save, share, restore",
-    "description": "Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices. Device backups refresh every 30 minutes, even while idle.",
     "actions": {
       "saveNow": "Save now",
       "download": "Download backup",

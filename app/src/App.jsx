@@ -583,7 +583,7 @@ export default function App() {
   };
 
   const saveTemplateFromProject = (event) => {
-    event.preventDefault();
+    event?.preventDefault?.();
     if (!activeProject) {
       setStatus('Create a project before saving a template.');
       return;
@@ -687,6 +687,7 @@ export default function App() {
       projects,
       templates,
       history,
+      theme,
       activeProjectId,
       lastSaved
     });
@@ -702,6 +703,34 @@ export default function App() {
     setStatus('Backup downloaded. Store it somewhere safe.');
   };
 
+  const downloadProjectBackup = () => {
+    if (!activeProject) {
+      setStatus('Select a project before exporting.');
+      return;
+    }
+    const { json, fileName } = storageRef.current.exportProjectBackup(
+      {
+        projects,
+        templates,
+        history,
+        theme,
+        activeProjectId,
+        lastSaved
+      },
+      activeProject.id
+    );
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setStatus('Project export downloaded. Keep it with your production files.');
+  };
+
   const restoreFromDeviceBackup = async () => {
     const result = await storageRef.current.restoreFromBackup();
     setProjects(result.state.projects);
@@ -709,6 +738,7 @@ export default function App() {
     setHistory(result.state.history);
     setActiveProjectId(result.state.activeProjectId);
     setLastSaved(result.state.lastSaved);
+    setTheme(result.state.theme || 'light');
     if (result.warnings.length > 0) {
       setStatus(result.warnings[0]);
       return;
@@ -727,12 +757,14 @@ export default function App() {
         projects,
         templates,
         history,
+        theme,
         activeProjectId,
         lastSaved
       });
       setProjects(state.projects);
       setTemplates(state.templates);
       setHistory(state.history);
+      setTheme(state.theme || 'light');
       setActiveProjectId(state.activeProjectId);
       if (warnings.length > 0) {
         setStatus(warnings[0]);
@@ -749,6 +781,7 @@ export default function App() {
       projects,
       templates,
       history,
+      theme,
       activeProjectId,
       lastSaved
     });
@@ -762,6 +795,7 @@ export default function App() {
       projects,
       templates,
       history,
+      theme,
       activeProjectId,
       lastSaved
     });
@@ -844,6 +878,41 @@ export default function App() {
             </div>
           </div>
         </header>
+
+        {activeProject && (
+          <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-[0.25em] text-slate-500">Active project</span>
+              <div className="text-lg font-semibold text-white">{activeProject.name}</div>
+              <div className="text-xs text-slate-400">
+                {activeProject.client || 'Client not set'} · {activeProject.shootDate || 'Date not set'}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={downloadProjectBackup}
+                className="rounded-lg border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Export project
+              </button>
+              <button
+                type="button"
+                onClick={exportPdf}
+                className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
+              >
+                Export PDF
+              </button>
+              <button
+                type="button"
+                onClick={saveTemplateFromProject}
+                className="rounded-lg border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Save as template
+              </button>
+            </div>
+          </div>
+        )}
 
         <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
           <div className="flex flex-col gap-6">
@@ -994,13 +1063,6 @@ export default function App() {
                       : 'Select a project to start editing.'}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={exportPdf}
-                  className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                >
-                  Export PDF
-                </button>
               </div>
 
               {activeProject ? (

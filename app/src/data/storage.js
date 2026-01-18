@@ -434,6 +434,47 @@ export const exportState = (state) => {
   return { json, fileName, payload };
 };
 
+export const exportProjectBackup = (state, projectId) => {
+  const migrated = migratePayload(state);
+  const project = migrated.projects.find((item) => item.id === projectId);
+  const exportDate = new Date().toISOString().slice(0, 10);
+  if (!project) {
+    return exportState({
+      ...migrated,
+      projects: [],
+      templates: [],
+      history: { items: [], categories: [] },
+      activeProjectId: null
+    });
+  }
+  const historyFromProject = deriveHistoryFromProjects([project], { items: [], categories: [] });
+  const categoryNames = Array.from(
+    new Set(project.categories.map((category) => normalizeText(category.name)).filter(Boolean))
+  );
+  const filteredState = {
+    ...migrated,
+    projects: [project],
+    templates: [],
+    history: {
+      items: historyFromProject.items,
+      categories: categoryNames
+    },
+    activeProjectId: project.id
+  };
+  const exported = exportState(filteredState);
+  const safeProjectName = normalizeText(project.name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  const fileName = safeProjectName
+    ? `gear-list-project-${safeProjectName}-${exportDate}.json`
+    : `gear-list-project-${exportDate}.json`;
+  return {
+    ...exported,
+    fileName
+  };
+};
+
 const getBestBackup = async () => {
   const opfsLatest = await readFromOpfsFile(OPFS_BACKUP_FILE);
   if (opfsLatest) {
@@ -567,6 +608,7 @@ export const createStorageService = (options = {}) => {
   const saveNow = (state) => queueSave(() => persist(state, 'explicit'));
 
   const exportBackup = (state) => exportState(state);
+  const exportProject = (state, projectId) => exportProjectBackup(state, projectId);
 
   const importBackup = (rawText, currentState) => {
     const parsed = safeParse(rawText);
@@ -615,6 +657,7 @@ export const createStorageService = (options = {}) => {
     scheduleAutosave,
     saveNow,
     exportBackup,
+    exportProjectBackup: exportProject,
     importBackup,
     restoreFromBackup,
     dispose

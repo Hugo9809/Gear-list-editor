@@ -71,6 +71,7 @@
         "items": [
           "Clipboard sharing copies a full backup for quick handoffs.",
           "PDF export opens a print-ready list for production reference.",
+          "Project export downloads only the active project for focused handoffs.",
           "All sharing stays local unless you move files manually."
         ]
       },

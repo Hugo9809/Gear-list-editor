@@ -71,6 +71,7 @@
         "items": [
           "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
           "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
+          "Projekt-Export lädt nur das aktive Projekt für gezielte Übergaben herunter.",
           "Teilen bleibt lokal, solange Dateien nicht manuell weitergegeben werden."
         ]
       },

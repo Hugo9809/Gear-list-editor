@@ -1,23 +1,84 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { getDictionary, translate, useI18n } from './i18n/index.js';
-import HelpPanel from './components/HelpPanel.jsx';
-import ProjectDashboard from './components/ProjectDashboard.jsx';
-import ProjectWorkspace from './components/ProjectWorkspace.jsx';
-import SettingsPanel from './components/SettingsPanel.jsx';
-import TemplateManager from './components/TemplateManager.jsx';
-import { useProjects } from './hooks/useProjects.js';
-import { useStorageHydration } from './hooks/useStorageHydration.js';
-import { useTemplates } from './hooks/useTemplates.js';
-import { buildPrintableHtml } from './utils/print.js';
+import Layout from './app/Layout.jsx';
+import HelpPanel from './features/help/HelpPanel.jsx';
+import ProjectDashboard from './features/projects/ProjectDashboard.jsx';
+import ProjectWorkspace from './features/projects/ProjectWorkspace.jsx';
+import SettingsPanel from './features/settings/SettingsPanel.jsx';
+import TemplateManager from './features/templates/TemplateManager.jsx';
+import { useProjects } from './shared/hooks/useProjects.js';
+import { useStorageHydration } from './shared/hooks/useStorageHydration.js';
+import { useTemplates } from './shared/hooks/useTemplates.js';
+import { buildPrintableHtml } from './shared/utils/print.js';
 
 const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWith('defaults.');
+
+// Wrapper to extract projectId from URL and find the project object
+const ProjectWorkspaceWrapper = ({
+  projects,
+  onBackToDashboard,
+  onExportPdf,
+  onExportProject,
+  onSaveTemplate,
+  hookActions,
+  isHydrated,
+  ...props
+}) => {
+  const { projectId } = useParams();
+
+  if (!isHydrated) {
+    return null; // Or a loading spinner
+  }
+
+  const project = projects.find(p => p.id === projectId);
+
+  if (!project) {
+    return <Navigate to="/" replace />;
+  }
+
+  const projectIndex = projects.findIndex(p => p.id === projectId);
+
+  // Calculate totals locally since useProjects no longer does it
+  const totals = useMemo(() => {
+    const categories = project.categories.length;
+    const items = project.categories.reduce((sum, category) => sum + category.items.length, 0);
+    return { categories, items };
+  }, [project]);
+
+  return (
+    <ProjectWorkspace
+      activeProject={project}
+      activeProjectIndex={projectIndex}
+      totals={totals}
+      onBackToDashboard={onBackToDashboard}
+      onExportPdf={() => onExportPdf(project, projectIndex)}
+      onExportProject={() => onExportProject(project)}
+      onSaveTemplate={() => onSaveTemplate(project)}
+
+      onAddCategory={(e) => hookActions.addCategory(project.id, e)}
+      onAddItemToCategory={(e, catId) => hookActions.addItemToCategory(project.id, e, catId)}
+      onUpdateDraftItem={hookActions.updateDraftItem} // this one doesn't need projectId
+      onUpdateItemField={(catId, itemId, field, val) => hookActions.updateItemField(project.id, catId, itemId, field, val)}
+      onUpdateCategoryField={(catId, field, val) => hookActions.updateCategoryField(project.id, catId, field, val)}
+      onUpdateProjectField={(field, val) => hookActions.updateProjectField(project.id, field, val)}
+      onUpdateProjectNotes={(val) => hookActions.updateProjectNotes(project.id, val)}
+      onRemoveCategory={(catId) => hookActions.removeCategory(project.id, catId)}
+      onRemoveItem={(catId, itemId) => hookActions.removeItem(project.id, catId, itemId)}
+      onApplySuggestionToDraft={hookActions.applySuggestionToDraft} // no projectId
+      onApplySuggestionToItem={(catId, itemId, sugg) => hookActions.applySuggestionToItem(project.id, catId, itemId, sugg)}
+
+      {...props}
+    />
+  );
+};
 
 export default function App() {
   const { locale, locales, setLocale, t, tPlural } = useI18n();
   const [status, setStatus] = useState(() =>
     t('status.loading', 'Loading your saved gear list...')
   );
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
   const {
@@ -25,15 +86,13 @@ export default function App() {
     setProjects,
     history,
     setHistory,
-    activeProjectId,
-    setActiveProjectId,
-    activeProject,
-    activeProjectIndex,
-    totals,
+    // activeProjectId removed
+    // activeProject removed
+    // totals removed (calculated in wrapper)
     projectDraft,
     updateProjectDraftField,
     addProject,
-    openProject,
+    // openProject removed
     deleteProject,
     newCategoryName,
     setNewCategoryName,
@@ -67,7 +126,7 @@ export default function App() {
     handleLoadTemplate,
     updateTemplateField,
     removeTemplate
-  } = useTemplates({ t, setStatus, activeProject, updateProject, rememberItem });
+  } = useTemplates({ t, setStatus, updateProject, rememberItem });
 
   const {
     storageRef,
@@ -82,18 +141,17 @@ export default function App() {
     importBackupFile,
     restoreFromDeviceBackup,
     resolveStorageMessage,
-    resolveStorageSource
+    resolveStorageSource,
+    isHydrated
   } = useStorageHydration({
     t,
     locale,
     projects,
     templates,
     history,
-    activeProjectId,
     setProjects,
     setTemplates,
     setHistory,
-    setActiveProjectId,
     setStatus
   });
 
@@ -112,31 +170,28 @@ export default function App() {
 
   const handleCreateProject = useCallback(
     (event) => {
-      const created = addProject(event);
-      if (created) {
-        setActiveTab('project');
+      const newProjectId = addProject(event);
+      if (newProjectId) {
+        navigate(`/project/${newProjectId}`);
       }
     },
-    [addProject]
+    [addProject, navigate]
   );
 
   const handleOpenProject = useCallback(
     (projectId) => {
-      openProject(projectId);
-      setActiveTab('project');
+      navigate(`/project/${projectId}`);
     },
-    [openProject]
+    [navigate]
   );
 
   const handleDeleteProject = useCallback(
     (projectId) => {
-      const wasActive = projectId === activeProjectId;
       deleteProject(projectId);
-      if (wasActive) {
-        setActiveTab('dashboard');
-      }
+      // If we were on that project page, we might ideally redirect, 
+      // but simpler to just let the Wrapper render Navigate to / if not found
     },
-    [activeProjectId, deleteProject]
+    [deleteProject]
   );
 
   const handleTemplateSelect = useCallback(
@@ -171,8 +226,8 @@ export default function App() {
     [importBackupFile, resolveStorageMessage, setStatus, storageRef, t]
   );
 
-  const exportPdf = useCallback(() => {
-    if (!activeProject) {
+  const exportPdf = useCallback((project, index) => {
+    if (!project) {
       setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
       return;
     }
@@ -184,20 +239,20 @@ export default function App() {
     }
     printWindow.document.open();
     printWindow.document.write(
-      buildPrintableHtml(activeProject, dictionary, Math.max(activeProjectIndex, 0))
+      buildPrintableHtml(project, dictionary, Math.max(index, 0))
     );
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
     setStatus(t('status.pdfReady', 'PDF export ready. Confirm printing to save the file.'));
-  }, [activeProject, activeProjectIndex, locale, setStatus, t]);
+  }, [locale, setStatus, t]);
 
-  const exportProject = useCallback(() => {
-    if (!activeProject) {
+  const exportProject = useCallback((project) => {
+    if (!project) {
       setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
       return;
     }
-    const { json, fileName } = exportProjectBackup(activeProject.id);
+    const { json, fileName } = exportProjectBackup(project.id);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -208,7 +263,7 @@ export default function App() {
     link.remove();
     URL.revokeObjectURL(url);
     setStatus(t('status.projectExported', 'Project export downloaded. Store it somewhere safe.'));
-  }, [activeProject, exportProjectBackup, setStatus, t]);
+  }, [exportProjectBackup, setStatus, t]);
 
   const downloadBackup = useCallback(() => {
     const { json, fileName } = exportBackup();
@@ -224,6 +279,8 @@ export default function App() {
     setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
   }, [exportBackup, setStatus, t]);
 
+  // Factory reset logic handles 'activeProjectId' in state, but we removed it.
+  // We need to just navigate to / after reset.
   const handleFactoryReset = useCallback(async () => {
     const confirmed = window.confirm(
       t(
@@ -232,7 +289,6 @@ export default function App() {
       )
     );
     if (!confirmed) {
-      setStatus(t('status.factoryResetCancelled', 'Factory reset cancelled. No data was removed.'));
       return;
     }
     const confirmedAgain = window.confirm(
@@ -242,7 +298,6 @@ export default function App() {
       )
     );
     if (!confirmedAgain) {
-      setStatus(t('status.factoryResetCancelled', 'Factory reset cancelled. No data was removed.'));
       return;
     }
 
@@ -252,8 +307,8 @@ export default function App() {
       setProjects(result.state.projects);
       setTemplates(result.state.templates);
       setHistory(result.state.history);
-      setActiveProjectId(result.state.activeProjectId);
-      setActiveTab('dashboard');
+      // setActiveProjectId no longer exists
+      navigate('/');
       setStatus(
         t(
           'status.factoryResetComplete',
@@ -271,24 +326,22 @@ export default function App() {
     }
   }, [
     downloadBackup,
-    setActiveProjectId,
     setHistory,
     setProjects,
     setStatus,
     setTemplates,
-    setActiveTab,
+    navigate,
     setTheme,
     storageRef,
     t
   ]);
 
   const handleLocaleChange = useCallback(
-    (event) => {
-      const nextLocale = event.target.value;
-      setLocale(nextLocale);
+    (value) => {
+      setLocale(value);
       setStatus(
         translate(
-          getDictionary(nextLocale),
+          getDictionary(value),
           'language.status',
           t('language.status', 'Language updated and saved locally.')
         )
@@ -297,140 +350,47 @@ export default function App() {
     [setLocale, setStatus, t]
   );
 
-  const statusClasses = status
-    ? 'border border-brand/40 bg-brand/10 text-brand'
-    : 'border border-surface-sunken bg-surface-elevated/60 text-text-secondary';
-
-  const navigationTabs = useMemo(
-    () => [
-      { id: 'dashboard', label: t('navigation.sidebar.dashboard', 'All Projects') },
-      { id: 'templates', label: t('navigation.sidebar.templates', 'Templates') },
-      { id: 'settings', label: t('navigation.sidebar.settings', 'Settings') },
-      { id: 'help', label: t('navigation.sidebar.help', 'Help') }
-    ],
-    [t]
-  );
-
-  const themeOptions = useMemo(
-    () => [
-      { id: 'light', label: t('theme.options.light', 'Light'), icon: '☀️' },
-      { id: 'dark', label: t('theme.options.dark', 'Dark'), icon: '🌙' },
-      { id: 'pink', label: t('theme.options.pink', 'Pink'), icon: '🦄' }
-    ],
-    [t]
-  );
-
   const helpSections = t('help.sections', []);
   const documentationSections = t('documentation.sections', []);
   const offlineSteps = t('offline.steps', []);
 
+  // Bind actions to accept projectId implicitly in the Workspace
+  // Actually we need to pass handlers that take (e) or (params) and calls hook actions with (project.id, ...)
+  // This binding happens in the Wrapper mostly.
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
-      <div className="mx-auto w-full max-w-7xl px-6 py-10">
-        <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="ui-sidebar flex w-full flex-col gap-6 p-5 lg:w-80">
-            <div className="flex flex-col gap-3">
-              <h1 className="w-full text-[1.6rem] font-normal ui-heading tracking-tight">
-                {t('ui.appName', 'Gear List Creator')}
-              </h1>
-              <div className="rounded-2xl border border-surface-sunken/60 bg-surface-elevated/70 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-                  {t('ui.sidebar.title', 'Safe offline workspace')}
-                </p>
-                <p className="mt-2 text-sm text-text-secondary">
-                  {t(
-                    'ui.sidebar.description',
-                    'Your All Projects view keeps projects close while autosave runs in the background.'
-                  )}
-                </p>
-              </div>
-            </div>
-
-            <div className="ui-sidebar-section">
-              <nav className="flex flex-col gap-2">
-                {navigationTabs.map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`ui-sidebar-tab ${isActive ? 'ui-sidebar-tab-active' : ''}`}
-                    >
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-
-            <div className="ui-sidebar-section">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-                    {t('theme.label', 'Theme')}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {themeOptions.map((themeOption) => {
-                      const isActive = theme === themeOption.id;
-                      return (
-                        <button
-                          key={themeOption.id}
-                          type="button"
-                          onClick={() => setTheme(themeOption.id)}
-                          aria-pressed={isActive}
-                          className={`ui-button gap-2 px-3 py-1.5 text-xs ${
-                            isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
-                          }`}
-                        >
-                          <span aria-hidden="true">{themeOption.icon}</span>
-                          <span>{themeOption.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-                    {t('language.label', 'Language')}
-                  </p>
-                  <select
-                    value={locale}
-                    onChange={handleLocaleChange}
-                    className="ui-select text-sm"
-                    aria-label={t('language.label', 'Language')}
-                  >
-                    {locales.map((option) => (
-                      <option key={option.code} value={option.code}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className={`rounded-xl bg-surface-elevated/60 p-4 text-sm ${statusClasses}`} aria-live="polite">
-              {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
-            </div>
-          </aside>
-
-          <main className="flex flex-1 flex-col gap-6">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/json"
-              onChange={handleImport}
-              className="hidden"
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/json"
+        onChange={handleImport}
+        className="hidden"
+      />
+      <Routes>
+        <Route
+          element={
+            <Layout
+              t={t}
+              status={status}
+              theme={theme}
+              setTheme={setTheme}
+              locale={locale}
+              setLocale={handleLocaleChange}
+              locales={locales}
             />
-            {activeTab === 'dashboard' ? (
+          }
+        >
+          <Route
+            path="/"
+            element={
               <ProjectDashboard
                 t={t}
                 tPlural={tPlural}
                 templates={templates}
                 selectedTemplateId={selectedTemplateId}
                 onTemplateSelect={handleTemplateSelect}
-                onLoadTemplate={handleLoadTemplate}
+                onLoadTemplate={handleLoadTemplate} // Note: This might need adjustment for no active project
                 onImportProject={() => fileInputRef.current?.click()}
                 projectDraft={projectDraft}
                 onProjectDraftChange={updateProjectDraftField}
@@ -444,54 +404,64 @@ export default function App() {
                 autoBackups={autoBackups}
                 resolveStorageSource={resolveStorageSource}
               />
-            ) : null}
-
-            {activeTab === 'project' ? (
-              <ProjectWorkspace
+            }
+          />
+          <Route
+            path="/project/:projectId"
+            element={
+              <ProjectWorkspaceWrapper
                 t={t}
                 tPlural={tPlural}
-                activeProject={activeProject}
-                activeProjectIndex={activeProjectIndex}
-                totals={totals}
+                projects={projects}
                 resolveDisplayName={resolveDisplayName}
-                onBackToDashboard={() => setActiveTab('dashboard')}
+                onBackToDashboard={() => navigate('/')}
                 onExportPdf={exportPdf}
                 onExportProject={exportProject}
                 onSaveTemplate={saveTemplateFromProject}
                 newCategoryName={newCategoryName}
                 onNewCategoryNameChange={setNewCategoryName}
-                onAddCategory={addCategory}
+
+                hookActions={{
+                  addCategory,
+                  updateProjectDraftField,
+                  addItemToCategory,
+                  updateDraftItem,
+                  updateItemField,
+                  updateCategoryField,
+                  updateProjectField,
+                  updateProjectNotes,
+                  removeCategory,
+                  removeItem,
+                  applySuggestionToDraft,
+                  applySuggestionToItem
+                }}
+
                 itemSuggestions={itemSuggestions}
                 getItemDraft={getItemDraft}
-                onUpdateDraftItem={updateDraftItem}
-                onAddItemToCategory={addItemToCategory}
-                onUpdateItemField={updateItemField}
-                onUpdateCategoryField={updateCategoryField}
-                onUpdateProjectField={updateProjectField}
-                onUpdateProjectNotes={updateProjectNotes}
-                onRemoveCategory={removeCategory}
-                onRemoveItem={removeItem}
-                onApplySuggestionToDraft={applySuggestionToDraft}
-                onApplySuggestionToItem={applySuggestionToItem}
+                isHydrated={isHydrated}
               />
-            ) : null}
-
-            {activeTab === 'templates' ? (
+            }
+          />
+          <Route
+            path="/templates"
+            element={
               <TemplateManager
                 t={t}
                 tPlural={tPlural}
                 templateDraft={templateDraft}
                 onTemplateDraftChange={updateTemplateDraftField}
-                onSubmit={handleTemplateSubmit}
+                onSubmit={(e) => handleTemplateSubmit(e, null)} // Templates tab has no active project
                 templates={templates}
                 resolveDisplayName={resolveDisplayName}
                 onUpdateTemplateField={updateTemplateField}
-                onApplyTemplate={applyTemplateToProject}
+                onApplyTemplate={(id) => applyTemplateToProject(id, null)} // Templates tab has no active project
                 onRemoveTemplate={removeTemplate}
               />
-            ) : null}
-
-            {activeTab === 'settings' ? (
+            }
+          />
+          <Route
+            path="/settings"
+            element={
               <SettingsPanel
                 t={t}
                 showAutoBackups={showAutoBackups}
@@ -501,19 +471,21 @@ export default function App() {
                 onRestoreFromDeviceBackup={restoreFromDeviceBackup}
                 onFactoryReset={handleFactoryReset}
               />
-            ) : null}
-
-            {activeTab === 'help' ? (
+            }
+          />
+          <Route
+            path="/help"
+            element={
               <HelpPanel
                 t={t}
                 helpSections={helpSections}
                 documentationSections={documentationSections}
                 offlineSteps={offlineSteps}
               />
-            ) : null}
-          </main>
-        </div>
-      </div>
-    </div>
+            }
+          />
+        </Route>
+      </Routes>
+    </>
   );
 }

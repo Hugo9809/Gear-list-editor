@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { createId, STORAGE_MESSAGE_KEYS } from '../data/storage.js';
+import { createId, STORAGE_MESSAGE_KEYS } from '../../data/storage.js';
 
 const emptyItemDraft = {
   name: '',
@@ -25,29 +25,10 @@ const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
 export const useProjects = ({ t, setStatus }) => {
   const [projects, setProjects] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
-  const [activeProjectId, setActiveProjectId] = useState(null);
+  // activeProjectId and activeProject logic removed in favor of URL state
   const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [itemDrafts, setItemDrafts] = useState({});
-
-  const activeProject = useMemo(
-    () => projects.find((project) => project.id === activeProjectId) || null,
-    [projects, activeProjectId]
-  );
-
-  const activeProjectIndex = useMemo(
-    () => projects.findIndex((project) => project.id === activeProject?.id),
-    [activeProject?.id, projects]
-  );
-
-  const totals = useMemo(() => {
-    if (!activeProject) {
-      return { items: 0, categories: 0 };
-    }
-    const categories = activeProject.categories.length;
-    const items = activeProject.categories.reduce((sum, category) => sum + category.items.length, 0);
-    return { categories, items };
-  }, [activeProject]);
 
   const itemSuggestions = useMemo(
     () => (history.items || []).filter((entry) => !DEFAULT_NAME_KEYS.has(entry.name)),
@@ -139,7 +120,7 @@ export const useProjects = ({ t, setStatus }) => {
       const name = projectDraft.name.trim();
       if (!name) {
         setStatus(t('status.projectNameRequired', 'Please name the project before creating it.'));
-        return false;
+        return null; // Return null instead of false
       }
       const newProject = {
         id: createId(),
@@ -152,45 +133,35 @@ export const useProjects = ({ t, setStatus }) => {
         categories: []
       };
       setProjects((prev) => [newProject, ...prev]);
-      setActiveProjectId(newProject.id);
       setProjectDraft(emptyProjectDraft);
       setStatus(t('status.projectCreated', 'New project created and protected by autosave.'));
-      return true;
+      return newProject.id;
     },
     [projectDraft, setStatus, t]
   );
-
-  const openProject = useCallback((projectId) => {
-    setActiveProjectId(projectId);
-  }, []);
 
   const deleteProject = useCallback(
     (projectId) => {
       setProjects((prev) => {
         const remaining = prev.filter((project) => project.id !== projectId);
-        if (activeProjectId === projectId) {
-          setActiveProjectId(null);
-        }
         return remaining;
       });
       setStatus(t('status.projectArchived', 'Project archived. Backups remain intact.'));
     },
-    [activeProjectId, setStatus, t]
+    [setStatus, t]
   );
 
   const addCategory = useCallback(
-    (event) => {
+    (projectId, event) => {
       event.preventDefault();
-      if (!activeProject) {
-        setStatus(t('status.projectNeededForCategories', 'Create a project before adding categories.'));
-        return;
-      }
+      // Need to find activeProject to check safely? Or just rely on updateProject not finding it?
+      // For UX checks, we assume projectId exists if we are here.
       const name = newCategoryName.trim();
       if (!name) {
         setStatus(t('status.categoryNameRequired', 'Please name the category before adding it.'));
         return;
       }
-      updateProject(activeProject.id, (project) => ({
+      updateProject(projectId, (project) => ({
         ...project,
         categories: [
           ...project.categories,
@@ -206,15 +177,12 @@ export const useProjects = ({ t, setStatus }) => {
       setNewCategoryName('');
       setStatus(t('status.categoryAdded', 'Category added.'));
     },
-    [activeProject, newCategoryName, rememberCategory, setStatus, t, updateProject]
+    [newCategoryName, rememberCategory, setStatus, t, updateProject]
   );
 
   const addItemToCategory = useCallback(
-    (event, categoryId) => {
+    (projectId, event, categoryId) => {
       event.preventDefault();
-      if (!activeProject) {
-        return;
-      }
       const draft = itemDrafts[categoryId] || emptyItemDraft;
       const name = draft.name.trim();
       if (!name) {
@@ -229,7 +197,7 @@ export const useProjects = ({ t, setStatus }) => {
         details: draft.details.trim(),
         status: 'needed'
       };
-      updateCategory(activeProject.id, categoryId, (category) => ({
+      updateCategory(projectId, categoryId, (category) => ({
         ...category,
         items: [...category.items, newItem]
       }));
@@ -240,43 +208,34 @@ export const useProjects = ({ t, setStatus }) => {
       }));
       setStatus(t('status.itemAdded', 'Item added. Autosave will secure it immediately.'));
     },
-    [activeProject, itemDrafts, rememberItem, setStatus, t, updateCategory]
+    [itemDrafts, rememberItem, setStatus, t, updateCategory]
   );
 
   const removeCategory = useCallback(
-    (categoryId) => {
-      if (!activeProject) {
-        return;
-      }
-      updateProject(activeProject.id, (project) => ({
+    (projectId, categoryId) => {
+      updateProject(projectId, (project) => ({
         ...project,
         categories: project.categories.filter((category) => category.id !== categoryId)
       }));
       setStatus(t('status.categoryRemoved', 'Category removed.'));
     },
-    [activeProject, setStatus, t, updateProject]
+    [setStatus, t, updateProject]
   );
 
   const removeItem = useCallback(
-    (categoryId, itemId) => {
-      if (!activeProject) {
-        return;
-      }
-      updateCategory(activeProject.id, categoryId, (category) => ({
+    (projectId, categoryId, itemId) => {
+      updateCategory(projectId, categoryId, (category) => ({
         ...category,
         items: category.items.filter((item) => item.id !== itemId)
       }));
       setStatus(t('status.itemRemoved', 'Item removed. Backups remain available.'));
     },
-    [activeProject, setStatus, t, updateCategory]
+    [setStatus, t, updateCategory]
   );
 
   const updateItemField = useCallback(
-    (categoryId, itemId, field, value) => {
-      if (!activeProject) {
-        return;
-      }
-      updateItem(activeProject.id, categoryId, itemId, (item) => {
+    (projectId, categoryId, itemId, field, value) => {
+      updateItem(projectId, categoryId, itemId, (item) => {
         const next = {
           ...item,
           [field]: field === 'quantity' ? Math.max(1, Number(value) || 1) : value
@@ -286,15 +245,12 @@ export const useProjects = ({ t, setStatus }) => {
       });
       setStatus(t('status.changesQueued', 'Changes queued for autosave.'));
     },
-    [activeProject, rememberItem, setStatus, t, updateItem]
+    [rememberItem, setStatus, t, updateItem]
   );
 
   const updateCategoryField = useCallback(
-    (categoryId, field, value) => {
-      if (!activeProject) {
-        return;
-      }
-      updateCategory(activeProject.id, categoryId, (category) => ({
+    (projectId, categoryId, field, value) => {
+      updateCategory(projectId, categoryId, (category) => ({
         ...category,
         [field]: value
       }));
@@ -303,35 +259,29 @@ export const useProjects = ({ t, setStatus }) => {
       }
       setStatus(t('status.categoryUpdated', 'Category updated.'));
     },
-    [activeProject, rememberCategory, setStatus, t, updateCategory]
+    [rememberCategory, setStatus, t, updateCategory]
   );
 
   const updateProjectField = useCallback(
-    (field, value) => {
-      if (!activeProject) {
-        return;
-      }
-      updateProject(activeProject.id, (project) => ({
+    (projectId, field, value) => {
+      updateProject(projectId, (project) => ({
         ...project,
         [field]: value
       }));
       setStatus(t('status.projectDetailsUpdated', 'Project details updated.'));
     },
-    [activeProject, setStatus, t, updateProject]
+    [setStatus, t, updateProject]
   );
 
   const updateProjectNotes = useCallback(
-    (value) => {
-      if (!activeProject) {
-        return;
-      }
-      updateProject(activeProject.id, (project) => ({
+    (projectId, value) => {
+      updateProject(projectId, (project) => ({
         ...project,
         notes: value
       }));
       setStatus(t('status.projectNotesSaved', 'Project notes saved for autosave.'));
     },
-    [activeProject, setStatus, t, updateProject]
+    [setStatus, t, updateProject]
   );
 
   const updateDraftItem = useCallback((categoryId, field, value) => {
@@ -357,23 +307,20 @@ export const useProjects = ({ t, setStatus }) => {
   }, []);
 
   const applySuggestionToItem = useCallback(
-    (categoryId, itemId, suggestion) => {
-      if (!activeProject) {
-        return;
-      }
+    (projectId, categoryId, itemId, suggestion) => {
       const updated = {
         name: suggestion.name,
         unit: suggestion.unit || '',
         details: suggestion.details || ''
       };
-      updateItem(activeProject.id, categoryId, itemId, (item) => ({
+      updateItem(projectId, categoryId, itemId, (item) => ({
         ...item,
         ...updated
       }));
       rememberItem(updated);
       setStatus(t('status.suggestionApplied', 'Suggestion applied and ready for autosave.'));
     },
-    [activeProject, rememberItem, setStatus, t, updateItem]
+    [rememberItem, setStatus, t, updateItem]
   );
 
   return {
@@ -381,15 +328,9 @@ export const useProjects = ({ t, setStatus }) => {
     setProjects,
     history,
     setHistory,
-    activeProjectId,
-    setActiveProjectId,
-    activeProject,
-    activeProjectIndex,
-    totals,
     projectDraft,
     updateProjectDraftField,
     addProject,
-    openProject,
     deleteProject,
     newCategoryName,
     setNewCategoryName,

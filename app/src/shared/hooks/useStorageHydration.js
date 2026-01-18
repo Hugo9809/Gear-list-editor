@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createStorageService, STORAGE_MESSAGE_KEYS } from '../data/storage.js';
+import { createStorageService, STORAGE_MESSAGE_KEYS } from '../../data/storage.js';
 
 /**
  * Hydrate and persist app state with the storage service.
@@ -11,11 +11,9 @@ export const useStorageHydration = ({
   projects,
   templates,
   history,
-  activeProjectId,
   setProjects,
   setTemplates,
   setHistory,
-  setActiveProjectId,
   setStatus
 }) => {
   const [lastSaved, setLastSaved] = useState(null);
@@ -111,7 +109,7 @@ export const useStorageHydration = ({
       setProjects(result.state.projects);
       setTemplates(result.state.templates);
       setHistory(result.state.history);
-      setActiveProjectId(result.state.activeProjectId);
+      // activeProjectId is no longer managed here
       setLastSaved(result.state.lastSaved);
       setTheme(result.state.theme || 'light');
       setShowAutoBackups(Boolean(result.state.showAutoBackups));
@@ -122,12 +120,12 @@ export const useStorageHydration = ({
         setStatus(
           result.source === STORAGE_MESSAGE_KEYS.sources.empty
             ? t(
-                'status.noSavedData',
-                'No saved data yet. Start a project and autosave will protect it.'
-              )
+              'status.noSavedData',
+              'No saved data yet. Start a project and autosave will protect it.'
+            )
             : t('status.loadedFromSource', 'Loaded safely from {source}.', {
-                source: localizedSource
-              })
+              source: localizedSource
+            })
         );
       }
       setIsHydrated(true);
@@ -140,7 +138,6 @@ export const useStorageHydration = ({
   }, [
     resolveStorageMessage,
     resolveStorageSource,
-    setActiveProjectId,
     setHistory,
     setProjects,
     setStatus,
@@ -161,7 +158,7 @@ export const useStorageHydration = ({
       projects,
       templates,
       history,
-      activeProjectId,
+      activeProjectId: null, // Legacy support
       lastSaved,
       showAutoBackups
     });
@@ -169,7 +166,6 @@ export const useStorageHydration = ({
     projects,
     templates,
     history,
-    activeProjectId,
     isHydrated,
     theme,
     showAutoBackups,
@@ -200,10 +196,10 @@ export const useStorageHydration = ({
         projects,
         templates,
         history,
-        activeProjectId,
+        activeProjectId: null,
         lastSaved
       }),
-    [activeProjectId, history, lastSaved, projects, templates]
+    [history, lastSaved, projects, templates]
   );
 
   const exportProjectBackup = useCallback(
@@ -213,12 +209,12 @@ export const useStorageHydration = ({
           projects,
           templates,
           history,
-          activeProjectId,
+          activeProjectId: null,
           lastSaved
         },
         projectId
       ),
-    [activeProjectId, history, lastSaved, projects, templates]
+    [history, lastSaved, projects, templates]
   );
 
   const importBackupFile = useCallback(
@@ -233,24 +229,22 @@ export const useStorageHydration = ({
             projects,
             templates,
             history,
-            activeProjectId,
+            activeProjectId: null,
             lastSaved
           });
           setProjects(state.projects);
           setTemplates(state.templates);
           setHistory(state.history);
-          setActiveProjectId(state.activeProjectId);
+          // setActiveProjectId(state.activeProjectId); // Removed
           resolve({ state, warnings });
         };
         reader.readAsText(file);
       });
     },
     [
-      activeProjectId,
       history,
       lastSaved,
       projects,
-      setActiveProjectId,
       setHistory,
       setProjects,
       setTemplates,
@@ -263,7 +257,7 @@ export const useStorageHydration = ({
     setProjects(result.state.projects);
     setTemplates(result.state.templates);
     setHistory(result.state.history);
-    setActiveProjectId(result.state.activeProjectId);
+    // setActiveProjectId(result.state.activeProjectId); // Removed
     setLastSaved(result.state.lastSaved);
     if (result.warnings.length > 0) {
       setStatus(resolveStorageMessage(result.warnings[0]));
@@ -282,7 +276,6 @@ export const useStorageHydration = ({
   }, [
     resolveStorageMessage,
     resolveStorageSource,
-    setActiveProjectId,
     setHistory,
     setProjects,
     setStatus,

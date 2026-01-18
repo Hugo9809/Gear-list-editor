@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 /**
  * Render the project dashboard, quick actions, and backup overview.
  * Assumes callbacks handle persistence and navigation.
@@ -77,11 +79,10 @@ const ProjectDashboard = ({
               type="button"
               onClick={onLoadTemplate}
               disabled={!selectedTemplateId}
-              className={`ui-button ${
-                selectedTemplateId
-                  ? 'ui-button-primary'
-                  : 'cursor-not-allowed bg-surface-sunken text-text-muted'
-              }`}
+              className={`ui-button ${selectedTemplateId
+                ? 'ui-button-primary'
+                : 'cursor-not-allowed bg-surface-sunken text-text-muted'
+                }`}
             >
               {t('template.actions.loadIntoProject', 'Load from template')}
             </button>
@@ -214,13 +215,12 @@ const ProjectDashboard = ({
                   </div>
                 </div>
                 <div className="mt-auto flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onOpenProject(project.id)}
-                    className="ui-button ui-button-primary px-3 py-1 text-xs"
+                  <Link
+                    to={`/project/${project.id}`}
+                    className="ui-button ui-button-primary px-3 py-1 text-xs no-underline"
                   >
                     {t('project.actions.open', 'Open')}
-                  </button>
+                  </Link>
                   <button
                     type="button"
                     onClick={() => onDeleteProject(project.id)}

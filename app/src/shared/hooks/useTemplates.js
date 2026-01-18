@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { createId } from '../data/storage.js';
+import { createId } from '../../data/storage.js';
 
 const emptyTemplateDraft = {
   name: '',
@@ -10,7 +10,7 @@ const emptyTemplateDraft = {
  * Manage template library state and template workflows.
  * Assumes project state is provided by the caller.
  */
-export const useTemplates = ({ t, setStatus, activeProject, updateProject, rememberItem }) => {
+export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [templateDraft, setTemplateDraft] = useState(emptyTemplateDraft);
@@ -29,7 +29,7 @@ export const useTemplates = ({ t, setStatus, activeProject, updateProject, remem
     setTemplateDraft((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const saveTemplateFromProject = useCallback(() => {
+  const saveTemplateFromProject = useCallback((activeProject) => {
     if (!activeProject) {
       setStatus(t('status.projectNeededForTemplate', 'Create a project before saving a template.'));
       return;
@@ -57,18 +57,18 @@ export const useTemplates = ({ t, setStatus, activeProject, updateProject, remem
     setTemplates((prev) => [template, ...prev]);
     setTemplateDraft(emptyTemplateDraft);
     setStatus(t('status.templateSaved', 'Template saved from the current project.'));
-  }, [activeProject, setStatus, t, templateDraft.description, templateDraft.name]);
+  }, [setStatus, t, templateDraft.description, templateDraft.name]);
 
   const handleTemplateSubmit = useCallback(
-    (event) => {
+    (event, activeProject) => {
       event.preventDefault();
-      saveTemplateFromProject();
+      saveTemplateFromProject(activeProject);
     },
     [saveTemplateFromProject]
   );
 
   const applyTemplateToProject = useCallback(
-    (templateId) => {
+    (templateId, activeProject) => {
       if (!activeProject) {
         setStatus(
           t('status.projectNeededForApplyTemplate', 'Select a project before applying a template.')
@@ -103,17 +103,17 @@ export const useTemplates = ({ t, setStatus, activeProject, updateProject, remem
       );
       setStatus(t('status.templateApplied', 'Template applied. Autosave will secure the updated list.'));
     },
-    [activeProject, rememberItem, setStatus, t, templates, updateProject]
+    [rememberItem, setStatus, t, templates, updateProject]
   );
 
-  const handleLoadTemplate = useCallback(() => {
+  const handleLoadTemplate = useCallback((activeProject) => {
     if (!selectedTemplateId) {
       setStatus(
         t('status.templateSelectionRequired', 'Select a template to load into the active project.')
       );
       return;
     }
-    applyTemplateToProject(selectedTemplateId);
+    applyTemplateToProject(selectedTemplateId, activeProject);
   }, [applyTemplateToProject, selectedTemplateId, setStatus, t]);
 
   const updateTemplateField = useCallback(
@@ -122,9 +122,9 @@ export const useTemplates = ({ t, setStatus, activeProject, updateProject, remem
         prev.map((template) =>
           template.id === templateId
             ? {
-                ...template,
-                [field]: value
-              }
+              ...template,
+              [field]: value
+            }
             : template
         )
       );

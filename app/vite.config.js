@@ -6,4 +6,9 @@ const base = process.env.VITE_BASE_URL || '/Gear-list-editor/';
 export default defineConfig({
   base,
   plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './test/setup.js',
+  },
 });

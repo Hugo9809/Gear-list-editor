@@ -68,6 +68,10 @@
   --v2-shadow-xl: 0 12px 18px rgba(0, 0, 0, 0.12);
   --v2-shadow-tile: 0 4px 10px rgba(0, 0, 0, 0.06);
   --v2-shadow-popover: 0 8px 14px rgba(0, 0, 0, 0.08);
+
+  --v2-transition-fast: 150ms ease;
+  --v2-transition-normal: 250ms ease;
+  --v2-transition-slow: 350ms ease;
 }
 
 :root[data-theme='dark'] {

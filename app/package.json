@@ -8,17 +8,23 @@
     "build": "vite build",
     "build:root": "vite build --outDir .. --base=/Gear-list-editor/",
     "preview": "vite preview",
-    "validate-storage": "node scripts/validateStorage.mjs"
+    "validate-storage": "node scripts/validateStorage.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.12.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "jsdom": "^27.4.0",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10",
-    "vite": "^5.4.2"
+    "vite": "^5.4.2",
+    "vitest": "^4.0.17"
   }
 }

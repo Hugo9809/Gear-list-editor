@@ -1,0 +1,21 @@
+{
+  "version": "0.5.0",
+  "generated_at": 1768764365,
+  "modules": {
+    "app-src-i18n": {
+      "latest_mtime": 1768760524,
+      "file_count": 1,
+      "files_hash": 11732181224869807380
+    },
+    "root": {
+      "latest_mtime": 1768763704,
+      "file_count": 16,
+      "files_hash": 4227774776906704500
+    },
+    "app-src-components": {
+      "latest_mtime": 1768763704,
+      "file_count": 6,
+      "files_hash": 154924809536406769
+    }
+  }
+}

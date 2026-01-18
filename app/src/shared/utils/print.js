@@ -1,4 +1,4 @@
-import { getDictionary, translate } from '../i18n/index.js';
+import { getDictionary, translate } from '../../i18n/index.js';
 
 /**
  * Escape content for safe injection into printable HTML markup.
@@ -21,7 +21,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
     typeof dictionaryOrT === 'function'
       ? dictionaryOrT
       : (key, fallback, variables) =>
-          translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
+        translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
   const resolveLabel = (value, variables) =>
     typeof value === 'string' && value.startsWith('defaults.')
       ? t(value, undefined, variables)
@@ -35,9 +35,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
               <td>${escapeHtml(item.quantity)}</td>
               <td>${escapeHtml(item.unit || t('units.pcs'))}</td>
               <td>${escapeHtml(
-                resolveLabel(item.name, { index: itemIndex + 1 }) ||
-                  t('defaults.untitled_item', undefined, { index: itemIndex + 1 })
-              )}</td>
+            resolveLabel(item.name, { index: itemIndex + 1 }) ||
+            t('defaults.untitled_item', undefined, { index: itemIndex + 1 })
+          )}</td>
               <td>${escapeHtml(item.details)}</td>
             </tr>
           `
@@ -46,9 +46,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
       return `
         <section>
           <h3>${escapeHtml(
-            resolveLabel(category.name, { index: categoryIndex + 1 }) ||
-              t('defaults.untitled_category', undefined, { index: categoryIndex + 1 })
-          )}</h3>
+        resolveLabel(category.name, { index: categoryIndex + 1 }) ||
+        t('defaults.untitled_category', undefined, { index: categoryIndex + 1 })
+      )}</h3>
           <table>
             <thead>
               <tr>
@@ -59,10 +59,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
               </tr>
             </thead>
             <tbody>
-              ${
-                rows ||
-                `<tr><td colspan="4">${escapeHtml(t('items.print.empty'))}</td></tr>`
-              }
+              ${rows ||
+        `<tr><td colspan="4">${escapeHtml(t('items.print.empty'))}</td></tr>`
+        }
             </tbody>
           </table>
         </section>
@@ -76,9 +75,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
       <head>
         <meta charset="UTF-8" />
         <title>${escapeHtml(
-          resolveLabel(project.name, { index: projectIndex + 1 }) ||
-            t('defaults.untitled_project', undefined, { index: projectIndex + 1 })
-        )} - ${escapeHtml(t('ui.gearList'))}</title>
+    resolveLabel(project.name, { index: projectIndex + 1 }) ||
+    t('defaults.untitled_project', undefined, { index: projectIndex + 1 })
+  )} - ${escapeHtml(t('ui.gearList'))}</title>
         <style>
           body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -134,9 +133,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
       <body>
         <header>
           <h1>${escapeHtml(
-            resolveLabel(project.name, { index: projectIndex + 1 }) ||
-              t('defaults.untitled_project', undefined, { index: projectIndex + 1 })
-          )}</h1>
+    resolveLabel(project.name, { index: projectIndex + 1 }) ||
+    t('defaults.untitled_project', undefined, { index: projectIndex + 1 })
+  )}</h1>
           <div class="meta">
             <div><strong>${escapeHtml(t('project.print.labels.client'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
             <div><strong>${escapeHtml(t('project.print.labels.date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
@@ -147,8 +146,8 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
         ${categoriesHtml}
         <div class="notes">
           <strong>${escapeHtml(t('project.print.notes.title'))}:</strong> ${escapeHtml(
-            project.notes || t('project.notes.empty', 'No notes added.')
-          )}
+    project.notes || t('project.notes.empty', 'No notes added.')
+  )}
         </div>
       </body>
     </html>

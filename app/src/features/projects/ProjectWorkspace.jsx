@@ -1,4 +1,4 @@
-import TypeaheadInput from './TypeaheadInput.jsx';
+import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
 
 /**
  * Render the active project workspace with categories, items, and notes.
@@ -40,13 +40,13 @@ const ProjectWorkspace = ({
         <p className="text-sm text-text-secondary">
           {activeProject
             ? t('project.workspace.summary', '{categories} · {items}', {
-                categories: tPlural('categories.count', totals.categories, '{count} categories', {
-                  count: totals.categories
-                }),
-                items: tPlural('items.count', totals.items, '{count} items', {
-                  count: totals.items
-                })
+              categories: tPlural('categories.count', totals.categories, '{count} categories', {
+                count: totals.categories
+              }),
+              items: tPlural('items.count', totals.items, '{count} items', {
+                count: totals.items
               })
+            })
             : t('project.workspace.empty', 'Select a project to start editing.')}
         </p>
       </div>

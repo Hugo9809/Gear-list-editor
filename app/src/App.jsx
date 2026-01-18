@@ -1022,9 +1022,9 @@ export default function App() {
 
   const themeOptions = useMemo(
     () => [
-      { id: 'light', label: t('theme.options.light', 'Light') },
-      { id: 'dark', label: t('theme.options.dark', 'Dark') },
-      { id: 'pink', label: t('theme.options.pink', 'Pink') }
+      { id: 'light', label: t('theme.options.light', 'Light'), icon: '☀️' },
+      { id: 'dark', label: t('theme.options.dark', 'Dark'), icon: '🌙' },
+      { id: 'pink', label: t('theme.options.pink', 'Pink'), icon: '🦄' }
     ],
     [t]
   );
@@ -1037,9 +1037,9 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="flex w-full flex-col gap-6 lg:w-72">
-            <div className="ui-tile bg-surface-elevated/80 p-6">
-              <h1 className="w-full text-[1.6rem] font-normal text-text-secondary title-shadow tracking-tight">
+          <aside className="flex w-full flex-col gap-5 rounded-3xl border border-surface-sunken bg-surface-base/70 p-5 shadow-xs lg:w-80">
+            <div className="ui-panel bg-surface-elevated/80 p-5">
+              <h1 className="w-full text-[1.6rem] font-normal ui-heading tracking-tight">
                 {t('ui.appName', 'Gear List Creator')}
               </h1>
               <nav className="mt-4 flex flex-col gap-2">
@@ -1061,57 +1061,58 @@ export default function App() {
               </nav>
             </div>
 
-            <div className="ui-tile bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">
-                {t('language.label', 'Language')}
-              </h3>
-              <label className="mt-3 flex flex-col gap-2 text-sm text-text-secondary">
-                {t('language.label', 'Language')}
-                <select
-                  value={locale}
-                  onChange={handleLocaleChange}
-                  className="ui-select"
-                >
-                  {locales.map((option) => (
-                    <option key={option.code} value={option.code}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <p className="mt-2 text-xs text-text-muted">
-                {t('language.helper', 'Saved locally for offline use.')}
-              </p>
-            </div>
-
-            <div className="ui-tile bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">
-                {t('theme.label', 'Theme')}
-              </h3>
-              <div className="mt-3 grid gap-2">
-                {themeOptions.map((themeOption) => {
-                  const isActive = theme === themeOption.id;
-                  return (
-                    <button
-                      key={themeOption.id}
-                      type="button"
-                      onClick={() => setTheme(themeOption.id)}
-                      aria-pressed={isActive}
-                      className={`ui-button text-left ${
-                        isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
-                      }`}
-                    >
-                      {themeOption.label}
-                    </button>
-                  );
-                })}
+            <div className="ui-panel bg-surface-elevated/70 p-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex flex-1 flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide ui-heading">
+                    {t('theme.label', 'Theme')}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {themeOptions.map((themeOption) => {
+                      const isActive = theme === themeOption.id;
+                      return (
+                        <button
+                          key={themeOption.id}
+                          type="button"
+                          onClick={() => setTheme(themeOption.id)}
+                          aria-pressed={isActive}
+                          className={`ui-button gap-2 px-3 py-1.5 text-xs ${
+                            isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
+                          }`}
+                        >
+                          <span aria-hidden="true">{themeOption.icon}</span>
+                          <span>{themeOption.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-text-muted">
+                    {t('theme.helper', 'Theme stays with your saved workspace.')}
+                  </p>
+                </div>
+                <div className="flex flex-1 flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide ui-heading">
+                    {t('language.label', 'Language')}
+                  </span>
+                  <select
+                    value={locale}
+                    onChange={handleLocaleChange}
+                    className="ui-select text-sm"
+                  >
+                    {locales.map((option) => (
+                      <option key={option.code} value={option.code}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-text-muted">
+                    {t('language.helper', 'Saved locally for offline use.')}
+                  </p>
+                </div>
               </div>
-              <p className="mt-2 text-xs text-text-muted">
-                {t('theme.helper', 'Theme stays with your saved workspace.')}
-              </p>
             </div>
 
-            <div className={`ui-tile p-4 text-sm ${statusClasses}`} aria-live="polite">
+            <div className={`ui-panel p-4 text-sm ${statusClasses}`} aria-live="polite">
               {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
             </div>
           </aside>
@@ -1131,7 +1132,7 @@ export default function App() {
                     <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
                       {t('project.active.label', 'Active project')}
                     </span>
-                    <span className="text-lg font-semibold text-text-primary title-shadow">
+                    <span className="text-lg font-semibold ui-heading">
                       {resolveDisplayName(
                         activeProject.name,
                         { index: Math.max(activeProjectIndex, 0) + 1 },
@@ -1174,7 +1175,7 @@ export default function App() {
                 <div className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                      <h2 className="text-xl font-semibold ui-heading">
                         {t('dashboard.quickActions.title', 'Dashboard quick actions')}
                       </h2>
                       <p className="text-sm text-text-secondary">
@@ -1243,7 +1244,7 @@ export default function App() {
                   className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6"
                 >
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                    <h2 className="text-xl font-semibold ui-heading">
                       {t('project.dashboard.title', 'Project dashboard')}
                     </h2>
                     <p className="text-sm text-text-secondary">
@@ -1321,7 +1322,7 @@ export default function App() {
                 <div className="ui-tile bg-surface-elevated/60 p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                      <h2 className="text-xl font-semibold ui-heading">
                         {t('project.list.title', 'Projects')}
                       </h2>
                       <p className="text-sm text-text-secondary">
@@ -1362,7 +1363,7 @@ export default function App() {
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
-                                <h3 className="text-lg font-semibold text-text-primary title-shadow">
+                                <h3 className="text-lg font-semibold ui-heading">
                                   {resolveDisplayName(
                                     project.name,
                                     { index: projectIndex + 1 },
@@ -1419,7 +1420,7 @@ export default function App() {
                   <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
-                        <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                        <h2 className="text-xl font-semibold ui-heading">
                           {t('dashboard.autoBackups.title', 'Auto backups')}
                         </h2>
                         <p className="text-sm text-text-secondary">
@@ -1453,7 +1454,7 @@ export default function App() {
                             className="flex h-full flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
                           >
                             <div>
-                              <h3 className="text-sm font-semibold text-text-primary title-shadow">
+                              <h3 className="text-sm font-semibold ui-heading">
                                 {resolveStorageSource(backup.source)}
                               </h3>
                               <p className="text-xs text-text-secondary">
@@ -1485,7 +1486,7 @@ export default function App() {
               <div className="ui-tile bg-surface-elevated/60 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                    <h2 className="text-xl font-semibold ui-heading">
                       {t('project.workspace.title', 'Active project workspace')}
                     </h2>
                     <p className="text-sm text-text-secondary">
@@ -1577,7 +1578,7 @@ export default function App() {
                       className="ui-panel flex flex-col gap-3 bg-surface-muted/60 p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h3 className="text-lg font-semibold text-text-primary title-shadow">
+                        <h3 className="text-lg font-semibold ui-heading">
                           {t('categories.title', 'Categories')}
                         </h3>
                         <span className="text-xs text-text-muted">
@@ -1777,7 +1778,7 @@ export default function App() {
                     </div>
 
                     <div className="ui-tile bg-surface-elevated/60 p-4">
-                      <h3 className="text-lg font-semibold text-text-primary title-shadow">
+                      <h3 className="text-lg font-semibold ui-heading">
                         {t('project.notes.title', 'Project notes')}
                       </h3>
                       <p className="text-sm text-text-secondary">
@@ -1815,7 +1816,7 @@ export default function App() {
                 className="ui-tile bg-surface-elevated/60 p-6"
               >
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                  <h2 className="text-xl font-semibold ui-heading">
                     {t('template.management.title', 'Template management')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1933,7 +1934,7 @@ export default function App() {
             {activeTab === 'settings' ? (
               <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-lg font-semibold text-text-primary title-shadow">
+                  <h2 className="text-lg font-semibold ui-heading">
                     {t('settings.title', 'Settings')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -1947,7 +1948,7 @@ export default function App() {
                   <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <h3 className="text-base font-semibold text-text-primary title-shadow">
+                        <h3 className="text-base font-semibold ui-heading">
                           {t('settings.autoBackups.title', 'Dashboard auto backups')}
                         </h3>
                         <p className="mt-1 text-sm text-text-secondary">
@@ -1987,7 +1988,7 @@ export default function App() {
                     </p>
                   </div>
                   <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
-                    <h3 className="text-base font-semibold text-text-primary title-shadow">
+                    <h3 className="text-base font-semibold ui-heading">
                       {t('settings.backup.title', 'Full backup controls')}
                     </h3>
                     <p className="mt-1 text-sm text-text-secondary">
@@ -2028,7 +2029,7 @@ export default function App() {
                   </div>
 
                   <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
-                    <h3 className="text-base font-semibold text-text-primary title-shadow">
+                    <h3 className="text-base font-semibold ui-heading">
                       {t('settings.factoryReset.title', 'Factory reset')}
                     </h3>
                     <p className="mt-1 text-sm text-text-secondary">
@@ -2058,7 +2059,7 @@ export default function App() {
             {activeTab === 'help' ? (
               <section className="ui-tile bg-surface-elevated/70 p-6">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-lg font-semibold text-text-primary title-shadow">
+                  <h2 className="text-lg font-semibold ui-heading">
                     {t('help.title', 'Help & documentation')}
                   </h2>
                   <p className="text-sm text-text-secondary">
@@ -2072,7 +2073,7 @@ export default function App() {
                       open={index === 0}
                       className="ui-panel bg-surface-muted/60 px-4 py-3"
                     >
-                      <summary className="cursor-pointer text-sm font-semibold text-text-primary title-shadow">
+                      <summary className="cursor-pointer text-sm font-semibold ui-heading">
                         {section.title}
                       </summary>
                       <p className="mt-2 text-sm text-text-secondary">{section.description}</p>
@@ -2085,7 +2086,7 @@ export default function App() {
                   ))}
                 </div>
                 <div className="mt-5 border-t border-surface-sunken pt-4">
-                  <h3 className="text-base font-semibold text-text-primary title-shadow">
+                  <h3 className="text-base font-semibold ui-heading">
                     {t('offline.title', 'Offline workflow')}
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -2101,7 +2102,7 @@ export default function App() {
                   </p>
                 </div>
                 <div className="mt-5 border-t border-surface-sunken pt-4">
-                  <h3 className="text-base font-semibold text-text-primary title-shadow">
+                  <h3 className="text-base font-semibold ui-heading">
                     {t('documentation.title', 'Documentation')}
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -2116,7 +2117,7 @@ export default function App() {
                         key={section.title}
                         className="ui-panel bg-surface-muted/60 px-4 py-3"
                       >
-                        <h4 className="text-sm font-semibold text-text-primary title-shadow">
+                        <h4 className="text-sm font-semibold ui-heading">
                           {section.title}
                         </h4>
                         <p className="mt-1 text-xs text-text-secondary">{section.description}</p>

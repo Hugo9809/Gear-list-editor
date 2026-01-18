@@ -241,6 +241,36 @@
   "units": {
     "pcs": "Stk."
   },
+  "defaults": {
+    "untitled_item": "Unbenanntes Item {index}",
+    "untitled_category": "Kategorie {index}",
+    "untitled_project": "Unbenanntes Projekt {index}",
+    "untitled_template": "Vorlage {index}",
+    "imported_project": "Importierte Equipmentliste",
+    "imported_category": "Allgemeines Equipment"
+  },
+  "errors": {
+    "payload_invalid": "Backup-Daten fehlen oder sind ungültig.",
+    "projects_invalid": "Projekte müssen als Array vorliegen.",
+    "templates_invalid": "Vorlagen müssen als Array vorliegen.",
+    "history_invalid": "Historie muss ein Objekt sein, wenn sie vorhanden ist.",
+    "version_invalid": "Version muss numerisch sein, wenn sie vorhanden ist."
+  },
+  "warnings": {
+    "storage_locations_unavailable": "Einige Speicherorte konnten nicht aktualisiert werden. Deine neuesten Daten bleiben in anderen Backups erhalten.",
+    "autosave_storage_error": "Autosave hat einen Speicherfehler festgestellt. Deine Daten sind weiterhin sicher im Speicher.",
+    "indexeddb_unavailable": "IndexedDB war nicht verfügbar. Geräte-Backups werden geprüft.",
+    "import_invalid": "Import fehlgeschlagen. Bitte wähle eine gültige Backup-Datei.",
+    "no_device_backup": "Es wurde noch kein Geräte-Backup gefunden."
+  },
+  "sources": {
+    "empty": "Leer",
+    "indexeddb": "IndexedDB",
+    "device_backup_latest": "Geräte-Backup (aktuell)",
+    "device_backup_previous": "Geräte-Backup (vorherig)",
+    "legacy_local_backup": "Altes lokales Backup",
+    "device_backup": "Geräte-Backup"
+  },
   "status": {
     "loading": "Gespeicherte Equipmentliste wird geladen...",
     "autosaveComplete": "Autosave abgeschlossen. Dein Projekt-Dashboard ist sicher.",

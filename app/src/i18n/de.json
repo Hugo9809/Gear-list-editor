@@ -10,7 +10,7 @@
   },
   "navigation": {
     "sidebar": {
-      "dashboard": "Dashboard",
+      "dashboard": "Alle Projekte",
       "templates": "Vorlagen",
       "help": "Hilfe"
     },
@@ -26,7 +26,7 @@
       "importBackup": "Backup importieren"
     },
     "helper": {
-      "dashboard": "Hier starten: Projekt-Kachel öffnen oder erstellen, Importe verwalten und Backups offline schützen.",
+      "dashboard": "In Alle Projekte starten: Projekt-Kachel öffnen oder erstellen, Importe verwalten und Backups offline schützen.",
       "project": "Projekt-Kachel öffnen, um die Equipmentliste mit Autosave und Exporten zu bearbeiten.",
       "templates": "Kits sicher wiederverwenden. Vorlagen sind hier und ergänzen ohne Überschreiben.",
       "help": "Offline-fokussierte Hilfe zu Autosave, Backups, Wiederherstellung und Exporten."
@@ -38,7 +38,7 @@
     "emptyValue": "—",
     "sidebar": {
       "title": "Sicherer Offline-Arbeitsbereich",
-      "description": "Dein Dashboard hält Projekte griffbereit, während Autosave im Hintergrund läuft."
+      "description": "Deine Alle-Projekte-Übersicht hält Projekte griffbereit, während Autosave im Hintergrund läuft."
     },
     "hero": {
       "title": "Projektfertige Equipmentlisten mit Offline-Schutz.",
@@ -73,7 +73,7 @@
   },
   "dashboard": {
     "quickActions": {
-      "title": "Dashboard-Schnellaktionen",
+      "title": "Alle-Projekte-Schnellaktionen",
       "description": "Vertrauenswürdige Vorlagen laden oder ein Projekt-Backup in deine lokale Bibliothek zurückholen."
     }
   },
@@ -108,7 +108,7 @@
       "importProject": "Projekt importieren",
       "active": "Aktiv",
       "open": "Projekt öffnen",
-      "backToDashboard": "Zurück zum Dashboard",
+      "backToDashboard": "Zurück zu Alle Projekte",
       "archive": "Archivieren"
     },
     "list": {
@@ -324,12 +324,12 @@
     "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",
     "sections": [
       {
-        "title": "Start im Dashboard",
-        "description": "Dashboard → Projekt-Kachel auswählen/erstellen → Projekt-Arbeitsbereich öffnet sich.",
+        "title": "Start in Alle Projekte",
+        "description": "Alle Projekte → Projekt-Kachel auswählen/erstellen → Projekt-Arbeitsbereich öffnet sich.",
         "items": [
           "Projekt anlegen, damit es sofort lokal gespeichert wird, auch offline.",
           "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
-          "Dashboard-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
+          "Alle-Projekte-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
           "Im Projekt-Arbeitsbereich oben exportieren, PDF erstellen oder teilen.",
           "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben."
         ]
@@ -398,7 +398,7 @@
           "Backup-Dateien für Langzeitablage oder Gerätewechsel speichern.",
           "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
           "Bei Problemen vom Geräte-Backup wiederherstellen.",
-          "Dashboard-Aktionen halten Importe und Wiederherstellung nah an deinen Projekten.",
+          "Alle-Projekte-Aktionen halten Importe und Wiederherstellung nah an deinen Projekten.",
           "Vorlagen werden im Vorlagen-Tab verwaltet und überschreiben keine Daten."
         ]
       }

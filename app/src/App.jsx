@@ -980,7 +980,7 @@ export default function App() {
 
   const navigationTabs = useMemo(
     () => [
-      { id: 'dashboard', label: t('navigation.sidebar.dashboard', 'Dashboard') },
+      { id: 'dashboard', label: t('navigation.sidebar.dashboard', 'All Projects') },
       { id: 'templates', label: t('navigation.sidebar.templates', 'Templates') },
       { id: 'help', label: t('navigation.sidebar.help', 'Help') }
     ],

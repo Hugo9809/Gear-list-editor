@@ -10,7 +10,7 @@
   },
   "navigation": {
     "sidebar": {
-      "dashboard": "Dashboard",
+      "dashboard": "All Projects",
       "templates": "Templates",
       "help": "Help"
     },
@@ -26,7 +26,7 @@
       "importBackup": "Import backup"
     },
     "helper": {
-      "dashboard": "Start here: create or open a project tile, manage imports, and protect backups while offline.",
+      "dashboard": "Start in All Projects: create or open a project tile, manage imports, and protect backups while offline.",
       "project": "Open a project tile to edit the gear list with autosave and exports.",
       "templates": "Reuse kits safely. Templates live here and add gear without overwriting your list.",
       "help": "Offline-first guidance for autosave, backups, restores, and safe exports."
@@ -38,7 +38,7 @@
     "emptyValue": "—",
     "sidebar": {
       "title": "Safe offline workspace",
-      "description": "Your dashboard keeps projects close while autosave runs in the background."
+      "description": "Your All Projects view keeps projects close while autosave runs in the background."
     }
   },
   "theme": {
@@ -63,7 +63,7 @@
   },
   "dashboard": {
     "quickActions": {
-      "title": "Dashboard quick actions",
+      "title": "All Projects quick actions",
       "description": "Load trusted templates or bring a project backup back into your local library."
     }
   },
@@ -98,7 +98,7 @@
       "importProject": "Import project",
       "active": "Active",
       "open": "Open project",
-      "backToDashboard": "Back to dashboard",
+      "backToDashboard": "Back to All Projects",
       "archive": "Archive"
     },
     "list": {
@@ -314,12 +314,12 @@
     "subtitle": "Offline-first guidance for safe gear lists.",
     "sections": [
       {
-        "title": "Start from the dashboard",
-        "description": "Dashboard → select/create a project tile → the project workspace opens.",
+        "title": "Start from All Projects",
+        "description": "All Projects → select/create a project tile → the project workspace opens.",
         "items": [
           "Create a project to save locally the moment it exists, even offline.",
           "Select a project to continue editing without losing data.",
-          "Dashboard actions handle imports, restores, and device backups.",
+          "All Projects actions handle imports, restores, and device backups.",
           "Use the project workspace header for export, PDF, and share actions.",
           "Templates live in the Templates tab and can be added without overwriting gear."
         ]
@@ -388,7 +388,7 @@
           "Download backup files for long-term storage or device migration.",
           "Import backups to merge rather than overwrite your current data.",
           "Restore from device backup if storage needs recovery.",
-          "Dashboard quick actions keep imports and restores close to your projects.",
+          "All Projects quick actions keep imports and restores close to your projects.",
           "Templates are managed in the Templates tab and never overwrite your data."
         ]
       }

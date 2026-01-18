@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { createId, createStorageService } from './data/storage.js';
+import { useI18n } from './i18n/index.js';
 
 const emptyItemDraft = {
   name: '',
@@ -211,6 +212,7 @@ const TypeaheadInput = ({
 };
 
 export default function App() {
+  const { t } = useI18n();
   const [projects, setProjects] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
@@ -218,6 +220,7 @@ export default function App() {
   const [lastSaved, setLastSaved] = useState(null);
   const [status, setStatus] = useState('Loading your saved gear list...');
   const [isHydrated, setIsHydrated] = useState(false);
+  const [activeView, setActiveView] = useState('editor');
   const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
   const [templateDraft, setTemplateDraft] = useState(emptyTemplateDraft);
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -782,6 +785,77 @@ export default function App() {
     return { categories, items };
   }, [activeProject]);
 
+  const helpSections = [
+    {
+      title: t('help.quickStart.title'),
+      items: [
+        t('help.quickStart.step1'),
+        t('help.quickStart.step2'),
+        t('help.quickStart.step3'),
+        t('help.quickStart.step4')
+      ]
+    },
+    {
+      title: t('help.safety.title'),
+      items: [
+        t('help.safety.step1'),
+        t('help.safety.step2'),
+        t('help.safety.step3'),
+        t('help.safety.step4')
+      ]
+    },
+    {
+      title: t('help.sharing.title'),
+      items: [
+        t('help.sharing.step1'),
+        t('help.sharing.step2'),
+        t('help.sharing.step3'),
+        t('help.sharing.step4')
+      ]
+    }
+  ];
+
+  const documentationSections = [
+    {
+      title: t('docs.dataSafety.title'),
+      body: [t('docs.dataSafety.body1'), t('docs.dataSafety.body2')]
+    },
+    {
+      title: t('docs.saving.title'),
+      body: [t('docs.saving.body1'), t('docs.saving.body2')]
+    },
+    {
+      title: t('docs.backup.title'),
+      body: [t('docs.backup.body1'), t('docs.backup.body2'), t('docs.backup.body3')]
+    },
+    {
+      title: t('docs.sharing.title'),
+      body: [t('docs.sharing.body1'), t('docs.sharing.body2')]
+    },
+    {
+      title: t('docs.pdf.title'),
+      body: [t('docs.pdf.body1')]
+    },
+    {
+      title: t('docs.templates.title'),
+      body: [t('docs.templates.body1'), t('docs.templates.body2')]
+    },
+    {
+      title: t('docs.translations.title'),
+      body: [t('docs.translations.body1'), t('docs.translations.body2')]
+    },
+    {
+      title: t('docs.offline.title'),
+      body: [t('docs.offline.body1'), t('docs.offline.body2')]
+    }
+  ];
+
+  const viewTabs = [
+    { id: 'editor', label: t('view.editor') },
+    { id: 'help', label: t('view.help') },
+    { id: 'documentation', label: t('view.documentation') }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-10">
@@ -803,8 +877,33 @@ export default function App() {
           </div>
         </header>
 
-        <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-          <div className="flex flex-col gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-full border border-slate-800 bg-slate-900/50 p-2">
+            {viewTabs.map((tab) => {
+              const isActive = activeView === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveView(tab.id)}
+                  aria-pressed={isActive}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    isActive
+                      ? 'bg-emerald-500 text-emerald-950'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-sm text-slate-400">{t('view.description')}</p>
+        </div>
+
+        {activeView === 'editor' ? (
+          <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+            <div className="flex flex-col gap-6">
             <form
               onSubmit={addProject}
               className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
@@ -1375,6 +1474,80 @@ export default function App() {
             </div>
           </aside>
         </section>
+        ) : activeView === 'help' ? (
+          <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+            <div className="flex flex-col gap-6">
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+                <h2 className="text-2xl font-semibold text-white">{t('help.title')}</h2>
+                <p className="mt-2 text-sm text-slate-400">{t('help.subtitle')}</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {helpSections.map((section) => (
+                  <div
+                    key={section.title}
+                    className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
+                  >
+                    <h3 className="text-lg font-semibold text-white">{section.title}</h3>
+                    <ul className="mt-3 flex list-disc flex-col gap-2 pl-5 text-sm text-slate-300">
+                      {section.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <aside className="flex flex-col gap-6">
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+                <h3 className="text-lg font-semibold text-white">{t('help.return.title')}</h3>
+                <p className="mt-2 text-sm text-slate-400">{t('help.return.body')}</p>
+                <button
+                  type="button"
+                  onClick={() => setActiveView('editor')}
+                  className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                >
+                  {t('help.return.button')}
+                </button>
+              </div>
+              <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
+                {status || 'Status updates appear here to confirm data safety.'}
+              </div>
+            </aside>
+          </section>
+        ) : (
+          <section className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+              <h2 className="text-2xl font-semibold text-white">{t('docs.title')}</h2>
+              <p className="mt-2 text-sm text-slate-400">{t('docs.subtitle')}</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              {documentationSections.map((section) => (
+                <div
+                  key={section.title}
+                  className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
+                >
+                  <h3 className="text-lg font-semibold text-white">{section.title}</h3>
+                  <div className="mt-3 flex flex-col gap-2 text-sm text-slate-300">
+                    {section.body.map((line) => (
+                      <p key={line}>{line}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+              <h3 className="text-lg font-semibold text-white">{t('help.return.title')}</h3>
+              <p className="mt-2 text-sm text-slate-400">{t('help.return.body')}</p>
+              <button
+                type="button"
+                onClick={() => setActiveView('editor')}
+                className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+              >
+                {t('help.return.button')}
+              </button>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

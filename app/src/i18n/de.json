@@ -33,7 +33,7 @@
     }
   },
   "ui": {
-    "appName": "Equipmentlisten-Editor",
+    "appName": "Gear List Creator",
     "gearList": "Equipmentliste",
     "emptyValue": "—",
     "sidebar": {

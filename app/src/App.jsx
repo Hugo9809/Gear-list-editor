@@ -253,6 +253,8 @@ export default function App() {
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [lastSaved, setLastSaved] = useState(null);
   const [theme, setTheme] = useState('light');
+  const [showAutoBackups, setShowAutoBackups] = useState(false);
+  const [autoBackups, setAutoBackups] = useState([]);
   const [status, setStatus] = useState(() =>
     t('status.loading', 'Loading your saved gear list...')
   );
@@ -368,6 +370,7 @@ export default function App() {
       setActiveProjectId(result.state.activeProjectId);
       setLastSaved(result.state.lastSaved);
       setTheme(result.state.theme || 'light');
+      setShowAutoBackups(Boolean(result.state.showAutoBackups));
       if (result.warnings.length > 0) {
         setStatus(resolveStorageMessage(result.warnings[0]));
       } else {
@@ -403,9 +406,10 @@ export default function App() {
       templates,
       history,
       activeProjectId,
-      lastSaved
+      lastSaved,
+      showAutoBackups
     });
-  }, [projects, templates, history, activeProjectId, isHydrated, theme]);
+  }, [projects, templates, history, activeProjectId, isHydrated, theme, showAutoBackups]);
 
   useEffect(() => {
     if (templates.length === 0) {
@@ -416,6 +420,24 @@ export default function App() {
       templates.some((template) => template.id === prev) ? prev : templates[0].id
     );
   }, [templates]);
+
+  useEffect(() => {
+    if (!isHydrated || !showAutoBackups) {
+      setAutoBackups([]);
+      return;
+    }
+    let mounted = true;
+    const loadAutoBackups = async () => {
+      const backups = await storageRef.current.listAutoBackups();
+      if (mounted) {
+        setAutoBackups(backups);
+      }
+    };
+    loadAutoBackups();
+    return () => {
+      mounted = false;
+    };
+  }, [isHydrated, lastSaved, showAutoBackups]);
 
   const activeProject = useMemo(
     () => projects.find((project) => project.id === activeProjectId) || null,
@@ -1400,6 +1422,70 @@ export default function App() {
                     )}
                   </div>
                 </div>
+
+                {showAutoBackups ? (
+                  <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <h2 className="text-xl font-semibold text-text-primary title-shadow">
+                          {t('dashboard.autoBackups.title', 'Auto backups')}
+                        </h2>
+                        <p className="text-sm text-text-secondary">
+                          {t(
+                            'dashboard.autoBackups.description',
+                            'Review the on-device auto backups created by autosave.'
+                          )}
+                        </p>
+                      </div>
+                      <div className="text-xs text-text-muted">
+                        {tPlural(
+                          'dashboard.autoBackups.count',
+                          autoBackups.length,
+                          '{count} auto backup available.',
+                          { count: autoBackups.length }
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-2">
+                      {autoBackups.length === 0 ? (
+                        <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
+                          {t(
+                            'dashboard.autoBackups.empty',
+                            'No auto backups yet. Create or edit a project and autosave will create them.'
+                          )}
+                        </div>
+                      ) : (
+                        autoBackups.map((backup) => (
+                          <div
+                            key={backup.id}
+                            className="flex h-full flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
+                          >
+                            <div>
+                              <h3 className="text-sm font-semibold text-text-primary title-shadow">
+                                {resolveStorageSource(backup.source)}
+                              </h3>
+                              <p className="text-xs text-text-secondary">
+                                {t('dashboard.autoBackups.lastSaved', 'Last saved: {time}', {
+                                  time: backup.lastSaved
+                                    ? new Date(backup.lastSaved).toLocaleString()
+                                    : t('dashboard.autoBackups.lastSavedEmpty', 'Not saved yet')
+                                })}
+                              </p>
+                            </div>
+                            <div className="text-xs text-text-muted">
+                              {tPlural(
+                                'dashboard.autoBackups.projects',
+                                backup.projectCount,
+                                '{count} project in this backup.',
+                                { count: backup.projectCount }
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : null}
               </>
             ) : null}
 
@@ -1891,6 +1977,48 @@ export default function App() {
                   </p>
                 </div>
                 <div className="mt-5 grid gap-4">
+                  <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <h3 className="text-base font-semibold text-text-primary title-shadow">
+                          {t('settings.autoBackups.title', 'Dashboard auto backups')}
+                        </h3>
+                        <p className="mt-1 text-sm text-text-secondary">
+                          {t(
+                            'settings.autoBackups.description',
+                            'Control whether device auto backups appear in the project dashboard.'
+                          )}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-semibold text-text-primary">
+                          {t('settings.autoBackups.toggle', 'Show auto backups')}
+                        </span>
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={showAutoBackups}
+                          aria-label={t('settings.autoBackups.toggle', 'Show auto backups')}
+                          onClick={() => setShowAutoBackups((prev) => !prev)}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full border border-surface-sunken transition ${
+                            showAutoBackups ? 'bg-brand' : 'bg-surface-sunken'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
+                              showAutoBackups ? 'translate-x-5' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-xs text-text-muted">
+                      {t(
+                        'settings.autoBackups.helper',
+                        'Keep this on to verify that autosave is generating device backups while you work offline.'
+                      )}
+                    </p>
+                  </div>
                   <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
                     <h3 className="text-base font-semibold text-text-primary title-shadow">
                       {t('settings.backup.title', 'Full backup controls')}

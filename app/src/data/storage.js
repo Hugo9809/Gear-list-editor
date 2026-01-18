@@ -64,7 +64,8 @@ export const createEmptyState = () => ({
     categories: []
   },
   activeProjectId: null,
-  lastSaved: null
+  lastSaved: null,
+  showAutoBackups: false
 });
 
 const normalizeText = (value) => {
@@ -271,6 +272,7 @@ export const migratePayload = (payload) => {
   };
 
   const lastSaved = typeof payload.lastSaved === 'string' ? payload.lastSaved : null;
+  const showAutoBackups = typeof payload.showAutoBackups === 'boolean' ? payload.showAutoBackups : false;
   const activeProjectId =
     typeof payload.activeProjectId === 'string'
       ? payload.activeProjectId
@@ -283,7 +285,8 @@ export const migratePayload = (payload) => {
     templates,
     history: mergedHistory,
     activeProjectId,
-    lastSaved
+    lastSaved,
+    showAutoBackups
   };
 };
 
@@ -490,6 +493,7 @@ export const mergePayloads = (current, incoming) => {
     projects,
     templates,
     history,
+    showAutoBackups: base.showAutoBackups,
     activeProjectId: base.activeProjectId || next.activeProjectId || projects[0]?.id || null
   };
 };
@@ -528,6 +532,23 @@ const getBestBackup = async () => {
     return { payload: legacyBackup, source: STORAGE_MESSAGE_KEYS.sources.legacyLocalBackup };
   }
   return { payload: null, source: null };
+};
+
+const buildAutoBackupSummary = (payload, source) => {
+  if (!payload) {
+    return null;
+  }
+  const timestamp = getPayloadTimestamp(payload);
+  const lastSaved = typeof payload.lastSaved === 'string' ? payload.lastSaved : null;
+  return {
+    id: `${source}-${lastSaved || createId()}`,
+    source,
+    lastSaved,
+    projectCount: Array.isArray(payload.projects) ? payload.projects.length : 0,
+    templateCount: Array.isArray(payload.templates) ? payload.templates.length : 0,
+    savedBy: typeof payload.savedBy === 'string' ? payload.savedBy : null,
+    timestamp
+  };
 };
 
 export const createStorageService = (options = {}) => {
@@ -670,6 +691,31 @@ export const createStorageService = (options = {}) => {
 
   const exportBackup = (state) => exportState(state);
   const exportProjectBackupWithId = (state, projectId) => exportProjectBackup(state, projectId);
+  const listAutoBackups = async () => {
+    const [latest, previous] = await Promise.all([
+      readFromOpfsFile(OPFS_BACKUP_FILE),
+      readFromOpfsFile(OPFS_BACKUP_PREVIOUS_FILE)
+    ]);
+    const legacy = readLegacyBackup();
+    const summaries = [
+      buildAutoBackupSummary(latest, STORAGE_MESSAGE_KEYS.sources.deviceBackupLatest),
+      buildAutoBackupSummary(previous, STORAGE_MESSAGE_KEYS.sources.deviceBackupPrevious),
+      buildAutoBackupSummary(legacy, STORAGE_MESSAGE_KEYS.sources.legacyLocalBackup)
+    ].filter(Boolean);
+
+    return summaries.sort((a, b) => {
+      if (a.timestamp === b.timestamp) {
+        return 0;
+      }
+      if (a.timestamp === null) {
+        return 1;
+      }
+      if (b.timestamp === null) {
+        return -1;
+      }
+      return b.timestamp - a.timestamp;
+    });
+  };
 
   const importBackup = (rawText, currentState) => {
     const parsed = safeParse(rawText);
@@ -746,6 +792,7 @@ export const createStorageService = (options = {}) => {
     saveNow,
     exportBackup,
     exportProjectBackup: exportProjectBackupWithId,
+    listAutoBackups,
     importBackup,
     restoreFromBackup,
     factoryReset,

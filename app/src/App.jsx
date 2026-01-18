@@ -1037,8 +1037,8 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="flex w-full flex-col gap-5 rounded-3xl border border-surface-sunken bg-surface-base/70 p-5 shadow-xs lg:w-80">
-            <div className="ui-panel bg-surface-elevated/80 p-5">
+          <aside className="ui-tile flex w-full flex-col gap-6 rounded-3xl bg-surface-base/70 p-5 lg:w-80">
+            <div>
               <h1 className="w-full text-[1.6rem] font-normal ui-heading tracking-tight">
                 {t('ui.appName', 'Gear List Creator')}
               </h1>
@@ -1061,58 +1061,47 @@ export default function App() {
               </nav>
             </div>
 
-            <div className="ui-panel bg-surface-elevated/70 p-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex flex-1 flex-col gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wide ui-heading">
-                    {t('theme.label', 'Theme')}
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {themeOptions.map((themeOption) => {
-                      const isActive = theme === themeOption.id;
-                      return (
-                        <button
-                          key={themeOption.id}
-                          type="button"
-                          onClick={() => setTheme(themeOption.id)}
-                          aria-pressed={isActive}
-                          className={`ui-button gap-2 px-3 py-1.5 text-xs ${
-                            isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
-                          }`}
-                        >
-                          <span aria-hidden="true">{themeOption.icon}</span>
-                          <span>{themeOption.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="text-xs text-text-muted">
-                    {t('theme.helper', 'Theme stays with your saved workspace.')}
-                  </p>
+            <div className="h-px w-full bg-surface-sunken/70" aria-hidden="true" />
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-1 flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {themeOptions.map((themeOption) => {
+                    const isActive = theme === themeOption.id;
+                    return (
+                      <button
+                        key={themeOption.id}
+                        type="button"
+                        onClick={() => setTheme(themeOption.id)}
+                        aria-pressed={isActive}
+                        className={`ui-button gap-2 px-3 py-1.5 text-xs ${
+                          isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
+                        }`}
+                      >
+                        <span aria-hidden="true">{themeOption.icon}</span>
+                        <span>{themeOption.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
-                <div className="flex flex-1 flex-col gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wide ui-heading">
-                    {t('language.label', 'Language')}
-                  </span>
-                  <select
-                    value={locale}
-                    onChange={handleLocaleChange}
-                    className="ui-select text-sm"
-                  >
-                    {locales.map((option) => (
-                      <option key={option.code} value={option.code}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-text-muted">
-                    {t('language.helper', 'Saved locally for offline use.')}
-                  </p>
-                </div>
+              </div>
+              <div className="flex flex-1 flex-col gap-2">
+                <select
+                  value={locale}
+                  onChange={handleLocaleChange}
+                  className="ui-select text-sm"
+                  aria-label={t('language.label', 'Language')}
+                >
+                  {locales.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
-            <div className={`ui-panel p-4 text-sm ${statusClasses}`} aria-live="polite">
+            <div className={`rounded-xl bg-surface-elevated/60 p-4 text-sm ${statusClasses}`} aria-live="polite">
               {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
             </div>
           </aside>

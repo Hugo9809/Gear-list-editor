@@ -865,29 +865,52 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-10">
-        <header className="flex flex-col gap-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Gear List Editor</p>
-          <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
-            <h1 className="text-3xl font-semibold text-white">Project-ready gear lists with offline protection.</h1>
-            <p className="max-w-3xl text-base text-slate-300">
-              Build equipment lists that match your production PDFs. Create projects, reuse templates, and
-              export print-ready gear lists without leaving offline mode. Every edit is saved locally with
-              redundant backups.
-            </p>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
-              <span className="rounded-full border border-slate-700 px-3 py-1">Autosave active</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Project dashboard</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Template library</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">PDF export ready</span>
+      <div className="mx-auto w-full max-w-7xl px-6 py-10">
+        <div className="flex flex-col gap-8 lg:flex-row">
+          <aside className="flex w-full flex-col gap-6 lg:w-72">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Gear List Editor</p>
+              <h2 className="mt-3 text-lg font-semibold text-white">Safe offline workspace</h2>
+              <p className="mt-2 text-sm text-slate-400">
+                Tabs keep your workflow focused while autosave runs in the background.
+              </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
-              <label className="flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1">
-                <span>{t('language.label', 'Language')}</span>
+
+            <nav className="flex flex-col gap-2">
+              {[
+                { id: 'dashboard', label: 'Dashboard' },
+                { id: 'project', label: 'Project' },
+                { id: 'templates', label: 'Templates' },
+                { id: 'help', label: 'Help' }
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`rounded-xl px-4 py-2 text-left text-sm font-semibold transition ${
+                      isActive
+                        ? 'bg-emerald-500 text-emerald-950'
+                        : 'border border-slate-800 text-slate-200 hover:border-emerald-400'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                {t('language.label', 'Language')}
+              </h3>
+              <label className="mt-3 flex flex-col gap-2 text-sm text-slate-300">
+                {t('language.label', 'Language')}
                 <select
                   value={locale}
                   onChange={handleLocaleChange}
-                  className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
+                  className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                 >
                   {locales.map((option) => (
                     <option key={option.code} value={option.code}>
@@ -896,73 +919,154 @@ export default function App() {
                   ))}
                 </select>
               </label>
-              <span>{t('language.helper', 'Saved locally for offline use.')}</span>
+              <p className="mt-2 text-xs text-slate-500">
+                {t('language.helper', 'Saved locally for offline use.')}
+              </p>
             </div>
-          </div>
-        </header>
 
-        <nav className="flex flex-wrap gap-3">
-          {[
-            { id: 'dashboard', label: 'Dashboard' },
-            { id: 'workspace', label: 'Workspace' }
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  isActive
-                    ? 'bg-emerald-500 text-emerald-950'
-                    : 'border border-slate-800 text-slate-200 hover:border-emerald-400'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </nav>
-
-        {activeProject ? (
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 px-5 py-4 shadow-lg">
-            <div className="flex min-w-[200px] flex-col gap-1">
-              <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Active project</span>
-              <span className="text-lg font-semibold text-white">
-                {activeProject.name || 'Untitled project'}
-              </span>
-              <span className="text-xs text-slate-400">
-                Export the current list or save it as a reusable template.
-              </span>
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Theme</h3>
+              <div className="mt-3 grid gap-2">
+                {[
+                  { id: 'light', label: 'Light' },
+                  { id: 'dark', label: 'Dark' },
+                  { id: 'pink', label: 'Pink' }
+                ].map((themeOption) => {
+                  const isActive = theme === themeOption.id;
+                  return (
+                    <button
+                      key={themeOption.id}
+                      type="button"
+                      onClick={() => setTheme(themeOption.id)}
+                      aria-pressed={isActive}
+                      className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
+                        isActive
+                          ? 'bg-emerald-500 text-emerald-950'
+                          : 'border border-slate-700 text-slate-200 hover:border-emerald-400'
+                      }`}
+                    >
+                      {themeOption.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-xs text-slate-500">Theme stays with your saved workspace.</p>
             </div>
-            <div className="flex flex-wrap gap-3 text-sm">
-              <button
-                type="button"
-                onClick={exportProject}
-                className="rounded-full border border-slate-700 px-4 py-2 font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-              >
-                Export project
-              </button>
-              <button
-                type="button"
-                onClick={exportPdf}
-                className="rounded-full border border-slate-700 px-4 py-2 font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-              >
-                Export PDF
-              </button>
-              <button
-                type="button"
-                onClick={saveTemplateFromProject}
-                className="rounded-full bg-emerald-500 px-4 py-2 font-semibold text-emerald-950 transition hover:bg-emerald-400"
-              >
-                Save as template
-              </button>
-            </div>
-          </div>
-        ) : null}
 
-        <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-          <div className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+              <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
+              <p className="text-sm text-slate-400">
+                Your data stays on-device. Save immediately, create offline backups, and restore if you ever
+                switch devices. Device backups refresh every 30 minutes, even while idle.
+              </p>
+              <div className="mt-4 flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={saveNow}
+                  className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
+                >
+                  Save now
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadBackup}
+                  className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                >
+                  Download backup
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                >
+                  Import backup file
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="application/json"
+                  className="hidden"
+                  onChange={handleImport}
+                />
+                <button
+                  type="button"
+                  onClick={restoreFromDeviceBackup}
+                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                >
+                  Restore from device backup
+                </button>
+                <button
+                  type="button"
+                  onClick={shareData}
+                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                >
+                  Share via clipboard
+                </button>
+              </div>
+            </div>
+
+            <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
+              {status || 'Status updates appear here to confirm data safety.'}
+            </div>
+          </aside>
+
+          <main className="flex flex-1 flex-col gap-6">
+            <header className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+                <h1 className="text-3xl font-semibold text-white">
+                  Project-ready gear lists with offline protection.
+                </h1>
+                <p className="max-w-3xl text-base text-slate-300">
+                  Build equipment lists that match your production PDFs. Create projects, reuse templates, and
+                  export print-ready gear lists without leaving offline mode. Every edit is saved locally with
+                  redundant backups.
+                </p>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+                  <span className="rounded-full border border-slate-700 px-3 py-1">Autosave active</span>
+                  <span className="rounded-full border border-slate-700 px-3 py-1">Project dashboard</span>
+                  <span className="rounded-full border border-slate-700 px-3 py-1">Template library</span>
+                  <span className="rounded-full border border-slate-700 px-3 py-1">PDF export ready</span>
+                </div>
+              </div>
+            </header>
+
+            {activeProject && activeTab !== 'help' ? (
+              <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 px-5 py-4 shadow-lg">
+                <div className="flex min-w-[200px] flex-col gap-1">
+                  <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Active project</span>
+                  <span className="text-lg font-semibold text-white">
+                    {activeProject.name || 'Untitled project'}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    Export the current list or save it as a reusable template.
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <button
+                    type="button"
+                    onClick={exportProject}
+                    className="rounded-full border border-slate-700 px-4 py-2 font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                  >
+                    Export project
+                  </button>
+                  <button
+                    type="button"
+                    onClick={exportPdf}
+                    className="rounded-full border border-slate-700 px-4 py-2 font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                  >
+                    Export PDF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={saveTemplateFromProject}
+                    className="rounded-full bg-emerald-500 px-4 py-2 font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                  >
+                    Save as template
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
             {activeTab === 'dashboard' ? (
               <>
                 <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
@@ -1143,7 +1247,10 @@ export default function App() {
                             </div>
                             <div className="grid gap-2 text-xs text-slate-400 md:grid-cols-2">
                               <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2">
-                                Categories <span className="font-semibold text-slate-200">{project.categories.length}</span>
+                                Categories{' '}
+                                <span className="font-semibold text-slate-200">
+                                  {project.categories.length}
+                                </span>
                               </div>
                               <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2">
                                 Items <span className="font-semibold text-slate-200">{itemTotal}</span>
@@ -1176,521 +1283,472 @@ export default function App() {
                   </div>
                 </div>
               </>
-            ) : (
-              <>
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                      <h2 className="text-xl font-semibold text-white">Active project workspace</h2>
-                      <p className="text-sm text-slate-400">
-                        {activeProject
-                          ? `${totals.categories} categories · ${totals.items} items`
-                          : 'Select a project to start editing.'}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={exportPdf}
-                      className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                    >
-                      Export PDF
-                    </button>
-                  </div>
+            ) : null}
 
-                  {activeProject ? (
-                    <div className="mt-6 flex flex-col gap-6">
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <label className="flex flex-col gap-2 text-sm text-slate-300">
-                          Project name
-                          <input
-                            value={activeProject.name}
-                            onChange={(event) => updateProjectField('name', event.target.value)}
-                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                          />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm text-slate-300">
-                          Client / production
-                          <input
-                            value={activeProject.client}
-                            onChange={(event) => updateProjectField('client', event.target.value)}
-                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                          />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm text-slate-300">
-                          Shoot date
-                          <input
-                            type="date"
-                            value={activeProject.shootDate}
-                            onChange={(event) => updateProjectField('shootDate', event.target.value)}
-                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                          />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm text-slate-300">
-                          Location
-                          <input
-                            value={activeProject.location}
-                            onChange={(event) => updateProjectField('location', event.target.value)}
-                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                          />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
-                          Lead contact
-                          <input
-                            value={activeProject.contact}
-                            onChange={(event) => updateProjectField('contact', event.target.value)}
-                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                          />
-                        </label>
-                      </div>
-
-                      <form
-                        onSubmit={addCategory}
-                        className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <h3 className="text-lg font-semibold text-white">Categories</h3>
-                          <span className="text-xs text-slate-500">Use templates for faster setups.</span>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                          <input
-                            value={newCategoryName}
-                            onChange={(event) => setNewCategoryName(event.target.value)}
-                            placeholder="Add a category (e.g. Camera, Lighting)"
-                            className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                          />
-                          <button
-                            type="submit"
-                            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                          >
-                            Add category
-                          </button>
-                        </div>
-                      </form>
-
-                      <div className="flex flex-col gap-4">
-                        {activeProject.categories.length === 0 ? (
-                          <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
-                            No categories yet. Add one above or apply a template.
-                          </div>
-                        ) : (
-                          activeProject.categories.map((category) => (
-                            <div
-                              key={category.id}
-                              className="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
-                            >
-                              <div className="flex flex-wrap items-start justify-between gap-3">
-                                <div className="flex flex-1 flex-col gap-3">
-                                  <input
-                                    value={category.name}
-                                    onChange={(event) =>
-                                      updateCategoryField(category.id, 'name', event.target.value)
-                                    }
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                  />
-                                  <textarea
-                                    value={category.notes}
-                                    onChange={(event) =>
-                                      updateCategoryField(category.id, 'notes', event.target.value)
-                                    }
-                                    placeholder="Category notes or rental references"
-                                    rows={2}
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                                  />
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removeCategory(category.id)}
-                                  className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
-                                >
-                                  Remove category
-                                </button>
-                              </div>
-
-                              <form
-                                onSubmit={(event) => addItemToCategory(event, category.id)}
-                                className="grid gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_auto]"
-                              >
-                                <TypeaheadInput
-                                  value={(itemDrafts[category.id] || emptyItemDraft).name}
-                                  onChange={(value) => updateDraftItem(category.id, 'name', value)}
-                                  onSelectSuggestion={(suggestion) =>
-                                    applySuggestionToDraft(category.id, suggestion)
-                                  }
-                                  suggestions={itemSuggestions}
-                                  placeholder="Item name"
-                                  label="Item name"
-                                  inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                                />
-                                <input
-                                  type="number"
-                                  min="1"
-                                  value={(itemDrafts[category.id] || emptyItemDraft).quantity}
-                                  onChange={(event) =>
-                                    updateDraftItem(category.id, 'quantity', event.target.value)
-                                  }
-                                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                />
-                                <input
-                                  value={(itemDrafts[category.id] || emptyItemDraft).unit}
-                                  onChange={(event) => updateDraftItem(category.id, 'unit', event.target.value)}
-                                  placeholder="Unit"
-                                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                                />
-                                <input
-                                  value={(itemDrafts[category.id] || emptyItemDraft).details}
-                                  onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
-                                  placeholder="Details / notes"
-                                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                                />
-                                <button
-                                  type="submit"
-                                  className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                                >
-                                  Add
-                                </button>
-                              </form>
-
-                              <div className="flex flex-col gap-3">
-                                {category.items.length === 0 ? (
-                                  <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-4 text-center text-xs text-slate-500">
-                                    No items yet. Add the first item above.
-                                  </div>
-                                ) : (
-                                  category.items.map((item) => (
-                                    <div
-                                      key={item.id}
-                                      className="grid gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
-                                    >
-                                      <TypeaheadInput
-                                        value={item.name}
-                                        onChange={(value) =>
-                                          updateItemField(category.id, item.id, 'name', value)
-                                        }
-                                        onSelectSuggestion={(suggestion) =>
-                                          applySuggestionToItem(category.id, item.id, suggestion)
-                                        }
-                                        suggestions={itemSuggestions}
-                                        placeholder="Item name"
-                                        label="Item name"
-                                        inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                      />
-                                      <input
-                                        type="number"
-                                        min="1"
-                                        value={item.quantity}
-                                        onChange={(event) =>
-                                          updateItemField(
-                                            category.id,
-                                            item.id,
-                                            'quantity',
-                                            event.target.value
-                                          )
-                                        }
-                                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                      />
-                                      <input
-                                        value={item.unit}
-                                        onChange={(event) =>
-                                          updateItemField(category.id, item.id, 'unit', event.target.value)
-                                        }
-                                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                      />
-                                      <input
-                                        value={item.details}
-                                        onChange={(event) =>
-                                          updateItemField(
-                                            category.id,
-                                            item.id,
-                                            'details',
-                                            event.target.value
-                                          )
-                                        }
-                                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                      />
-                                      <select
-                                        value={item.status}
-                                        onChange={(event) =>
-                                          updateItemField(category.id, item.id, 'status', event.target.value)
-                                        }
-                                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                                      >
-                                        <option value="needed">Needed</option>
-                                        <option value="packed">Packed</option>
-                                        <option value="missing">Missing</option>
-                                        <option value="rented">Rented</option>
-                                      </select>
-                                      <button
-                                        type="button"
-                                        onClick={() => removeItem(category.id, item.id)}
-                                        className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
-                                      >
-                                        Remove
-                                      </button>
-                                    </div>
-                                  ))
-                                )}
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-
-                      <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-                        <h3 className="text-lg font-semibold text-white">Project notes</h3>
-                        <p className="text-sm text-slate-400">
-                          Notes appear in exports and are included in backups for every project.
-                        </p>
-                        <textarea
-                          value={activeProject.notes}
-                          onChange={(event) => updateProjectNotes(event.target.value)}
-                          placeholder="Crew notes, pickup info, or return instructions"
-                          rows={4}
-                          className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-6 rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
-                      Select or create a project to unlock the gear list editor.
-                    </div>
-                  )}
-                </div>
-
-                <form
-                  onSubmit={handleTemplateSubmit}
-                  className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
-                >
-                  <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold text-white">Template management</h2>
+            {activeTab === 'project' ? (
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-white">Active project workspace</h2>
                     <p className="text-sm text-slate-400">
-                      Save reusable setups for recurring shoots. Templates can be applied to any project
-                      without overwriting existing data.
+                      {activeProject
+                        ? `${totals.categories} categories · ${totals.items} items`
+                        : 'Select a project to start editing.'}
                     </p>
                   </div>
-                  <div className="mt-4 grid gap-4 md:grid-cols-2">
-                    <label className="flex flex-col gap-2 text-sm text-slate-300">
-                      Template name
-                      <input
-                        value={templateDraft.name}
-                        onChange={(event) =>
-                          setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))
-                        }
-                        placeholder="e.g. Standard documentary kit"
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                      />
-                    </label>
-                    <label className="flex flex-col gap-2 text-sm text-slate-300">
-                      Description
-                      <input
-                        value={templateDraft.description}
-                        onChange={(event) =>
-                          setTemplateDraft((prev) => ({ ...prev, description: event.target.value }))
-                        }
-                        placeholder="Key details or usage"
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                      />
-                    </label>
-                  </div>
                   <button
-                    type="submit"
-                    className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                    type="button"
+                    onClick={exportPdf}
+                    className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
                   >
-                    Save current project as template
+                    Export PDF
                   </button>
+                </div>
 
-                  <div className="mt-6 grid gap-4 md:grid-cols-2">
-                    {templates.length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
-                        No templates yet. Save the active project to build your library.
+                {activeProject ? (
+                  <div className="mt-6 flex flex-col gap-6">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <label className="flex flex-col gap-2 text-sm text-slate-300">
+                        Project name
+                        <input
+                          value={activeProject.name}
+                          onChange={(event) => updateProjectField('name', event.target.value)}
+                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-2 text-sm text-slate-300">
+                        Client / production
+                        <input
+                          value={activeProject.client}
+                          onChange={(event) => updateProjectField('client', event.target.value)}
+                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-2 text-sm text-slate-300">
+                        Shoot date
+                        <input
+                          type="date"
+                          value={activeProject.shootDate}
+                          onChange={(event) => updateProjectField('shootDate', event.target.value)}
+                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-2 text-sm text-slate-300">
+                        Location
+                        <input
+                          value={activeProject.location}
+                          onChange={(event) => updateProjectField('location', event.target.value)}
+                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
+                        Lead contact
+                        <input
+                          value={activeProject.contact}
+                          onChange={(event) => updateProjectField('contact', event.target.value)}
+                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        />
+                      </label>
+                    </div>
+
+                    <form
+                      onSubmit={addCategory}
+                      className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h3 className="text-lg font-semibold text-white">Categories</h3>
+                        <span className="text-xs text-slate-500">Use templates for faster setups.</span>
                       </div>
-                    ) : (
-                      templates.map((template) => (
-                        <div
-                          key={template.id}
-                          className="flex h-full flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                      <div className="flex flex-wrap gap-3">
+                        <input
+                          value={newCategoryName}
+                          onChange={(event) => setNewCategoryName(event.target.value)}
+                          placeholder="Add a category (e.g. Camera, Lighting)"
+                          className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                        />
+                        <button
+                          type="submit"
+                          className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
                         >
-                          <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
-                            Name
-                            <input
-                              value={template.name}
-                              onChange={(event) =>
-                                updateTemplateField(template.id, 'name', event.target.value)
-                              }
-                              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                            />
-                          </label>
-                          <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
-                            Description
-                            <input
-                              value={template.description}
-                              onChange={(event) =>
-                                updateTemplateField(template.id, 'description', event.target.value)
-                              }
-                              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
-                            />
-                          </label>
-                          <div className="text-xs text-slate-500">
-                            {template.categories.length} categories · Last used{' '}
-                            {template.lastUsed
-                              ? new Date(template.lastUsed).toLocaleDateString()
-                              : 'Never'}
-                          </div>
-                          <div className="mt-auto flex flex-wrap gap-2">
-                            <button
-                              type="button"
-                              onClick={() => applyTemplateToProject(template.id)}
-                              className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                            >
-                              Apply to active project
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => removeTemplate(template.id)}
-                              className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
-                            >
-                              Remove
-                            </button>
-                          </div>
+                          Add category
+                        </button>
+                      </div>
+                    </form>
+
+                    <div className="flex flex-col gap-4">
+                      {activeProject.categories.length === 0 ? (
+                        <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
+                          No categories yet. Add one above or apply a template.
                         </div>
-                      ))
-                    )}
+                      ) : (
+                        activeProject.categories.map((category) => (
+                          <div
+                            key={category.id}
+                            className="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                          >
+                            <div className="flex flex-wrap items-start justify-between gap-3">
+                              <div className="flex flex-1 flex-col gap-3">
+                                <input
+                                  value={category.name}
+                                  onChange={(event) =>
+                                    updateCategoryField(category.id, 'name', event.target.value)
+                                  }
+                                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                />
+                                <textarea
+                                  value={category.notes}
+                                  onChange={(event) =>
+                                    updateCategoryField(category.id, 'notes', event.target.value)
+                                  }
+                                  placeholder="Category notes or rental references"
+                                  rows={2}
+                                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeCategory(category.id)}
+                                className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
+                              >
+                                Remove category
+                              </button>
+                            </div>
+
+                            <form
+                              onSubmit={(event) => addItemToCategory(event, category.id)}
+                              className="grid gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_auto]"
+                            >
+                              <TypeaheadInput
+                                value={(itemDrafts[category.id] || emptyItemDraft).name}
+                                onChange={(value) => updateDraftItem(category.id, 'name', value)}
+                                onSelectSuggestion={(suggestion) =>
+                                  applySuggestionToDraft(category.id, suggestion)
+                                }
+                                suggestions={itemSuggestions}
+                                placeholder="Item name"
+                                label="Item name"
+                                inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                              />
+                              <input
+                                type="number"
+                                min="1"
+                                value={(itemDrafts[category.id] || emptyItemDraft).quantity}
+                                onChange={(event) =>
+                                  updateDraftItem(category.id, 'quantity', event.target.value)
+                                }
+                                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                              />
+                              <input
+                                value={(itemDrafts[category.id] || emptyItemDraft).unit}
+                                onChange={(event) => updateDraftItem(category.id, 'unit', event.target.value)}
+                                placeholder="Unit"
+                                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                              />
+                              <input
+                                value={(itemDrafts[category.id] || emptyItemDraft).details}
+                                onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
+                                placeholder="Details / notes"
+                                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                              />
+                              <button
+                                type="submit"
+                                className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                              >
+                                Add
+                              </button>
+                            </form>
+
+                            <div className="flex flex-col gap-3">
+                              {category.items.length === 0 ? (
+                                <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-4 text-center text-xs text-slate-500">
+                                  No items yet. Add the first item above.
+                                </div>
+                              ) : (
+                                category.items.map((item) => (
+                                  <div
+                                    key={item.id}
+                                    className="grid gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
+                                  >
+                                    <TypeaheadInput
+                                      value={item.name}
+                                      onChange={(value) =>
+                                        updateItemField(category.id, item.id, 'name', value)
+                                      }
+                                      onSelectSuggestion={(suggestion) =>
+                                        applySuggestionToItem(category.id, item.id, suggestion)
+                                      }
+                                      suggestions={itemSuggestions}
+                                      placeholder="Item name"
+                                      label="Item name"
+                                      inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    />
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      value={item.quantity}
+                                      onChange={(event) =>
+                                        updateItemField(
+                                          category.id,
+                                          item.id,
+                                          'quantity',
+                                          event.target.value
+                                        )
+                                      }
+                                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    />
+                                    <input
+                                      value={item.unit}
+                                      onChange={(event) =>
+                                        updateItemField(category.id, item.id, 'unit', event.target.value)
+                                      }
+                                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    />
+                                    <input
+                                      value={item.details}
+                                      onChange={(event) =>
+                                        updateItemField(
+                                          category.id,
+                                          item.id,
+                                          'details',
+                                          event.target.value
+                                        )
+                                      }
+                                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    />
+                                    <select
+                                      value={item.status}
+                                      onChange={(event) =>
+                                        updateItemField(
+                                          category.id,
+                                          item.id,
+                                          'status',
+                                          event.target.value
+                                        )
+                                      }
+                                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    >
+                                      <option value="needed">Needed</option>
+                                      <option value="packed">Packed</option>
+                                      <option value="missing">Missing</option>
+                                      <option value="rented">Rented</option>
+                                    </select>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeItem(category.id, item.id)}
+                                      className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+                      <h3 className="text-lg font-semibold text-white">Project notes</h3>
+                      <p className="text-sm text-slate-400">
+                        Notes appear in exports and are included in backups for every project.
+                      </p>
+                      <textarea
+                        value={activeProject.notes}
+                        onChange={(event) => updateProjectNotes(event.target.value)}
+                        placeholder="Crew notes, pickup info, or return instructions"
+                        rows={4}
+                        className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                      />
+                    </div>
                   </div>
-                </form>
-              </>
-            )}
-          </div>
+                ) : (
+                  <div className="mt-6 rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
+                    Select or create a project to unlock the gear list editor.
+                  </div>
+                )}
+              </div>
+            ) : null}
 
-          <aside className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
-              <p className="text-sm text-slate-400">
-                Your data stays on-device. Save immediately, create offline backups, and restore if you ever
-                switch devices. Device backups refresh every 30 minutes, even while idle.
-              </p>
-              <div className="mt-4 flex flex-col gap-3">
+            {activeTab === 'templates' ? (
+              <form
+                onSubmit={handleTemplateSubmit}
+                className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
+              >
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-xl font-semibold text-white">Template management</h2>
+                  <p className="text-sm text-slate-400">
+                    Save reusable setups for recurring shoots. Templates can be applied to any project
+                    without overwriting existing data.
+                  </p>
+                </div>
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    Template name
+                    <input
+                      value={templateDraft.name}
+                      onChange={(event) =>
+                        setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))
+                      }
+                      placeholder="e.g. Standard documentary kit"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    Description
+                    <input
+                      value={templateDraft.description}
+                      onChange={(event) =>
+                        setTemplateDraft((prev) => ({ ...prev, description: event.target.value }))
+                      }
+                      placeholder="Key details or usage"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                </div>
                 <button
-                  type="button"
-                  onClick={saveNow}
-                  className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
+                  type="submit"
+                  className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
                 >
-                  Save now
+                  Save current project as template
                 </button>
-                <button
-                  type="button"
-                  onClick={downloadBackup}
-                  className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                >
-                  Download backup
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-                >
-                  Import backup file
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="application/json"
-                  className="hidden"
-                  onChange={handleImport}
-                />
-                <button
-                  type="button"
-                  onClick={restoreFromDeviceBackup}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-                >
-                  Restore from device backup
-                </button>
-                <button
-                  type="button"
-                  onClick={shareData}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-                >
-                  Share via clipboard
-                </button>
-              </div>
-            </div>
 
-            <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
-              {status || 'Status updates appear here to confirm data safety.'}
-            </div>
-
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-white">
-                  {t('help.title', 'Help & documentation')}
-                </h2>
-                <p className="text-sm text-slate-400">
-                  {t('help.subtitle', 'Offline-first guidance for safe gear lists.')}
-                </p>
-              </div>
-              <div className="mt-4 flex flex-col gap-3">
-                {helpSections.map((section, index) => (
-                  <details
-                    key={section.title}
-                    open={index === 0}
-                    className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
-                  >
-                    <summary className="cursor-pointer text-sm font-semibold text-slate-100">
-                      {section.title}
-                    </summary>
-                    <p className="mt-2 text-sm text-slate-400">{section.description}</p>
-                    <ul className="mt-3 list-disc space-y-1 pl-4 text-sm text-slate-300">
-                      {section.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </details>
-                ))}
-              </div>
-              <div className="mt-5 border-t border-slate-800 pt-4">
-                <h3 className="text-base font-semibold text-white">
-                  {t('offline.title', 'Offline workflow')}
-                </h3>
-                <p className="mt-1 text-sm text-slate-400">
-                  {t('offline.description', 'Every feature works without a connection.')}
-                </p>
-                <ol className="mt-3 list-decimal space-y-1 pl-4 text-sm text-slate-300">
-                  {offlineSteps.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-                <p className="mt-3 text-xs text-slate-500">
-                  {t('offline.footer', 'Backups stay on-device unless you export or share them.')}
-                </p>
-              </div>
-              <div className="mt-5 border-t border-slate-800 pt-4">
-                <h3 className="text-base font-semibold text-white">
-                  {t('documentation.title', 'Documentation')}
-                </h3>
-                <p className="mt-1 text-sm text-slate-400">
-                  {t(
-                    'documentation.subtitle',
-                    'Key safety behaviors are automatic, with manual controls when you need them.'
+                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                  {templates.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
+                      No templates yet. Save the active project to build your library.
+                    </div>
+                  ) : (
+                    templates.map((template) => (
+                      <div
+                        key={template.id}
+                        className="flex h-full flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                      >
+                        <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
+                          Name
+                          <input
+                            value={template.name}
+                            onChange={(event) =>
+                              updateTemplateField(template.id, 'name', event.target.value)
+                            }
+                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
+                          Description
+                          <input
+                            value={template.description}
+                            onChange={(event) =>
+                              updateTemplateField(template.id, 'description', event.target.value)
+                            }
+                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                          />
+                        </label>
+                        <div className="text-xs text-slate-500">
+                          {template.categories.length} categories · Last used{' '}
+                          {template.lastUsed
+                            ? new Date(template.lastUsed).toLocaleDateString()
+                            : 'Never'}
+                        </div>
+                        <div className="mt-auto flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => applyTemplateToProject(template.id)}
+                            className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                          >
+                            Apply to active project
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeTemplate(template.id)}
+                            className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))
                   )}
-                </p>
-                <div className="mt-3 grid gap-3">
-                  {documentationSections.map((section) => (
-                    <div
+                </div>
+              </form>
+            ) : null}
+
+            {activeTab === 'help' ? (
+              <section className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-lg font-semibold text-white">
+                    {t('help.title', 'Help & documentation')}
+                  </h2>
+                  <p className="text-sm text-slate-400">
+                    {t('help.subtitle', 'Offline-first guidance for safe gear lists.')}
+                  </p>
+                </div>
+                <div className="mt-4 flex flex-col gap-3">
+                  {helpSections.map((section, index) => (
+                    <details
                       key={section.title}
+                      open={index === 0}
                       className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
                     >
-                      <h4 className="text-sm font-semibold text-slate-100">{section.title}</h4>
-                      <p className="mt-1 text-xs text-slate-400">{section.description}</p>
-                      <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-slate-300">
+                      <summary className="cursor-pointer text-sm font-semibold text-slate-100">
+                        {section.title}
+                      </summary>
+                      <p className="mt-2 text-sm text-slate-400">{section.description}</p>
+                      <ul className="mt-3 list-disc space-y-1 pl-4 text-sm text-slate-300">
                         {section.items.map((item) => (
                           <li key={item}>{item}</li>
                         ))}
                       </ul>
-                    </div>
+                    </details>
                   ))}
                 </div>
-              </div>
-            </div>
-          </aside>
-        </section>
+                <div className="mt-5 border-t border-slate-800 pt-4">
+                  <h3 className="text-base font-semibold text-white">
+                    {t('offline.title', 'Offline workflow')}
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {t('offline.description', 'Every feature works without a connection.')}
+                  </p>
+                  <ol className="mt-3 list-decimal space-y-1 pl-4 text-sm text-slate-300">
+                    {offlineSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p className="mt-3 text-xs text-slate-500">
+                    {t('offline.footer', 'Backups stay on-device unless you export or share them.')}
+                  </p>
+                </div>
+                <div className="mt-5 border-t border-slate-800 pt-4">
+                  <h3 className="text-base font-semibold text-white">
+                    {t('documentation.title', 'Documentation')}
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {t(
+                      'documentation.subtitle',
+                      'Key safety behaviors are automatic, with manual controls when you need them.'
+                    )}
+                  </p>
+                  <div className="mt-3 grid gap-3">
+                    {documentationSections.map((section) => (
+                      <div
+                        key={section.title}
+                        className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
+                      >
+                        <h4 className="text-sm font-semibold text-slate-100">{section.title}</h4>
+                        <p className="mt-1 text-xs text-slate-400">{section.description}</p>
+                        <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-slate-300">
+                          {section.items.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : null}
+          </main>
+        </div>
       </div>
     </div>
   );

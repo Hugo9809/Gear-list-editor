@@ -917,37 +917,6 @@ export default function App() {
     event.target.value = '';
   };
 
-  const shareData = async () => {
-    const { json } = storageRef.current.exportBackup({
-      projects,
-      templates,
-      history,
-      activeProjectId,
-      lastSaved
-    });
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(json);
-        setStatus(t('status.sharedToClipboard', 'Copied your gear list to the clipboard for sharing.'));
-        return;
-      } catch {
-        setStatus(
-          t(
-            'status.clipboardBlocked',
-            'Clipboard access was blocked. Use the download backup option instead.'
-          )
-        );
-      }
-    } else {
-      setStatus(
-        t(
-          'status.clipboardUnavailable',
-          'Clipboard sharing is not available. Use the download backup option instead.'
-        )
-      );
-    }
-  };
-
   const handleLocaleChange = (event) => {
     const nextLocale = event.target.value;
     setLocale(nextLocale);
@@ -1136,13 +1105,6 @@ export default function App() {
                     </button>
                     <button
                       type="button"
-                      onClick={shareData}
-                      className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                    >
-                      {t('backup.actions.shareClipboard', 'Share via clipboard')}
-                    </button>
-                    <button
-                      type="button"
                       onClick={saveTemplateFromProject}
                       className="rounded-full bg-brand px-4 py-2 font-semibold text-brand-foreground transition hover:bg-brand-hover"
                     >
@@ -1153,7 +1115,7 @@ export default function App() {
 
                 <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
                   <h2 className="text-lg font-semibold text-text-primary">
-                    {t('backup.title', 'Save, share, restore')}
+                    {t('backup.title', 'Save, backup, restore')}
                   </h2>
                   <p className="text-sm text-text-secondary">
                     {t(
@@ -1189,13 +1151,6 @@ export default function App() {
                       className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                     >
                       {t('backup.actions.restoreDevice', 'Restore from device backup')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={shareData}
-                      className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                    >
-                      {t('backup.actions.shareClipboard', 'Share via clipboard')}
                     </button>
                   </div>
                 </div>

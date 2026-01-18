@@ -60,17 +60,6 @@
       "pink": "Pink"
     }
   },
-  "backup": {
-    "title": "Speichern, teilen, wiederherstellen",
-    "description": "Deine Daten bleiben auf dem Gerät. Sofort speichern, Offline-Backups erstellen und bei Bedarf wiederherstellen, wenn du Geräte wechselst. Geräte-Backups werden alle 30 Minuten aktualisiert, auch im Leerlauf.",
-    "actions": {
-      "saveNow": "Jetzt speichern",
-      "download": "Backup herunterladen",
-      "import": "Backup-Datei importieren",
-      "restoreDevice": "Vom Geräte-Backup wiederherstellen",
-      "shareClipboard": "Über Zwischenablage teilen"
-    }
-  },
   "dashboard": {
     "quickActions": {
       "title": "Alle-Projekte-Schnellaktionen",

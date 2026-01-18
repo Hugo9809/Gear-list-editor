@@ -1,1 +1,27 @@
 # Gear-list-editor
+
+This repository now contains a Vite + React + Tailwind CSS app inside the `app/` folder.
+
+## Getting started
+
+1. Install dependencies inside `app/`:
+
+   ```bash
+   cd app
+   npm install
+   ```
+
+2. Start the dev server:
+
+   ```bash
+   npm run dev
+   ```
+
+The Vite dev server requires Node.js because it uses the Vite tooling chain for module bundling and hot reloads.
+If you need a non-Node development strategy, you can serve the built static files (`npm run build` and then host
+`app/dist/`) with any simple static file server, but you will still need Node.js for the build step.
+
+## Data safety and offline use
+
+The app is designed to keep all data local, autosave after every change, and maintain local backups. Backup export,
+import, and restore are built in so your data stays protected even without network access.

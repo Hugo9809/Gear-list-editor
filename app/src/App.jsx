@@ -1024,28 +1024,27 @@ export default function App() {
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="flex w-full flex-col gap-6 lg:w-72">
             <div className="ui-tile bg-surface-elevated/80 p-6">
-              <h1 className="text-[1.35rem] font-semibold text-text-primary title-shadow tracking-tight whitespace-nowrap">
+              <h1 className="w-full text-[1.6rem] font-normal text-text-secondary title-shadow tracking-tight">
                 {t('ui.appName', 'Gear List Creator')}
               </h1>
+              <nav className="mt-4 flex flex-col gap-2">
+                {navigationTabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`ui-button w-full text-left ${
+                        isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
-
-            <nav className="flex flex-col gap-2">
-              {navigationTabs.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`ui-button w-full text-left ${
-                      isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
 
             <div className="ui-tile bg-surface-elevated/70 p-5">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary title-shadow">

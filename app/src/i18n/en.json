@@ -20,7 +20,6 @@
       "saveNow": "Save now",
       "exportProject": "Export project",
       "exportPdf": "Export PDF",
-      "shareBackup": "Copy backup",
       "downloadBackup": "Download backup",
       "restoreData": "Restore data",
       "importBackup": "Import backup"
@@ -287,9 +286,6 @@
     "backupDownloaded": "Backup downloaded. Store it somewhere safe.",
     "restoredFromSource": "Restored from {source}.",
     "importComplete": "Import complete. Existing data was preserved.",
-    "sharedToClipboard": "Copied your gear list to the clipboard for sharing.",
-    "clipboardBlocked": "Clipboard access was blocked. Use the download backup option instead.",
-    "clipboardUnavailable": "Clipboard sharing is not available. Use the download backup option instead.",
     "empty": "Status updates appear here to confirm data safety.",
     "labels": {
       "needed": "Needed",
@@ -309,7 +305,7 @@
           "Create a project to save locally the moment it exists, even offline.",
           "Select a project to continue editing without losing data.",
           "All Projects actions handle imports, restores, and device backups.",
-          "Use the project workspace header for export, PDF, and share actions.",
+          "Use the project workspace header for export and PDF actions.",
           "Templates live in the Templates tab and can be added without overwriting gear."
         ]
       },
@@ -344,7 +340,7 @@
       "Import a backup file on another device to merge gear lists safely.",
       "Use “Restore from device backup” if local storage needs recovery."
     ],
-    "footer": "Backups stay on-device unless you export or share them."
+    "footer": "Backups stay on-device unless you export them."
   },
   "documentation": {
     "title": "Documentation",
@@ -361,13 +357,12 @@
         ]
       },
       {
-        "title": "Sharing and exports",
-        "description": "Share without leaving offline mode or exposing data online.",
+        "title": "Exports and handoffs",
+        "description": "Export while staying offline and keeping data on-device.",
         "items": [
-          "Clipboard sharing copies a full backup for quick handoffs.",
           "Project export downloads only the active project for safe handoffs.",
           "PDF export opens a print-ready list for production reference.",
-          "Project workspace actions keep exports and sharing next to your gear list."
+          "Project workspace actions keep exports next to your gear list."
         ]
       },
       {

@@ -328,12 +328,26 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="ui-tile flex w-full flex-col gap-6 rounded-3xl bg-surface-base/70 p-5 lg:w-80">
-            <div>
+          <aside className="ui-sidebar flex w-full flex-col gap-6 p-5 lg:w-80">
+            <div className="flex flex-col gap-3">
               <h1 className="w-full text-[1.6rem] font-normal ui-heading tracking-tight">
                 {t('ui.appName', 'Gear List Creator')}
               </h1>
-              <nav className="mt-4 flex flex-col gap-2">
+              <div className="rounded-2xl border border-surface-sunken/60 bg-surface-elevated/70 px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                  {t('ui.sidebar.title', 'Safe offline workspace')}
+                </p>
+                <p className="mt-2 text-sm text-text-secondary">
+                  {t(
+                    'ui.sidebar.description',
+                    'Your All Projects view keeps projects close while autosave runs in the background.'
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="ui-sidebar-section">
+              <nav className="flex flex-col gap-2">
                 {navigationTabs.map((tab) => {
                   const isActive = activeTab === tab.id;
                   return (
@@ -341,9 +355,7 @@ export default function App() {
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
-                      className={`ui-button w-full text-left ${
-                        isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
-                      }`}
+                      className={`ui-sidebar-tab ${isActive ? 'ui-sidebar-tab-active' : ''}`}
                     >
                       {tab.label}
                     </button>
@@ -352,43 +364,49 @@ export default function App() {
               </nav>
             </div>
 
-            <div className="h-px w-full bg-surface-sunken/70" aria-hidden="true" />
-
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex flex-1 flex-col gap-2">
-                <div className="flex flex-wrap gap-2">
-                  {themeOptions.map((themeOption) => {
-                    const isActive = theme === themeOption.id;
-                    return (
-                      <button
-                        key={themeOption.id}
-                        type="button"
-                        onClick={() => setTheme(themeOption.id)}
-                        aria-pressed={isActive}
-                        className={`ui-button gap-2 px-3 py-1.5 text-xs ${
-                          isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
-                        }`}
-                      >
-                        <span aria-hidden="true">{themeOption.icon}</span>
-                        <span>{themeOption.label}</span>
-                      </button>
-                    );
-                  })}
+            <div className="ui-sidebar-section">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                    {t('theme.label', 'Theme')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {themeOptions.map((themeOption) => {
+                      const isActive = theme === themeOption.id;
+                      return (
+                        <button
+                          key={themeOption.id}
+                          type="button"
+                          onClick={() => setTheme(themeOption.id)}
+                          aria-pressed={isActive}
+                          className={`ui-button gap-2 px-3 py-1.5 text-xs ${
+                            isActive ? 'bg-brand text-brand-foreground' : 'ui-button-outline'
+                          }`}
+                        >
+                          <span aria-hidden="true">{themeOption.icon}</span>
+                          <span>{themeOption.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-1 flex-col gap-2">
-                <select
-                  value={locale}
-                  onChange={handleLocaleChange}
-                  className="ui-select text-sm"
-                  aria-label={t('language.label', 'Language')}
-                >
-                  {locales.map((option) => (
-                    <option key={option.code} value={option.code}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                    {t('language.label', 'Language')}
+                  </p>
+                  <select
+                    value={locale}
+                    onChange={handleLocaleChange}
+                    className="ui-select text-sm"
+                    aria-label={t('language.label', 'Language')}
+                  >
+                    {locales.map((option) => (
+                      <option key={option.code} value={option.code}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 

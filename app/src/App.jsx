@@ -220,6 +220,7 @@ export default function App() {
   const [theme, setTheme] = useState('light');
   const [status, setStatus] = useState('Loading your saved gear list...');
   const [isHydrated, setIsHydrated] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
   const [templateDraft, setTemplateDraft] = useState(emptyTemplateDraft);
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -807,13 +808,161 @@ export default function App() {
   const documentationSections = t('documentation.sections', []);
   const offlineSteps = t('offline.steps', []);
 
+  const tabs = [
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'project', label: 'Project' },
+    { id: 'templates', label: 'Templates' },
+    { id: 'help', label: 'Help' }
+  ];
+
+  const themeOptions = [
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+    { value: 'pink', label: 'Pink' }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-10">
-        <header className="flex flex-col gap-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Gear List Editor</p>
-          <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
-            <h1 className="text-3xl font-semibold text-white">Project-ready gear lists with offline protection.</h1>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-10 lg:flex-row">
+        <aside className="flex w-full flex-col gap-6 lg:max-w-xs">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Gear List Editor</p>
+            <h1 className="mt-3 text-2xl font-semibold text-white">Offline-ready gear list control.</h1>
+            <p className="mt-3 text-sm text-slate-300">
+              Every edit stays protected on-device with redundant backups and autosave.
+            </p>
+          </div>
+
+          <nav className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Workspace</p>
+            <div className="mt-3 flex flex-col gap-2">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                      isActive
+                        ? 'bg-emerald-500 text-emerald-950'
+                        : 'border border-slate-700 text-slate-200 hover:border-emerald-400 hover:text-emerald-200'
+                    }`}
+                  >
+                    {tab.label}
+                    {isActive && <span className="text-xs uppercase tracking-wide">Active</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+            <h2 className="text-lg font-semibold text-white">Language</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              {t('language.helper', 'Saved locally for offline use.')}
+            </p>
+            <label className="mt-4 flex flex-col gap-2 text-sm text-slate-300">
+              {t('language.label', 'Language')}
+              <select
+                value={locale}
+                onChange={handleLocaleChange}
+                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+              >
+                {locales.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+            <h2 className="text-lg font-semibold text-white">Theme</h2>
+            <p className="mt-2 text-sm text-slate-400">Choose a viewing mode that fits your environment.</p>
+            <div className="mt-4 grid gap-2">
+              {themeOptions.map((option) => {
+                const isActive = theme === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setTheme(option.value)}
+                    className={`flex items-center justify-between rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                      isActive
+                        ? 'bg-emerald-500 text-emerald-950'
+                        : 'border border-slate-700 text-slate-200 hover:border-emerald-400 hover:text-emerald-200'
+                    }`}
+                  >
+                    {option.label}
+                    {isActive && <span className="text-xs uppercase tracking-wide">Selected</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+            <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
+            <p className="text-sm text-slate-400">
+              Your data stays on-device. Save immediately, create offline backups, and restore if you ever
+              switch devices. Device backups refresh every 30 minutes, even while idle.
+            </p>
+            <div className="mt-4 flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={saveNow}
+                className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
+              >
+                Save now
+              </button>
+              <button
+                type="button"
+                onClick={downloadBackup}
+                className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+              >
+                Download backup
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Import backup file
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={handleImport}
+              />
+              <button
+                type="button"
+                onClick={restoreFromDeviceBackup}
+                className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Restore from device backup
+              </button>
+              <button
+                type="button"
+                onClick={shareData}
+                className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Share via clipboard
+              </button>
+            </div>
+          </div>
+
+          <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
+            {status || 'Status updates appear here to confirm data safety.'}
+          </div>
+        </aside>
+
+        <main className="flex flex-1 flex-col gap-6">
+          <header className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold text-white">Project-ready gear lists with offline protection.</h2>
             <p className="max-w-3xl text-base text-slate-300">
               Build equipment lists that match your production PDFs. Create projects, reuse templates, and
               export print-ready gear lists without leaving offline mode. Every edit is saved locally with
@@ -825,166 +974,157 @@ export default function App() {
               <span className="rounded-full border border-slate-700 px-3 py-1">Template library</span>
               <span className="rounded-full border border-slate-700 px-3 py-1">PDF export ready</span>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
-              <label className="flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1">
-                <span>{t('language.label', 'Language')}</span>
-                <select
-                  value={locale}
-                  onChange={handleLocaleChange}
-                  className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
-                >
-                  {locales.map((option) => (
-                    <option key={option.code} value={option.code}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <span>{t('language.helper', 'Saved locally for offline use.')}</span>
-            </div>
-          </div>
-        </header>
+          </header>
 
-        <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-          <div className="flex flex-col gap-6">
-            <form
-              onSubmit={addProject}
-              className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
-            >
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold text-white">Project dashboard</h2>
-                <p className="text-sm text-slate-400">
-                  Track multiple productions and always know which list is active. New projects are
-                  autosaved the moment they are created.
-                </p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Project name
-                  <input
-                    value={projectDraft.name}
-                    onChange={(event) => setProjectDraft((prev) => ({ ...prev, name: event.target.value }))}
-                    placeholder="e.g. October studio shoot"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Client / production
-                  <input
-                    value={projectDraft.client}
-                    onChange={(event) => setProjectDraft((prev) => ({ ...prev, client: event.target.value }))}
-                    placeholder="Client, agency, or show"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Shoot date
-                  <input
-                    type="date"
-                    value={projectDraft.shootDate}
-                    onChange={(event) =>
-                      setProjectDraft((prev) => ({ ...prev, shootDate: event.target.value }))
-                    }
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Location
-                  <input
-                    value={projectDraft.location}
-                    onChange={(event) => setProjectDraft((prev) => ({ ...prev, location: event.target.value }))}
-                    placeholder="Studio, city, or venue"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
-                  Lead contact
-                  <input
-                    value={projectDraft.contact}
-                    onChange={(event) => setProjectDraft((prev) => ({ ...prev, contact: event.target.value }))}
-                    placeholder="Producer or department contact"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
-                  />
-                </label>
-              </div>
-              <button
-                type="submit"
-                className="inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+          {activeTab === 'dashboard' && (
+            <section className="flex flex-col gap-6">
+              <form
+                onSubmit={addProject}
+                className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
               >
-                Create project
-              </button>
-            </form>
-
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-semibold text-white">Active projects</h2>
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-xl font-semibold text-white">Project dashboard</h2>
                   <p className="text-sm text-slate-400">
-                    {projects.length} project{projects.length === 1 ? '' : 's'} stored locally.
+                    Track multiple productions and always know which list is active. New projects are
+                    autosaved the moment they are created.
                   </p>
                 </div>
-                <div className="text-xs text-slate-500">
-                  Last saved: {lastSaved ? new Date(lastSaved).toLocaleString() : 'Not saved yet'}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    Project name
+                    <input
+                      value={projectDraft.name}
+                      onChange={(event) => setProjectDraft((prev) => ({ ...prev, name: event.target.value }))}
+                      placeholder="e.g. October studio shoot"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    Client / production
+                    <input
+                      value={projectDraft.client}
+                      onChange={(event) =>
+                        setProjectDraft((prev) => ({ ...prev, client: event.target.value }))
+                      }
+                      placeholder="Client, agency, or show"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    Shoot date
+                    <input
+                      type="date"
+                      value={projectDraft.shootDate}
+                      onChange={(event) =>
+                        setProjectDraft((prev) => ({ ...prev, shootDate: event.target.value }))
+                      }
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    Location
+                    <input
+                      value={projectDraft.location}
+                      onChange={(event) =>
+                        setProjectDraft((prev) => ({ ...prev, location: event.target.value }))
+                      }
+                      placeholder="Studio, city, or venue"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
+                    Lead contact
+                    <input
+                      value={projectDraft.contact}
+                      onChange={(event) =>
+                        setProjectDraft((prev) => ({ ...prev, contact: event.target.value }))
+                      }
+                      placeholder="Producer or department contact"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    />
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                >
+                  Create project
+                </button>
+              </form>
+
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-white">Active projects</h2>
+                    <p className="text-sm text-slate-400">
+                      {projects.length} project{projects.length === 1 ? '' : 's'} stored locally.
+                    </p>
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Last saved: {lastSaved ? new Date(lastSaved).toLocaleString() : 'Not saved yet'}
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                  {projects.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
+                      No projects yet. Create your first project to begin building a gear list.
+                    </div>
+                  ) : (
+                    projects.map((project) => {
+                      const isActive = project.id === activeProject?.id;
+                      const itemTotal = project.categories.reduce(
+                        (sum, category) => sum + category.items.length,
+                        0
+                      );
+                      return (
+                        <div
+                          key={project.id}
+                          className={`flex flex-col gap-3 rounded-xl border p-4 transition ${
+                            isActive
+                              ? 'border-emerald-500/60 bg-emerald-500/10'
+                              : 'border-slate-800 bg-slate-950/60'
+                          }`}
+                        >
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">{project.name}</h3>
+                            <p className="text-xs text-slate-400">
+                              {project.client || 'Client not set'} · {project.shootDate || 'Date not set'}
+                            </p>
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {project.categories.length} categories · {itemTotal} items
+                          </div>
+                          <div className="mt-auto flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setActiveProjectId(project.id)}
+                              className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
+                                isActive
+                                  ? 'bg-emerald-500 text-emerald-950'
+                                  : 'border border-slate-700 text-slate-200 hover:border-emerald-400'
+                              }`}
+                            >
+                              {isActive ? 'Active' : 'Open'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteProject(project.id)}
+                              className="rounded-lg border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
+                            >
+                              Archive
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                {projects.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
-                    No projects yet. Create your first project to begin building a gear list.
-                  </div>
-                ) : (
-                  projects.map((project) => {
-                    const isActive = project.id === activeProject?.id;
-                    const itemTotal = project.categories.reduce(
-                      (sum, category) => sum + category.items.length,
-                      0
-                    );
-                    return (
-                      <div
-                        key={project.id}
-                        className={`flex flex-col gap-3 rounded-xl border p-4 transition ${
-                          isActive
-                            ? 'border-emerald-500/60 bg-emerald-500/10'
-                            : 'border-slate-800 bg-slate-950/60'
-                        }`}
-                      >
-                        <div>
-                          <h3 className="text-lg font-semibold text-white">{project.name}</h3>
-                          <p className="text-xs text-slate-400">
-                            {project.client || 'Client not set'} · {project.shootDate || 'Date not set'}
-                          </p>
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          {project.categories.length} categories · {itemTotal} items
-                        </div>
-                        <div className="mt-auto flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setActiveProjectId(project.id)}
-                            className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
-                              isActive
-                                ? 'bg-emerald-500 text-emerald-950'
-                                : 'border border-slate-700 text-slate-200 hover:border-emerald-400'
-                            }`}
-                          >
-                            {isActive ? 'Active' : 'Open'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => deleteProject(project.id)}
-                            className="rounded-lg border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
-                          >
-                            Archive
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
+            </section>
+          )}
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          {activeTab === 'project' && (
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-semibold text-white">Active project workspace</h2>
@@ -1248,8 +1388,10 @@ export default function App() {
                   Select or create a project to unlock the gear list editor.
                 </div>
               )}
-            </div>
+            </section>
+          )}
 
+          {activeTab === 'templates' && (
             <form
               onSubmit={saveTemplateFromProject}
               className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
@@ -1266,7 +1408,9 @@ export default function App() {
                   Template name
                   <input
                     value={templateDraft.name}
-                    onChange={(event) => setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))}
+                    onChange={(event) =>
+                      setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))
+                    }
                     placeholder="e.g. Standard documentary kit"
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
@@ -1346,66 +1490,10 @@ export default function App() {
                 )}
               </div>
             </form>
-          </div>
+          )}
 
-          <aside className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
-              <p className="text-sm text-slate-400">
-                Your data stays on-device. Save immediately, create offline backups, and restore if you ever
-                switch devices. Device backups refresh every 30 minutes, even while idle.
-              </p>
-              <div className="mt-4 flex flex-col gap-3">
-                <button
-                  type="button"
-                  onClick={saveNow}
-                  className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
-                >
-                  Save now
-                </button>
-                <button
-                  type="button"
-                  onClick={downloadBackup}
-                  className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
-                >
-                  Download backup
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-                >
-                  Import backup file
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="application/json"
-                  className="hidden"
-                  onChange={handleImport}
-                />
-                <button
-                  type="button"
-                  onClick={restoreFromDeviceBackup}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-                >
-                  Restore from device backup
-                </button>
-                <button
-                  type="button"
-                  onClick={shareData}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
-                >
-                  Share via clipboard
-                </button>
-              </div>
-            </div>
-
-            <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
-              {status || 'Status updates appear here to confirm data safety.'}
-            </div>
-
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+          {activeTab === 'help' && (
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
               <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-white">
                   {t('help.title', 'Help & documentation')}
@@ -1476,9 +1564,9 @@ export default function App() {
                   ))}
                 </div>
               </div>
-            </div>
-          </aside>
-        </section>
+            </section>
+          )}
+        </main>
       </div>
     </div>
   );

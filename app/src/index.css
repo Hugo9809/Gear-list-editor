@@ -70,18 +70,18 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --v2-surface-app-bg: 26 26 46;
-  --v2-surface-base: 0 8 53;
-  --v2-surface-elevated: 0 10 75;
-  --v2-surface-muted: 0 16 106;
-  --v2-surface-sunken: 0 8 53;
-  --v2-surface-input: 0 8 53;
+  --v2-surface-app-bg: 11 16 32;
+  --v2-surface-base: 20 28 53;
+  --v2-surface-elevated: 27 36 66;
+  --v2-surface-muted: 34 44 82;
+  --v2-surface-sunken: 15 22 42;
+  --v2-surface-input: 22 30 56;
   --v2-surface-inverse: 245 247 250;
 
-  --v2-text-primary: 255 255 255;
-  --v2-text-secondary: 153 153 153;
-  --v2-text-muted: 102 102 102;
-  --v2-text-inverse: 26 26 26;
+  --v2-text-primary: 248 250 255;
+  --v2-text-secondary: 197 207 230;
+  --v2-text-muted: 154 168 200;
+  --v2-text-inverse: 15 22 42;
 }
 
 :root[data-theme='pink'] {

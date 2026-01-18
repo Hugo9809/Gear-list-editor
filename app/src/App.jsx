@@ -185,7 +185,7 @@ const TypeaheadInput = ({
       />
       {isOpen && filteredSuggestions.length > 0 && (
         <div
-          className={`absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-slate-700 bg-slate-950 text-left text-sm text-slate-200 shadow-xl ${
+          className={`absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-surface-sunken bg-surface-input text-left text-sm text-text-secondary shadow-xl ${
             listClassName || ''
           }`}
         >
@@ -197,10 +197,10 @@ const TypeaheadInput = ({
                 event.preventDefault();
                 handleSelect(suggestion);
               }}
-              className="flex w-full flex-col gap-1 px-3 py-2 text-left transition hover:bg-slate-800"
+              className="flex w-full flex-col gap-1 px-3 py-2 text-left transition hover:bg-surface-muted"
             >
-              <span className="font-medium text-white">{suggestion.name}</span>
-              <span className="text-xs text-slate-400">
+              <span className="font-medium text-text-primary">{suggestion.name}</span>
+              <span className="text-xs text-text-secondary">
                 {suggestion.unit || 'pcs'} · {suggestion.details || 'No details saved'}
               </span>
             </button>
@@ -791,8 +791,8 @@ export default function App() {
   };
 
   const statusClasses = status
-    ? 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
-    : 'border border-slate-800 bg-slate-900/40 text-slate-400';
+    ? 'border border-status-success bg-status-success-bg text-status-success'
+    : 'border border-surface-muted bg-surface-elevated text-text-secondary';
 
   const totals = useMemo(() => {
     if (!activeProject) {
@@ -808,30 +808,30 @@ export default function App() {
   const offlineSteps = t('offline.steps', []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-10">
         <header className="flex flex-col gap-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Gear List Editor</p>
-          <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
-            <h1 className="text-3xl font-semibold text-white">Project-ready gear lists with offline protection.</h1>
-            <p className="max-w-3xl text-base text-slate-300">
+          <p className="text-sm uppercase tracking-[0.3em] text-text-muted">Gear List Editor</p>
+          <div className="flex flex-col gap-4 rounded-2xl border border-surface-muted bg-surface-elevated p-6 shadow-lg">
+            <h1 className="text-3xl font-semibold text-text-primary">Project-ready gear lists with offline protection.</h1>
+            <p className="max-w-3xl text-base text-text-secondary">
               Build equipment lists that match your production PDFs. Create projects, reuse templates, and
               export print-ready gear lists without leaving offline mode. Every edit is saved locally with
               redundant backups.
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
-              <span className="rounded-full border border-slate-700 px-3 py-1">Autosave active</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Project dashboard</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Template library</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">PDF export ready</span>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
+              <span className="rounded-full border border-surface-sunken px-3 py-1">Autosave active</span>
+              <span className="rounded-full border border-surface-sunken px-3 py-1">Project dashboard</span>
+              <span className="rounded-full border border-surface-sunken px-3 py-1">Template library</span>
+              <span className="rounded-full border border-surface-sunken px-3 py-1">PDF export ready</span>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
-              <label className="flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-text-secondary">
+              <label className="flex items-center gap-2 rounded-full border border-surface-sunken px-3 py-1">
                 <span>{t('language.label', 'Language')}</span>
                 <select
                   value={locale}
                   onChange={handleLocaleChange}
-                  className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
+                  className="rounded-md border border-surface-sunken bg-surface-input px-2 py-1 text-xs text-text-primary focus:border-brand-hover focus:outline-none"
                 >
                   {locales.map((option) => (
                     <option key={option.code} value={option.code}>
@@ -849,35 +849,35 @@ export default function App() {
           <div className="flex flex-col gap-6">
             <form
               onSubmit={addProject}
-              className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
+              className="flex flex-col gap-4 rounded-2xl border border-surface-muted bg-surface-elevated p-6"
             >
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold text-white">Project dashboard</h2>
-                <p className="text-sm text-slate-400">
+                <h2 className="text-xl font-semibold text-text-primary">Project dashboard</h2>
+                <p className="text-sm text-text-secondary">
                   Track multiple productions and always know which list is active. New projects are
                   autosaved the moment they are created.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary">
                   Project name
                   <input
                     value={projectDraft.name}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, name: event.target.value }))}
                     placeholder="e.g. October studio shoot"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                   />
                 </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary">
                   Client / production
                   <input
                     value={projectDraft.client}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, client: event.target.value }))}
                     placeholder="Client, agency, or show"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                   />
                 </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary">
                   Shoot date
                   <input
                     type="date"
@@ -885,51 +885,51 @@ export default function App() {
                     onChange={(event) =>
                       setProjectDraft((prev) => ({ ...prev, shootDate: event.target.value }))
                     }
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                   />
                 </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary">
                   Location
                   <input
                     value={projectDraft.location}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, location: event.target.value }))}
                     placeholder="Studio, city, or venue"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                   />
                 </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
                   Lead contact
                   <input
                     value={projectDraft.contact}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, contact: event.target.value }))}
                     placeholder="Producer or department contact"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                   />
                 </label>
               </div>
               <button
                 type="submit"
-                className="inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                className="inline-flex w-fit items-center justify-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
               >
                 Create project
               </button>
             </form>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+            <div className="rounded-2xl border border-surface-muted bg-surface-elevated p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-white">Active projects</h2>
-                  <p className="text-sm text-slate-400">
+                  <h2 className="text-xl font-semibold text-text-primary">Active projects</h2>
+                  <p className="text-sm text-text-secondary">
                     {projects.length} project{projects.length === 1 ? '' : 's'} stored locally.
                   </p>
                 </div>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-text-muted">
                   Last saved: {lastSaved ? new Date(lastSaved).toLocaleString() : 'Not saved yet'}
                 </div>
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {projects.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
+                  <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-sunken px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
                     No projects yet. Create your first project to begin building a gear list.
                   </div>
                 ) : (
@@ -944,17 +944,17 @@ export default function App() {
                         key={project.id}
                         className={`flex flex-col gap-3 rounded-xl border p-4 transition ${
                           isActive
-                            ? 'border-emerald-500/60 bg-emerald-500/10'
-                            : 'border-slate-800 bg-slate-950/60'
+                            ? 'border-brand bg-status-success-bg'
+                            : 'border-surface-muted bg-surface-sunken'
                         }`}
                       >
                         <div>
-                          <h3 className="text-lg font-semibold text-white">{project.name}</h3>
-                          <p className="text-xs text-slate-400">
+                          <h3 className="text-lg font-semibold text-text-primary">{project.name}</h3>
+                          <p className="text-xs text-text-secondary">
                             {project.client || 'Client not set'} · {project.shootDate || 'Date not set'}
                           </p>
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-text-muted">
                           {project.categories.length} categories · {itemTotal} items
                         </div>
                         <div className="mt-auto flex flex-wrap gap-2">
@@ -963,8 +963,8 @@ export default function App() {
                             onClick={() => setActiveProjectId(project.id)}
                             className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                               isActive
-                                ? 'bg-emerald-500 text-emerald-950'
-                                : 'border border-slate-700 text-slate-200 hover:border-emerald-400'
+                                ? 'bg-brand text-brand-foreground'
+                                : 'border border-surface-sunken text-text-secondary hover:border-brand-hover'
                             }`}
                           >
                             {isActive ? 'Active' : 'Open'}
@@ -972,7 +972,7 @@ export default function App() {
                           <button
                             type="button"
                             onClick={() => deleteProject(project.id)}
-                            className="rounded-lg border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
+                            className="rounded-lg border border-surface-sunken px-3 py-1 text-xs font-semibold text-text-secondary transition hover:border-status-error hover:text-status-error"
                           >
                             Archive
                           </button>
@@ -984,11 +984,11 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+            <div className="rounded-2xl border border-surface-muted bg-surface-elevated p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-white">Active project workspace</h2>
-                  <p className="text-sm text-slate-400">
+                  <h2 className="text-xl font-semibold text-text-primary">Active project workspace</h2>
+                  <p className="text-sm text-text-secondary">
                     {activeProject
                       ? `${totals.categories} categories · ${totals.items} items`
                       : 'Select a project to start editing.'}
@@ -997,7 +997,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={exportPdf}
-                  className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                  className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                 >
                   Export PDF
                 </button>
@@ -1006,67 +1006,67 @@ export default function App() {
               {activeProject ? (
                 <div className="mt-6 flex flex-col gap-6">
                   <div className="grid gap-4 md:grid-cols-2">
-                    <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
                       Project name
                       <input
                         value={activeProject.name}
                         onChange={(event) => updateProjectField('name', event.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                       />
                     </label>
-                    <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
                       Client / production
                       <input
                         value={activeProject.client}
                         onChange={(event) => updateProjectField('client', event.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                       />
                     </label>
-                    <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
                       Shoot date
                       <input
                         type="date"
                         value={activeProject.shootDate}
                         onChange={(event) => updateProjectField('shootDate', event.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                       />
                     </label>
-                    <label className="flex flex-col gap-2 text-sm text-slate-300">
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
                       Location
                       <input
                         value={activeProject.location}
                         onChange={(event) => updateProjectField('location', event.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                       />
                     </label>
-                    <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
                       Lead contact
                       <input
                         value={activeProject.contact}
                         onChange={(event) => updateProjectField('contact', event.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                        className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                       />
                     </label>
                   </div>
 
                   <form
                     onSubmit={addCategory}
-                    className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                    className="flex flex-col gap-3 rounded-xl border border-surface-muted bg-surface-sunken p-4"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-white">Categories</h3>
-                      <span className="text-xs text-slate-500">Use templates for faster setups.</span>
+                      <h3 className="text-lg font-semibold text-text-primary">Categories</h3>
+                      <span className="text-xs text-text-muted">Use templates for faster setups.</span>
                     </div>
                     <div className="flex flex-wrap gap-3">
                       <input
                         value={newCategoryName}
                         onChange={(event) => setNewCategoryName(event.target.value)}
                         placeholder="Add a category (e.g. Camera, Lighting)"
-                        className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                        className="flex-1 rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                       />
                       <button
                         type="submit"
-                        className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                        className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                       >
                         Add category
                       </button>
@@ -1075,14 +1075,14 @@ export default function App() {
 
                   <div className="flex flex-col gap-4">
                     {activeProject.categories.length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
+                      <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-sunken px-4 py-6 text-center text-sm text-text-muted">
                         No categories yet. Add one above or apply a template.
                       </div>
                     ) : (
                       activeProject.categories.map((category) => (
                         <div
                           key={category.id}
-                          className="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                          className="flex flex-col gap-4 rounded-xl border border-surface-muted bg-surface-sunken p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div className="flex flex-1 flex-col gap-3">
@@ -1091,7 +1091,7 @@ export default function App() {
                                 onChange={(event) =>
                                   updateCategoryField(category.id, 'name', event.target.value)
                                 }
-                                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-base text-text-primary focus:border-brand-hover focus:outline-none"
                               />
                               <textarea
                                 value={category.notes}
@@ -1100,13 +1100,13 @@ export default function App() {
                                 }
                                 placeholder="Category notes or rental references"
                                 rows={2}
-                                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                                className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                               />
                             </div>
                             <button
                               type="button"
                               onClick={() => removeCategory(category.id)}
-                              className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
+                              className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-secondary transition hover:border-status-error hover:text-status-error"
                             >
                               Remove category
                             </button>
@@ -1114,7 +1114,7 @@ export default function App() {
 
                           <form
                             onSubmit={(event) => addItemToCategory(event, category.id)}
-                            className="grid gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_auto]"
+                            className="grid gap-3 rounded-lg border border-surface-muted bg-surface-elevated p-3 md:grid-cols-[2fr_1fr_1fr_2fr_auto]"
                           >
                             <TypeaheadInput
                               value={(itemDrafts[category.id] || emptyItemDraft).name}
@@ -1125,30 +1125,30 @@ export default function App() {
                               suggestions={itemSuggestions}
                               placeholder="Item name"
                               label="Item name"
-                              inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                              inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                             />
                             <input
                               type="number"
                               min="1"
                               value={(itemDrafts[category.id] || emptyItemDraft).quantity}
                               onChange={(event) => updateDraftItem(category.id, 'quantity', event.target.value)}
-                              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                              className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                             />
                             <input
                               value={(itemDrafts[category.id] || emptyItemDraft).unit}
                               onChange={(event) => updateDraftItem(category.id, 'unit', event.target.value)}
                               placeholder="Unit"
-                              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                              className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                             />
                             <input
                               value={(itemDrafts[category.id] || emptyItemDraft).details}
                               onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
                               placeholder="Details / notes"
-                              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                              className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                             />
                             <button
                               type="submit"
-                              className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                              className="rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
                             >
                               Add
                             </button>
@@ -1156,14 +1156,14 @@ export default function App() {
 
                           <div className="flex flex-col gap-3">
                             {category.items.length === 0 ? (
-                              <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-4 text-center text-xs text-slate-500">
+                              <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-sunken px-4 py-4 text-center text-xs text-text-muted">
                                 No items yet. Add the first item above.
                               </div>
                             ) : (
                               category.items.map((item) => (
                                 <div
                                   key={item.id}
-                                  className="grid gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
+                                  className="grid gap-3 rounded-lg border border-surface-muted bg-surface-sunken p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
                                 >
                                   <TypeaheadInput
                                     value={item.name}
@@ -1176,7 +1176,7 @@ export default function App() {
                                     suggestions={itemSuggestions}
                                     placeholder="Item name"
                                     label="Item name"
-                                    inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                                   />
                                   <input
                                     type="number"
@@ -1185,28 +1185,28 @@ export default function App() {
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'quantity', event.target.value)
                                     }
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                                   />
                                   <input
                                     value={item.unit}
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'unit', event.target.value)
                                     }
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                                   />
                                   <input
                                     value={item.details}
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'details', event.target.value)
                                     }
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                                   />
                                   <select
                                     value={item.status}
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'status', event.target.value)
                                     }
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                                   >
                                     <option value="needed">Needed</option>
                                     <option value="packed">Packed</option>
@@ -1216,7 +1216,7 @@ export default function App() {
                                   <button
                                     type="button"
                                     onClick={() => removeItem(category.id, item.id)}
-                                    className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
+                                    className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-secondary transition hover:border-status-error hover:text-status-error"
                                   >
                                     Remove
                                   </button>
@@ -1229,9 +1229,9 @@ export default function App() {
                     )}
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-                    <h3 className="text-lg font-semibold text-white">Project notes</h3>
-                    <p className="text-sm text-slate-400">
+                  <div className="rounded-2xl border border-surface-muted bg-surface-elevated p-4">
+                    <h3 className="text-lg font-semibold text-text-primary">Project notes</h3>
+                    <p className="text-sm text-text-secondary">
                       Notes appear in exports and are included in backups for every project.
                     </p>
                     <textarea
@@ -1239,12 +1239,12 @@ export default function App() {
                       onChange={(event) => updateProjectNotes(event.target.value)}
                       placeholder="Crew notes, pickup info, or return instructions"
                       rows={4}
-                      className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                      className="mt-3 w-full rounded-xl border border-surface-sunken bg-surface-input px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                     />
                   </div>
                 </div>
               ) : (
-                <div className="mt-6 rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
+                <div className="mt-6 rounded-lg border border-dashed border-surface-sunken bg-surface-sunken px-4 py-6 text-center text-sm text-text-muted">
                   Select or create a project to unlock the gear list editor.
                 </div>
               )}
@@ -1252,26 +1252,26 @@ export default function App() {
 
             <form
               onSubmit={saveTemplateFromProject}
-              className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
+              className="rounded-2xl border border-surface-muted bg-surface-elevated p-6"
             >
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold text-white">Template management</h2>
-                <p className="text-sm text-slate-400">
+                <h2 className="text-xl font-semibold text-text-primary">Template management</h2>
+                <p className="text-sm text-text-secondary">
                   Save reusable setups for recurring shoots. Templates can be applied to any project without
                   overwriting existing data.
                 </p>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary">
                   Template name
                   <input
                     value={templateDraft.name}
                     onChange={(event) => setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))}
                     placeholder="e.g. Standard documentary kit"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                   />
                 </label>
-                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                <label className="flex flex-col gap-2 text-sm text-text-secondary">
                   Description
                   <input
                     value={templateDraft.description}
@@ -1279,49 +1279,49 @@ export default function App() {
                       setTemplateDraft((prev) => ({ ...prev, description: event.target.value }))
                     }
                     placeholder="Key details or usage"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand-hover focus:outline-none"
                   />
                 </label>
               </div>
               <button
                 type="submit"
-                className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
               >
                 Save current project as template
               </button>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {templates.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
+                  <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-sunken px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
                     No templates yet. Save the active project to build your library.
                   </div>
                 ) : (
                   templates.map((template) => (
                     <div
                       key={template.id}
-                      className="flex h-full flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
+                      className="flex h-full flex-col gap-3 rounded-xl border border-surface-muted bg-surface-sunken p-4"
                     >
-                      <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
+                      <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
                         Name
                         <input
                           value={template.name}
                           onChange={(event) =>
                             updateTemplateField(template.id, 'name', event.target.value)
                           }
-                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                         />
                       </label>
-                      <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
+                      <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
                         Description
                         <input
                           value={template.description}
                           onChange={(event) =>
                             updateTemplateField(template.id, 'description', event.target.value)
                           }
-                          className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
+                          className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-hover focus:outline-none"
                         />
                       </label>
-                      <div className="text-xs text-slate-500">
+                      <div className="text-xs text-text-muted">
                         {template.categories.length} categories · Last used{' '}
                         {template.lastUsed ? new Date(template.lastUsed).toLocaleDateString() : 'Never'}
                       </div>
@@ -1329,14 +1329,14 @@ export default function App() {
                         <button
                           type="button"
                           onClick={() => applyTemplateToProject(template.id)}
-                          className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                          className="rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
                         >
                           Apply to active project
                         </button>
                         <button
                           type="button"
                           onClick={() => removeTemplate(template.id)}
-                          className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
+                          className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold text-text-secondary transition hover:border-status-error hover:text-status-error"
                         >
                           Remove
                         </button>
@@ -1349,9 +1349,9 @@ export default function App() {
           </div>
 
           <aside className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
-              <p className="text-sm text-slate-400">
+            <div className="rounded-2xl border border-surface-muted bg-surface-elevated p-6">
+              <h2 className="text-lg font-semibold text-text-primary">Save, share, restore</h2>
+              <p className="text-sm text-text-secondary">
                 Your data stays on-device. Save immediately, create offline backups, and restore if you ever
                 switch devices.
               </p>
@@ -1359,21 +1359,21 @@ export default function App() {
                 <button
                   type="button"
                   onClick={saveNow}
-                  className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
+                  className="rounded-lg bg-surface-base px-4 py-2 text-sm font-semibold text-text-primary transition hover:bg-surface-base"
                 >
                   Save now
                 </button>
                 <button
                   type="button"
                   onClick={downloadBackup}
-                  className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+                  className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                 >
                   Download backup
                 </button>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-brand-hover hover:text-status-success"
                 >
                   Import backup file
                 </button>
@@ -1387,14 +1387,14 @@ export default function App() {
                 <button
                   type="button"
                   onClick={restoreFromDeviceBackup}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-brand-hover hover:text-status-success"
                 >
                   Restore from device backup
                 </button>
                 <button
                   type="button"
                   onClick={shareData}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-brand-hover hover:text-status-success"
                 >
                   Share via clipboard
                 </button>
@@ -1405,12 +1405,12 @@ export default function App() {
               {status || 'Status updates appear here to confirm data safety.'}
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+            <div className="rounded-2xl border border-surface-muted bg-surface-elevated p-6">
               <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-text-primary">
                   {t('help.title', 'Help & documentation')}
                 </h2>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-text-secondary">
                   {t('help.subtitle', 'Offline-first guidance for safe gear lists.')}
                 </p>
               </div>
@@ -1419,13 +1419,13 @@ export default function App() {
                   <details
                     key={section.title}
                     open={index === 0}
-                    className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
+                    className="rounded-xl border border-surface-muted bg-surface-sunken px-4 py-3"
                   >
-                    <summary className="cursor-pointer text-sm font-semibold text-slate-100">
+                    <summary className="cursor-pointer text-sm font-semibold text-text-primary">
                       {section.title}
                     </summary>
-                    <p className="mt-2 text-sm text-slate-400">{section.description}</p>
-                    <ul className="mt-3 list-disc space-y-1 pl-4 text-sm text-slate-300">
+                    <p className="mt-2 text-sm text-text-secondary">{section.description}</p>
+                    <ul className="mt-3 list-disc space-y-1 pl-4 text-sm text-text-secondary">
                       {section.items.map((item) => (
                         <li key={item}>{item}</li>
                       ))}
@@ -1433,27 +1433,27 @@ export default function App() {
                   </details>
                 ))}
               </div>
-              <div className="mt-5 border-t border-slate-800 pt-4">
-                <h3 className="text-base font-semibold text-white">
+              <div className="mt-5 border-t border-surface-muted pt-4">
+                <h3 className="text-base font-semibold text-text-primary">
                   {t('offline.title', 'Offline workflow')}
                 </h3>
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-text-secondary">
                   {t('offline.description', 'Every feature works without a connection.')}
                 </p>
-                <ol className="mt-3 list-decimal space-y-1 pl-4 text-sm text-slate-300">
+                <ol className="mt-3 list-decimal space-y-1 pl-4 text-sm text-text-secondary">
                   {offlineSteps.map((step) => (
                     <li key={step}>{step}</li>
                   ))}
                 </ol>
-                <p className="mt-3 text-xs text-slate-500">
+                <p className="mt-3 text-xs text-text-muted">
                   {t('offline.footer', 'Backups stay on-device unless you export or share them.')}
                 </p>
               </div>
-              <div className="mt-5 border-t border-slate-800 pt-4">
-                <h3 className="text-base font-semibold text-white">
+              <div className="mt-5 border-t border-surface-muted pt-4">
+                <h3 className="text-base font-semibold text-text-primary">
                   {t('documentation.title', 'Documentation')}
                 </h3>
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-text-secondary">
                   {t(
                     'documentation.subtitle',
                     'Key safety behaviors are automatic, with manual controls when you need them.'
@@ -1463,11 +1463,11 @@ export default function App() {
                   {documentationSections.map((section) => (
                     <div
                       key={section.title}
-                      className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3"
+                      className="rounded-xl border border-surface-muted bg-surface-sunken px-4 py-3"
                     >
-                      <h4 className="text-sm font-semibold text-slate-100">{section.title}</h4>
-                      <p className="mt-1 text-xs text-slate-400">{section.description}</p>
-                      <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-slate-300">
+                      <h4 className="text-sm font-semibold text-text-primary">{section.title}</h4>
+                      <p className="mt-1 text-xs text-text-secondary">{section.description}</p>
+                      <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-text-secondary">
                         {section.items.map((item) => (
                           <li key={item}>{item}</li>
                         ))}

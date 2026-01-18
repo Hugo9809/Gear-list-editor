@@ -4,10 +4,131 @@
 
 :root {
   color-scheme: light;
+
+  --v2-brand-blue: #001589;
+  --v2-brand-blue-hover: #00106a;
+  --v2-brand-blue-active: #000a4b;
+  --v2-brand-blue-foreground: #ffffff;
+  --v2-brand-pink: #ff69b4;
+  --v2-brand-pink-hover: #f255a8;
+  --v2-brand-pink-active: #d1308a;
+  --v2-brand-pink-foreground: #18181b;
+
+  --v2-surface-app-bg: #f5f7fa;
+  --v2-surface-base: #ffffff;
+  --v2-surface-elevated: #ffffff;
+  --v2-surface-muted: #f0f0f0;
+  --v2-surface-sunken: #e8e8e8;
+  --v2-surface-input: #ffffff;
+  --v2-surface-inverse: #1a1a2e;
+
+  --v2-text-primary: #1a1a1a;
+  --v2-text-secondary: #666666;
+  --v2-text-muted: #999999;
+  --v2-text-inverse: #ffffff;
+  --v2-text-link: #001589;
+
+  --v2-status-success: #28a745;
+  --v2-status-success-bg: #d4edda;
+  --v2-status-warning: #ffc107;
+  --v2-status-warning-bg: #fff3cd;
+  --v2-status-error: #dc3545;
+  --v2-status-error-bg: #f8d7da;
+  --v2-status-info: #17a2b8;
+  --v2-status-info-bg: #d1ecf1;
+
+  --v2-palette-blue: #2196f3;
+  --v2-palette-green: #4caf50;
+  --v2-palette-orange: #ff9800;
+  --v2-palette-purple: #9c27b0;
+  --v2-palette-red: #f44336;
+  --v2-palette-pink: #e91e63;
+  --v2-palette-teal: #009688;
+  --v2-palette-indigo: #3f51b5;
+
+  --v2-radius-sm: 4px;
+  --v2-radius-md: 8px;
+  --v2-radius-lg: 12px;
+  --v2-radius-xl: 16px;
+  --v2-radius-full: 9999px;
+
+  --v2-space-xs: 4px;
+  --v2-space-sm: 8px;
+  --v2-space-md: 16px;
+  --v2-space-lg: 24px;
+  --v2-space-xl: 32px;
+  --v2-space-2xl: 48px;
+  --v2-space-3xl: 64px;
+
+  --v2-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --v2-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --v2-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --v2-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12);
+  --v2-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  --v2-theme-brand: var(--v2-brand-blue);
+  --v2-theme-brand-hover: var(--v2-brand-blue-hover);
+  --v2-theme-brand-active: var(--v2-brand-blue-active);
+  --v2-theme-brand-foreground: var(--v2-brand-blue-foreground);
+  --v2-theme-secondary: var(--v2-brand-pink);
+  --v2-theme-secondary-hover: var(--v2-brand-pink-hover);
+  --v2-theme-secondary-active: var(--v2-brand-pink-active);
+  --v2-theme-secondary-foreground: var(--v2-brand-pink-foreground);
+
+  --v2-theme-surface-app-bg: var(--v2-surface-app-bg);
+  --v2-theme-surface-base: var(--v2-surface-base);
+  --v2-theme-surface-elevated: var(--v2-surface-elevated);
+  --v2-theme-surface-muted: var(--v2-surface-muted);
+  --v2-theme-surface-sunken: var(--v2-surface-sunken);
+  --v2-theme-surface-input: var(--v2-surface-input);
+  --v2-theme-surface-inverse: var(--v2-surface-inverse);
+
+  --v2-theme-text-primary: var(--v2-text-primary);
+  --v2-theme-text-secondary: var(--v2-text-secondary);
+  --v2-theme-text-muted: var(--v2-text-muted);
+  --v2-theme-text-inverse: var(--v2-text-inverse);
+  --v2-theme-text-link: var(--v2-text-link);
+
+  --v2-theme-status-success: var(--v2-status-success);
+  --v2-theme-status-success-bg: var(--v2-status-success-bg);
+  --v2-theme-status-warning: var(--v2-status-warning);
+  --v2-theme-status-warning-bg: var(--v2-status-warning-bg);
+  --v2-theme-status-error: var(--v2-status-error);
+  --v2-theme-status-error-bg: var(--v2-status-error-bg);
+  --v2-theme-status-info: var(--v2-status-info);
+  --v2-theme-status-info-bg: var(--v2-status-info-bg);
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
+
+  --v2-theme-surface-app-bg: var(--v2-surface-inverse);
+  --v2-theme-surface-base: var(--v2-surface-inverse);
+  --v2-theme-surface-elevated: var(--v2-surface-inverse);
+  --v2-theme-surface-muted: var(--v2-surface-inverse);
+  --v2-theme-surface-sunken: var(--v2-surface-inverse);
+  --v2-theme-surface-input: var(--v2-surface-inverse);
+
+  --v2-theme-text-primary: var(--v2-text-inverse);
+  --v2-theme-text-secondary: var(--v2-text-muted);
+  --v2-theme-text-muted: var(--v2-text-secondary);
+  --v2-theme-text-inverse: var(--v2-text-primary);
+  --v2-theme-text-link: var(--v2-brand-pink);
+}
+
+:root[data-theme='pink'] {
+  color-scheme: light;
+
+  --v2-theme-brand: var(--v2-brand-pink);
+  --v2-theme-brand-hover: var(--v2-brand-pink-hover);
+  --v2-theme-brand-active: var(--v2-brand-pink-active);
+  --v2-theme-brand-foreground: var(--v2-brand-pink-foreground);
+  --v2-theme-secondary: var(--v2-brand-blue);
+  --v2-theme-secondary-hover: var(--v2-brand-blue-hover);
+  --v2-theme-secondary-active: var(--v2-brand-blue-active);
+  --v2-theme-secondary-foreground: var(--v2-brand-blue-foreground);
+
+  --v2-theme-text-link: var(--v2-brand-pink);
 }
 
 body {

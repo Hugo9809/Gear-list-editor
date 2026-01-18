@@ -22,6 +22,7 @@ export const createId = () => {
 
 export const createEmptyState = () => ({
   version: STORAGE_VERSION,
+  theme: 'light',
   projects: [],
   templates: [],
   history: {
@@ -207,6 +208,8 @@ export const migratePayload = (payload) => {
   const version = Number.isFinite(Number(payload.version)) ? Number(payload.version) : 0;
   const legacyItems = normalizeItems(payload.items);
   const legacyNotes = normalizeNotes(payload.notes);
+  const theme =
+    typeof payload.theme === 'string' && payload.theme.trim() ? payload.theme.trim() : 'light';
 
   let projects = Array.isArray(payload.projects) ? payload.projects.map(normalizeProject) : [];
   if (version <= 1 && legacyItems.length > 0) {
@@ -241,6 +244,7 @@ export const migratePayload = (payload) => {
 
   return {
     version: STORAGE_VERSION,
+    theme,
     projects,
     templates,
     history: mergedHistory,
@@ -415,6 +419,7 @@ export const mergePayloads = (current, incoming) => {
 
   return {
     ...base,
+    theme: base.theme,
     projects,
     templates,
     history,
@@ -619,6 +624,7 @@ export const createStorageService = (options = {}) => {
 export const validationSamples = () => ({
   validPayload: {
     version: STORAGE_VERSION,
+    theme: 'light',
     projects: [
       {
         id: 'sample-project',

@@ -216,6 +216,7 @@ export default function App() {
   const [history, setHistory] = useState({ items: [], categories: [] });
   const [activeProjectId, setActiveProjectId] = useState(null);
   const [lastSaved, setLastSaved] = useState(null);
+  const [theme, setTheme] = useState('light');
   const [status, setStatus] = useState('Loading your saved gear list...');
   const [isHydrated, setIsHydrated] = useState(false);
   const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
@@ -257,6 +258,7 @@ export default function App() {
       setHistory(result.state.history);
       setActiveProjectId(result.state.activeProjectId);
       setLastSaved(result.state.lastSaved);
+      setTheme(result.state.theme || 'light');
       if (result.warnings.length > 0) {
         setStatus(result.warnings[0]);
       } else {
@@ -276,17 +278,22 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
     if (!isHydrated) {
       return;
     }
     storageRef.current.scheduleAutosave({
+      theme,
       projects,
       templates,
       history,
       activeProjectId,
       lastSaved
     });
-  }, [projects, templates, history, activeProjectId, isHydrated]);
+  }, [projects, templates, history, activeProjectId, isHydrated, theme]);
 
   useEffect(() => {
     if (!isHydrated) {

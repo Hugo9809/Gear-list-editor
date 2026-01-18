@@ -1108,62 +1108,6 @@ export default function App() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
-              <h2 className="text-lg font-semibold text-text-primary">
-                {t('backup.title', 'Save, share, restore')}
-              </h2>
-              <p className="text-sm text-text-secondary">
-                {t(
-                  'backup.description',
-                  'Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices. Device backups refresh every 30 minutes, even while idle.'
-                )}
-              </p>
-              <div className="mt-4 flex flex-col gap-3">
-                <button
-                  type="button"
-                  onClick={saveNow}
-                  className="rounded-lg bg-surface-base px-4 py-2 text-sm font-semibold text-text-primary transition hover:bg-surface-elevated"
-                >
-                  {t('backup.actions.saveNow', 'Save now')}
-                </button>
-                <button
-                  type="button"
-                  onClick={downloadBackup}
-                  className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
-                >
-                  {t('backup.actions.download', 'Download backup')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                >
-                  {t('backup.actions.import', 'Import backup file')}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="application/json"
-                  className="hidden"
-                  onChange={handleImport}
-                />
-                <button
-                  type="button"
-                  onClick={restoreFromDeviceBackup}
-                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                >
-                  {t('backup.actions.restoreDevice', 'Restore from device backup')}
-                </button>
-                <button
-                  type="button"
-                  onClick={shareData}
-                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
-                >
-                  {t('backup.actions.shareClipboard', 'Share via clipboard')}
-                </button>
-              </div>
-            </div>
-
             <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
               {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
             </div>
@@ -1200,6 +1144,13 @@ export default function App() {
                   </button>
                   <button
                     type="button"
+                    onClick={shareData}
+                    className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                  >
+                    {t('backup.actions.shareClipboard', 'Share via clipboard')}
+                  </button>
+                  <button
+                    type="button"
                     onClick={exportPdf}
                     className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                   >
@@ -1215,6 +1166,48 @@ export default function App() {
                 </div>
               </div>
             ) : null}
+
+            <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
+              <h2 className="text-lg font-semibold text-text-primary">
+                {t('backup.title', 'Save, share, restore')}
+              </h2>
+              <p className="text-sm text-text-secondary">
+                {t(
+                  'backup.description',
+                  'Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices. Device backups refresh every 30 minutes, even while idle.'
+                )}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={downloadBackup}
+                  className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                >
+                  {t('backup.actions.download', 'Download backup')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                >
+                  {t('backup.actions.import', 'Import backup file')}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="application/json"
+                  className="hidden"
+                  onChange={handleImport}
+                />
+                <button
+                  type="button"
+                  onClick={restoreFromDeviceBackup}
+                  className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                >
+                  {t('backup.actions.restoreDevice', 'Restore from device backup')}
+                </button>
+              </div>
+            </section>
 
             {activeTab === 'dashboard' ? (
               <>

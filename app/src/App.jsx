@@ -34,7 +34,8 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
   const t =
     typeof dictionaryOrT === 'function'
       ? dictionaryOrT
-      : (key, fallback, variables) => translate(dictionaryOrT, key, fallback, variables);
+      : (key, fallback, variables) =>
+          translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
   const categoriesHtml = project.categories
     .map((category) => {
       const rows = category.items
@@ -42,7 +43,7 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
           (item) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
-              <td>${escapeHtml(item.unit || t('units.pcs', 'pcs'))}</td>
+              <td>${escapeHtml(item.unit || t('units.pcs'))}</td>
               <td>${escapeHtml(item.name)}</td>
               <td>${escapeHtml(item.details)}</td>
               <td>${escapeHtml(getStatusLabel(item.status))}</td>
@@ -56,18 +57,18 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
           <table>
             <thead>
               <tr>
-                <th>${escapeHtml(t('items.print.headers.quantity', 'Qty'))}</th>
-                <th>${escapeHtml(t('items.print.headers.unit', 'Unit'))}</th>
-                <th>${escapeHtml(t('items.print.headers.item', 'Item'))}</th>
-                <th>${escapeHtml(t('items.print.headers.details', 'Details'))}</th>
-                <th>${escapeHtml(t('items.print.headers.status', 'Status'))}</th>
+                <th>${escapeHtml(t('items.print.headers.quantity'))}</th>
+                <th>${escapeHtml(t('items.print.headers.unit'))}</th>
+                <th>${escapeHtml(t('items.print.headers.item'))}</th>
+                <th>${escapeHtml(t('items.print.headers.details'))}</th>
+                <th>${escapeHtml(t('items.print.headers.status'))}</th>
               </tr>
             </thead>
             <tbody>
               ${
                 rows ||
                 `<tr><td colspan="5">${escapeHtml(
-                  t('items.print.empty', 'No items listed.')
+                  t('items.print.empty')
                 )}</td></tr>`
               }
             </tbody>
@@ -82,7 +83,7 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>${escapeHtml(project.name)} - ${escapeHtml(t('ui.gearList', 'Gear list'))}</title>
+        <title>${escapeHtml(project.name)} - ${escapeHtml(t('ui.gearList'))}</title>
         <style>
           body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -139,15 +140,15 @@ const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
         <header>
           <h1>${escapeHtml(project.name)}</h1>
           <div class="meta">
-            <div><strong>${escapeHtml(t('project.print.labels.client', 'Client'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.print.labels.date', 'Date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.print.labels.location', 'Location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.print.labels.contact', 'Contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.client'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
           </div>
         </header>
         ${categoriesHtml}
         <div class="notes">
-          <strong>${escapeHtml(t('project.print.notes.title', 'Project notes'))}:</strong> ${escapeHtml(
+          <strong>${escapeHtml(t('project.print.notes.title'))}:</strong> ${escapeHtml(
             project.notes || t('project.notes.empty', 'No notes added.')
           )}
         </div>
@@ -1580,8 +1581,8 @@ export default function App() {
                                 suggestions={itemSuggestions}
                                 placeholder={t('items.fields.name', 'Item name')}
                                 label={t('items.fields.name', 'Item name')}
-                                unitFallback={t('items.suggestion.unitFallback', 'pcs')}
-                                detailsFallback={t('items.suggestion.detailsFallback', 'No details saved')}
+                                unitFallback={t('items.suggestion.unitFallback')}
+                                detailsFallback={t('items.suggestion.detailsFallback')}
                                 inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                               />
                               <input
@@ -1635,10 +1636,9 @@ export default function App() {
                                       suggestions={itemSuggestions}
                                       placeholder={t('items.fields.name', 'Item name')}
                                       label={t('items.fields.name', 'Item name')}
-                                      unitFallback={t('items.suggestion.unitFallback', 'pcs')}
+                                      unitFallback={t('items.suggestion.unitFallback')}
                                       detailsFallback={t(
-                                        'items.suggestion.detailsFallback',
-                                        'No details saved'
+                                        'items.suggestion.detailsFallback'
                                       )}
                                       inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
                                     />

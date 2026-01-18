@@ -7,6 +7,46 @@
     "helper": "Lokal gespeichert für die Offline-Nutzung.",
     "status": "Sprache aktualisiert und lokal gespeichert."
   },
+  "defaults": {
+    "untitled_item": "Unbenanntes Item {index}",
+    "untitled_category": "Kategorie {index}",
+    "untitled_project": "Unbenanntes Projekt {index}",
+    "untitled_template": "Vorlage {index}"
+  },
+  "migrations": {
+    "imported_project": "Importierte Equipment-Liste",
+    "imported_category": "Allgemeines Equipment"
+  },
+  "errors": {
+    "payload_invalid": "Die Daten sind nicht vorhanden oder ungültig.",
+    "projects_invalid": "Projekte müssen ein Array sein.",
+    "templates_invalid": "Vorlagen müssen ein Array sein.",
+    "history_invalid": "Historie muss ein Objekt sein, wenn sie angegeben ist.",
+    "version_invalid": "Version muss numerisch sein, wenn sie angegeben ist."
+  },
+  "warnings": {
+    "partial_save": "Einige Speicherorte konnten nicht aktualisiert werden. Deine neuesten Daten bleiben in anderen Backups erhalten.",
+    "autosave_error": "Autosave hatte einen Speicherfehler. Deine neuesten Daten sind weiterhin im Speicher sicher.",
+    "indexeddb_unavailable": "IndexedDB war nicht verfügbar. Gerät-Backups werden geprüft.",
+    "import_invalid": "Import fehlgeschlagen. Bitte wähle eine gültige Backup-Datei.",
+    "no_device_backup": "Es wurde noch kein Geräte-Backup gefunden."
+  },
+  "sources": {
+    "empty": "Leer",
+    "indexeddb": "IndexedDB",
+    "device_backup_latest": "Geräte-Backup (aktuell)",
+    "device_backup_previous": "Geräte-Backup (vorherig)",
+    "legacy_backup": "Altes lokales Backup",
+    "device_backup": "Geräte-Backup",
+    "none": "Keins"
+  },
+  "storage": {
+    "status": {
+      "empty": "Noch keine gespeicherten Daten. Starte ein Projekt, damit Autosave es schützt.",
+      "loaded": "Sicher aus {source} geladen.",
+      "restored": "Wiederhergestellt aus {source}."
+    }
+  },
   "help": {
     "title": "Hilfe & Dokumentation",
     "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",

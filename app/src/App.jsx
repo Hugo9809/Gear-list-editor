@@ -30,16 +30,43 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildPrintableHtml = (project) => {
+const resolveDisplayName = (t, name, { index } = {}) => {
+  if (!name) {
+    return '';
+  }
+  switch (name) {
+    case 'defaults.untitled_item':
+      return t('defaults.untitled_item', 'Untitled item {index}', { index: index ?? 1 });
+    case 'defaults.untitled_category':
+      return t('defaults.untitled_category', 'Category {index}', { index: index ?? 1 });
+    case 'defaults.untitled_project':
+      return t('defaults.untitled_project', 'Untitled project {index}', { index: index ?? 1 });
+    case 'defaults.untitled_template':
+      return t('defaults.untitled_template', 'Template {index}', { index: index ?? 1 });
+    case 'migrations.imported_project':
+      return t('migrations.imported_project', 'Imported gear list');
+    case 'migrations.imported_category':
+      return t('migrations.imported_category', 'General gear');
+    default:
+      return name;
+  }
+};
+
+const resolveStorageMessage = (t, messageKey, fallback, variables) =>
+  messageKey ? t(messageKey, fallback ?? messageKey, variables) : fallback ?? '';
+
+const resolveStorageSource = (t, sourceKey) => (sourceKey ? t(sourceKey, sourceKey) : '');
+
+const buildPrintableHtml = (project, t, projectIndex) => {
   const categoriesHtml = project.categories
-    .map((category) => {
+    .map((category, categoryIndex) => {
       const rows = category.items
         .map(
-          (item) => `
+          (item, itemIndex) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
               <td>${escapeHtml(item.unit || 'pcs')}</td>
-              <td>${escapeHtml(item.name)}</td>
+              <td>${escapeHtml(resolveDisplayName(t, item.name, { index: itemIndex + 1 }))}</td>
               <td>${escapeHtml(item.details)}</td>
               <td>${escapeHtml(item.status)}</td>
             </tr>
@@ -48,7 +75,7 @@ const buildPrintableHtml = (project) => {
         .join('');
       return `
         <section>
-          <h3>${escapeHtml(category.name)}</h3>
+          <h3>${escapeHtml(resolveDisplayName(t, category.name, { index: categoryIndex + 1 }))}</h3>
           <table>
             <thead>
               <tr>
@@ -68,12 +95,14 @@ const buildPrintableHtml = (project) => {
     })
     .join('');
 
+  const projectName = resolveDisplayName(t, project.name, { index: projectIndex });
+
   return `
     <!doctype html>
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>${escapeHtml(project.name)} - Gear List</title>
+        <title>${escapeHtml(projectName)} - Gear List</title>
         <style>
           body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -128,7 +157,7 @@ const buildPrintableHtml = (project) => {
       </head>
       <body>
         <header>
-          <h1>${escapeHtml(project.name)}</h1>
+          <h1>${escapeHtml(projectName)}</h1>
           <div class="meta">
             <div><strong>Client:</strong> ${escapeHtml(project.client || '—')}</div>
             <div><strong>Date:</strong> ${escapeHtml(project.shootDate || '—')}</div>
@@ -150,6 +179,7 @@ const TypeaheadInput = ({
   onChange,
   onSelectSuggestion,
   suggestions,
+  getSuggestionLabel,
   placeholder,
   inputClassName,
   listClassName,
@@ -158,14 +188,15 @@ const TypeaheadInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const filteredSuggestions = useMemo(() => {
     const normalized = value.trim().toLowerCase();
-    const sorted = [...suggestions].sort((a, b) =>
-      (b.lastUsed || '').localeCompare(a.lastUsed || '')
-    );
+    const sorted = [...suggestions].sort((a, b) => (b.lastUsed || '').localeCompare(a.lastUsed || ''));
     const filtered = normalized
-      ? sorted.filter((item) => item.name.toLowerCase().includes(normalized))
+      ? sorted.filter((item) => {
+          const labelText = getSuggestionLabel ? getSuggestionLabel(item) : item.name;
+          return labelText.toLowerCase().includes(normalized);
+        })
       : sorted;
     return filtered.slice(0, 6);
-  }, [value, suggestions]);
+  }, [getSuggestionLabel, value, suggestions]);
 
   const handleSelect = (suggestion) => {
     onSelectSuggestion?.(suggestion);
@@ -199,7 +230,9 @@ const TypeaheadInput = ({
               }}
               className="flex w-full flex-col gap-1 px-3 py-2 text-left transition hover:bg-slate-800"
             >
-              <span className="font-medium text-white">{suggestion.name}</span>
+              <span className="font-medium text-white">
+                {getSuggestionLabel ? getSuggestionLabel(suggestion) : suggestion.name}
+              </span>
               <span className="text-xs text-slate-400">
                 {suggestion.unit || 'pcs'} · {suggestion.details || 'No details saved'}
               </span>
@@ -233,7 +266,7 @@ export default function App() {
       onSaved: (payload, { reason, warnings }) => {
         setLastSaved(payload.lastSaved);
         if (warnings?.length) {
-          setStatus(warnings[0]);
+          setStatus(resolveStorageMessage(t, warnings[0]));
           return;
         }
         if (reason === 'autosave') {
@@ -244,7 +277,7 @@ export default function App() {
           setStatus('Storage repaired and redundancies refreshed.');
         }
       },
-      onWarning: (message) => setStatus(message)
+      onWarning: (message) => setStatus(resolveStorageMessage(t, message))
     });
   }
 
@@ -262,12 +295,17 @@ export default function App() {
       setLastSaved(result.state.lastSaved);
       setTheme(result.state.theme || 'light');
       if (result.warnings.length > 0) {
-        setStatus(result.warnings[0]);
+        setStatus(resolveStorageMessage(t, result.warnings[0]));
       } else {
         setStatus(
-          result.source === 'Empty'
-            ? 'No saved data yet. Start a project and autosave will protect it.'
-            : `Loaded safely from ${result.source}.`
+          result.source === 'sources.empty'
+            ? t(
+                'storage.status.empty',
+                'No saved data yet. Start a project and autosave will protect it.'
+              )
+            : t('storage.status.loaded', 'Loaded safely from {source}.', {
+                source: resolveStorageSource(t, result.source)
+              })
         );
       }
       setIsHydrated(true);
@@ -310,6 +348,13 @@ export default function App() {
     () => projects.find((project) => project.id === activeProjectId) || projects[0] || null,
     [projects, activeProjectId]
   );
+  const activeProjectIndex = useMemo(() => {
+    if (!activeProject) {
+      return 1;
+    }
+    const index = projects.findIndex((project) => project.id === activeProject.id);
+    return index >= 0 ? index + 1 : 1;
+  }, [activeProject, projects]);
 
   const itemSuggestions = useMemo(() => history.items || [], [history.items]);
 
@@ -675,7 +720,7 @@ export default function App() {
       return;
     }
     printWindow.document.open();
-    printWindow.document.write(buildPrintableHtml(activeProject));
+    printWindow.document.write(buildPrintableHtml(activeProject, t, activeProjectIndex));
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -710,10 +755,14 @@ export default function App() {
     setActiveProjectId(result.state.activeProjectId);
     setLastSaved(result.state.lastSaved);
     if (result.warnings.length > 0) {
-      setStatus(result.warnings[0]);
+      setStatus(resolveStorageMessage(t, result.warnings[0]));
       return;
     }
-    setStatus(`Restored from ${result.source}.`);
+    setStatus(
+      t('storage.status.restored', 'Restored from {source}.', {
+        source: resolveStorageSource(t, result.source)
+      })
+    );
   };
 
   const handleImport = (event) => {
@@ -735,7 +784,7 @@ export default function App() {
       setHistory(state.history);
       setActiveProjectId(state.activeProjectId);
       if (warnings.length > 0) {
-        setStatus(warnings[0]);
+        setStatus(resolveStorageMessage(t, warnings[0]));
       } else {
         setStatus('Import complete. Existing data was preserved.');
       }
@@ -753,7 +802,7 @@ export default function App() {
       lastSaved
     });
     if (result?.warnings?.length) {
-      setStatus(result.warnings[0]);
+      setStatus(resolveStorageMessage(t, result.warnings[0]));
     }
   };
 
@@ -933,7 +982,7 @@ export default function App() {
                     No projects yet. Create your first project to begin building a gear list.
                   </div>
                 ) : (
-                  projects.map((project) => {
+                  projects.map((project, projectIndex) => {
                     const isActive = project.id === activeProject?.id;
                     const itemTotal = project.categories.reduce(
                       (sum, category) => sum + category.items.length,
@@ -949,7 +998,9 @@ export default function App() {
                         }`}
                       >
                         <div>
-                          <h3 className="text-lg font-semibold text-white">{project.name}</h3>
+                          <h3 className="text-lg font-semibold text-white">
+                            {resolveDisplayName(t, project.name, { index: projectIndex + 1 })}
+                          </h3>
                           <p className="text-xs text-slate-400">
                             {project.client || 'Client not set'} · {project.shootDate || 'Date not set'}
                           </p>
@@ -1009,7 +1060,7 @@ export default function App() {
                     <label className="flex flex-col gap-2 text-sm text-slate-300">
                       Project name
                       <input
-                        value={activeProject.name}
+                        value={resolveDisplayName(t, activeProject.name, { index: activeProjectIndex })}
                         onChange={(event) => updateProjectField('name', event.target.value)}
                         className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 focus:border-emerald-400 focus:outline-none"
                       />
@@ -1079,7 +1130,7 @@ export default function App() {
                         No categories yet. Add one above or apply a template.
                       </div>
                     ) : (
-                      activeProject.categories.map((category) => (
+                      activeProject.categories.map((category, categoryIndex) => (
                         <div
                           key={category.id}
                           className="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
@@ -1087,7 +1138,7 @@ export default function App() {
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div className="flex flex-1 flex-col gap-3">
                               <input
-                                value={category.name}
+                                value={resolveDisplayName(t, category.name, { index: categoryIndex + 1 })}
                                 onChange={(event) =>
                                   updateCategoryField(category.id, 'name', event.target.value)
                                 }
@@ -1117,12 +1168,16 @@ export default function App() {
                             className="grid gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_auto]"
                           >
                             <TypeaheadInput
-                              value={(itemDrafts[category.id] || emptyItemDraft).name}
+                              value={resolveDisplayName(
+                                t,
+                                (itemDrafts[category.id] || emptyItemDraft).name
+                              )}
                               onChange={(value) => updateDraftItem(category.id, 'name', value)}
                               onSelectSuggestion={(suggestion) =>
                                 applySuggestionToDraft(category.id, suggestion)
                               }
                               suggestions={itemSuggestions}
+                              getSuggestionLabel={(suggestion) => resolveDisplayName(t, suggestion.name)}
                               placeholder="Item name"
                               label="Item name"
                               inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
@@ -1160,13 +1215,13 @@ export default function App() {
                                 No items yet. Add the first item above.
                               </div>
                             ) : (
-                              category.items.map((item) => (
+                              category.items.map((item, itemIndex) => (
                                 <div
                                   key={item.id}
                                   className="grid gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-3 md:grid-cols-[2fr_1fr_1fr_2fr_1fr_auto]"
                                 >
                                   <TypeaheadInput
-                                    value={item.name}
+                                    value={resolveDisplayName(t, item.name, { index: itemIndex + 1 })}
                                     onChange={(value) =>
                                       updateItemField(category.id, item.id, 'name', value)
                                     }
@@ -1174,6 +1229,9 @@ export default function App() {
                                       applySuggestionToItem(category.id, item.id, suggestion)
                                     }
                                     suggestions={itemSuggestions}
+                                    getSuggestionLabel={(suggestion) =>
+                                      resolveDisplayName(t, suggestion.name)
+                                    }
                                     placeholder="Item name"
                                     label="Item name"
                                     inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
@@ -1296,7 +1354,7 @@ export default function App() {
                     No templates yet. Save the active project to build your library.
                   </div>
                 ) : (
-                  templates.map((template) => (
+                  templates.map((template, templateIndex) => (
                     <div
                       key={template.id}
                       className="flex h-full flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
@@ -1304,7 +1362,7 @@ export default function App() {
                       <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
                         Name
                         <input
-                          value={template.name}
+                          value={resolveDisplayName(t, template.name, { index: templateIndex + 1 })}
                           onChange={(event) =>
                             updateTemplateField(template.id, 'name', event.target.value)
                           }

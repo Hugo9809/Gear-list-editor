@@ -10,6 +10,30 @@ const OPFS_BACKUP_PREVIOUS_FILE = 'gear-list-backup-prev.json';
 const AUTOSAVE_DELAY = 700;
 const MAX_AUTOSAVE_DELAY = 5000;
 
+const DEFAULT_ITEM_NAME = 'defaults.untitled_item';
+const DEFAULT_CATEGORY_NAME = 'defaults.untitled_category';
+const DEFAULT_PROJECT_NAME = 'defaults.untitled_project';
+const DEFAULT_TEMPLATE_NAME = 'defaults.untitled_template';
+const MIGRATION_IMPORTED_PROJECT_NAME = 'migrations.imported_project';
+const MIGRATION_IMPORTED_CATEGORY_NAME = 'migrations.imported_category';
+const ERROR_PAYLOAD_INVALID = 'errors.payload_invalid';
+const ERROR_PROJECTS_INVALID = 'errors.projects_invalid';
+const ERROR_TEMPLATES_INVALID = 'errors.templates_invalid';
+const ERROR_HISTORY_INVALID = 'errors.history_invalid';
+const ERROR_VERSION_INVALID = 'errors.version_invalid';
+const WARNING_PARTIAL_SAVE = 'warnings.partial_save';
+const WARNING_AUTOSAVE_ERROR = 'warnings.autosave_error';
+const WARNING_INDEXEDDB_UNAVAILABLE = 'warnings.indexeddb_unavailable';
+const WARNING_IMPORT_INVALID = 'warnings.import_invalid';
+const WARNING_NO_DEVICE_BACKUP = 'warnings.no_device_backup';
+const SOURCE_EMPTY = 'sources.empty';
+const SOURCE_INDEXEDDB = 'sources.indexeddb';
+const SOURCE_DEVICE_BACKUP_LATEST = 'sources.device_backup_latest';
+const SOURCE_DEVICE_BACKUP_PREVIOUS = 'sources.device_backup_previous';
+const SOURCE_LEGACY_BACKUP = 'sources.legacy_backup';
+const SOURCE_DEVICE_BACKUP = 'sources.device_backup';
+const SOURCE_NONE = 'sources.none';
+
 const hasIndexedDb = () => typeof indexedDB !== 'undefined';
 const hasOpfs = () => typeof navigator !== 'undefined' && navigator.storage?.getDirectory;
 
@@ -77,7 +101,7 @@ export const normalizeItems = (items) => {
     const parsedQuantity = Number(quantityCandidate);
     return {
       id: typeof item?.id === 'string' && item.id ? item.id : createId(),
-      name: rawName || `Untitled item ${index + 1}`,
+      name: rawName || DEFAULT_ITEM_NAME,
       quantity: Number.isFinite(parsedQuantity) && parsedQuantity > 0 ? parsedQuantity : 1,
       unit: normalizeText(item?.unit),
       details: normalizeText(item?.details),
@@ -94,7 +118,7 @@ const normalizeCategories = (categories) => {
     const rawName = normalizeText(category?.name);
     return {
       id: typeof category?.id === 'string' && category.id ? category.id : createId(),
-      name: rawName || `Category ${index + 1}`,
+      name: rawName || DEFAULT_CATEGORY_NAME,
       notes: normalizeNotes(category?.notes),
       items: normalizeItems(category?.items)
     };
@@ -105,7 +129,7 @@ const normalizeProject = (project, index) => {
   const rawName = normalizeText(project?.name);
   return {
     id: typeof project?.id === 'string' && project.id ? project.id : createId(),
-    name: rawName || `Untitled project ${index + 1}`,
+    name: rawName || DEFAULT_PROJECT_NAME,
     client: normalizeText(project?.client),
     shootDate: normalizeText(project?.shootDate),
     location: normalizeText(project?.location),
@@ -119,7 +143,7 @@ const normalizeTemplate = (template, index) => {
   const rawName = normalizeText(template?.name);
   return {
     id: typeof template?.id === 'string' && template.id ? template.id : createId(),
-    name: rawName || `Template ${index + 1}`,
+    name: rawName || DEFAULT_TEMPLATE_NAME,
     description: normalizeText(template?.description),
     notes: normalizeNotes(template?.notes),
     categories: normalizeCategories(template?.categories),
@@ -183,20 +207,20 @@ const deriveHistoryFromProjects = (projects, baseHistory) => {
 export const validatePayload = (payload) => {
   const errors = [];
   if (!payload || typeof payload !== 'object') {
-    errors.push('Payload is missing or invalid.');
+    errors.push(ERROR_PAYLOAD_INVALID);
     return { valid: false, errors };
   }
   if (!Array.isArray(payload.projects)) {
-    errors.push('Projects must be an array.');
+    errors.push(ERROR_PROJECTS_INVALID);
   }
   if (!Array.isArray(payload.templates)) {
-    errors.push('Templates must be an array.');
+    errors.push(ERROR_TEMPLATES_INVALID);
   }
   if (payload.history && typeof payload.history !== 'object') {
-    errors.push('History must be an object when provided.');
+    errors.push(ERROR_HISTORY_INVALID);
   }
   if (payload.version !== undefined && !Number.isFinite(Number(payload.version))) {
-    errors.push('Version must be numeric when provided.');
+    errors.push(ERROR_VERSION_INVALID);
   }
   return { valid: errors.length === 0, errors };
 };
@@ -215,11 +239,11 @@ export const migratePayload = (payload) => {
   if (version <= 1 && legacyItems.length > 0) {
     const defaultProject = normalizeProject(
       {
-        name: 'Imported gear list',
+        name: MIGRATION_IMPORTED_PROJECT_NAME,
         notes: legacyNotes,
         categories: [
           {
-            name: 'General gear',
+            name: MIGRATION_IMPORTED_CATEGORY_NAME,
             items: legacyItems
           }
         ]
@@ -371,11 +395,7 @@ const getPayloadTimestamp = (payload) => {
 };
 
 const collectWarnings = (errors) =>
-  errors.length === 0
-    ? []
-    : [
-        'Some storage locations could not be updated. Your latest data is still preserved in other backups.'
-      ];
+  errors.length === 0 ? [] : [WARNING_PARTIAL_SAVE];
 
 const mergeProjectArrays = (current, incoming) => {
   const merged = [...current];
@@ -437,15 +457,15 @@ export const exportState = (state) => {
 const getBestBackup = async () => {
   const opfsLatest = await readFromOpfsFile(OPFS_BACKUP_FILE);
   if (opfsLatest) {
-    return { payload: opfsLatest, source: 'Device backup (latest)' };
+    return { payload: opfsLatest, source: SOURCE_DEVICE_BACKUP_LATEST };
   }
   const opfsPrevious = await readFromOpfsFile(OPFS_BACKUP_PREVIOUS_FILE);
   if (opfsPrevious) {
-    return { payload: opfsPrevious, source: 'Device backup (previous)' };
+    return { payload: opfsPrevious, source: SOURCE_DEVICE_BACKUP_PREVIOUS };
   }
   const legacyBackup = readLegacyBackup();
   if (legacyBackup) {
-    return { payload: legacyBackup, source: 'Legacy local backup' };
+    return { payload: legacyBackup, source: SOURCE_LEGACY_BACKUP };
   }
   return { payload: null, source: null };
 };
@@ -458,8 +478,8 @@ export const createStorageService = (options = {}) => {
 
   const queueSave = (task) => {
     saveQueue = saveQueue.then(task).catch((error) => {
-      options.onWarning?.('Autosave encountered a storage error. Your data is still safe in memory.');
-      return { payload: null, warnings: ['Autosave encountered a storage error.'], error };
+      options.onWarning?.(WARNING_AUTOSAVE_ERROR);
+      return { payload: null, warnings: [WARNING_AUTOSAVE_ERROR], error };
     });
     return saveQueue;
   };
@@ -492,7 +512,7 @@ export const createStorageService = (options = {}) => {
 
   const loadState = async () => {
     let payload = null;
-    let source = 'Empty';
+    let source = SOURCE_EMPTY;
     let warnings = [];
     let backup = { payload: null, source: null };
 
@@ -500,27 +520,27 @@ export const createStorageService = (options = {}) => {
       try {
         payload = await readFromIndexedDb();
         if (payload) {
-          source = 'IndexedDB';
+          source = SOURCE_INDEXEDDB;
         }
       } catch {
-        warnings = ['IndexedDB was unavailable. Checking device backups instead.'];
+        warnings = [WARNING_INDEXEDDB_UNAVAILABLE];
       }
     }
 
     backup = await getBestBackup();
     if (!payload && backup.payload) {
       payload = backup.payload;
-      source = backup.source || 'Device backup';
+      source = backup.source || SOURCE_DEVICE_BACKUP;
     }
 
-    if (payload && backup.payload && source === 'IndexedDB') {
+    if (payload && backup.payload && source === SOURCE_INDEXEDDB) {
       const primaryTime = getPayloadTimestamp(payload);
       const backupTime = getPayloadTimestamp(backup.payload);
       const hasPrimaryTime = primaryTime !== null;
       const hasBackupTime = backupTime !== null;
       if ((!hasPrimaryTime && hasBackupTime) || (hasPrimaryTime && hasBackupTime && backupTime > primaryTime)) {
         payload = backup.payload;
-        source = backup.source || 'Device backup';
+        source = backup.source || SOURCE_DEVICE_BACKUP;
       }
     }
 
@@ -531,7 +551,7 @@ export const createStorageService = (options = {}) => {
       warnings = warnings.concat(validation.errors);
     }
 
-    if (payload && source !== 'IndexedDB') {
+    if (payload && source !== SOURCE_INDEXEDDB) {
       await queueSave(() => persist(state, 'rehydrate'));
     }
 
@@ -573,7 +593,7 @@ export const createStorageService = (options = {}) => {
     if (!parsed) {
       return {
         state: migratePayload(currentState),
-        warnings: ['Import failed. Please choose a valid backup file.']
+        warnings: [WARNING_IMPORT_INVALID]
       };
     }
     const merged = mergePayloads(currentState, parsed);
@@ -588,8 +608,8 @@ export const createStorageService = (options = {}) => {
     if (!backup.payload) {
       return {
         state: createEmptyState(),
-        source: 'None',
-        warnings: ['No device backup was found yet.']
+        source: SOURCE_NONE,
+        warnings: [WARNING_NO_DEVICE_BACKUP]
       };
     }
     const migrated = migratePayload(backup.payload);

@@ -7,6 +7,46 @@
     "helper": "Saved locally for offline use.",
     "status": "Language updated and saved locally."
   },
+  "defaults": {
+    "untitled_item": "Untitled item {index}",
+    "untitled_category": "Category {index}",
+    "untitled_project": "Untitled project {index}",
+    "untitled_template": "Template {index}"
+  },
+  "migrations": {
+    "imported_project": "Imported gear list",
+    "imported_category": "General gear"
+  },
+  "errors": {
+    "payload_invalid": "Payload is missing or invalid.",
+    "projects_invalid": "Projects must be an array.",
+    "templates_invalid": "Templates must be an array.",
+    "history_invalid": "History must be an object when provided.",
+    "version_invalid": "Version must be numeric when provided."
+  },
+  "warnings": {
+    "partial_save": "Some storage locations could not be updated. Your latest data is still preserved in other backups.",
+    "autosave_error": "Autosave hit a storage error. Your latest data is still safe in memory.",
+    "indexeddb_unavailable": "IndexedDB was unavailable. Checking device backups instead.",
+    "import_invalid": "Import failed. Please choose a valid backup file.",
+    "no_device_backup": "No device backup was found yet."
+  },
+  "sources": {
+    "empty": "Empty",
+    "indexeddb": "IndexedDB",
+    "device_backup_latest": "Device backup (latest)",
+    "device_backup_previous": "Device backup (previous)",
+    "legacy_backup": "Legacy local backup",
+    "device_backup": "Device backup",
+    "none": "None"
+  },
+  "storage": {
+    "status": {
+      "empty": "No saved data yet. Start a project and autosave will protect it.",
+      "loaded": "Loaded safely from {source}.",
+      "restored": "Restored from {source}."
+    }
+  },
   "help": {
     "title": "Help & documentation",
     "subtitle": "Offline-first guidance for safe gear lists.",

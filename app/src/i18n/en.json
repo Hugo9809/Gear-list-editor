@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "label": "English"
+  },
+  "language": {
+    "label": "Language",
+    "helper": "Saved locally for offline use.",
+    "status": "Language updated and saved locally."
+  },
+  "help": {
+    "title": "Help & documentation",
+    "subtitle": "Offline-first guidance for safe gear lists.",
+    "sections": [
+      {
+        "title": "Start with a protected project",
+        "description": "Create a project first so autosave can protect every edit.",
+        "items": [
+          "Name the project and add client, location, or contact details.",
+          "New projects are saved locally the moment they are created.",
+          "Switch projects any time to keep each production separate."
+        ]
+      },
+      {
+        "title": "Build categories and items",
+        "description": "Organize gear by department or case for faster packing.",
+        "items": [
+          "Add categories, then list items with quantity, unit, and status.",
+          "Typeahead remembers previous items so you can reuse details quickly.",
+          "Use project notes for crew instructions, pickup info, or returns."
+        ]
+      },
+      {
+        "title": "Reuse templates safely",
+        "description": "Templates copy gear without overwriting existing lists.",
+        "items": [
+          "Save the active project as a template whenever you repeat a kit.",
+          "Apply templates to add gear while keeping what is already listed.",
+          "Template usage is tracked so your most-used kits stay visible."
+        ]
+      }
+    ]
+  },
+  "offline": {
+    "title": "Offline workflow",
+    "description": "Every feature works without a connection.",
+    "steps": [
+      "Create or open a project while offline.",
+      "Use “Save now” before handing off or closing the device.",
+      "Download a backup file for transfer or long-term storage.",
+      "Import a backup file on another device to merge gear lists safely.",
+      "Use “Restore from device backup” if local storage needs recovery."
+    ],
+    "footer": "Backups stay on-device unless you export or share them."
+  },
+  "documentation": {
+    "title": "Documentation",
+    "subtitle": "Key safety behaviors are automatic, with manual controls when you need them.",
+    "sections": [
+      {
+        "title": "Saving and autosave",
+        "description": "Edits are protected immediately and mirrored to backups.",
+        "items": [
+          "Autosave runs after every change and keeps redundant copies.",
+          "“Save now” forces an immediate sync across local storage locations.",
+          "Status updates confirm when saves and repairs are complete."
+        ]
+      },
+      {
+        "title": "Sharing and exports",
+        "description": "Share without leaving offline mode or exposing data online.",
+        "items": [
+          "Clipboard sharing copies a full backup for quick handoffs.",
+          "PDF export opens a print-ready list for production reference.",
+          "All sharing stays local unless you move files manually."
+        ]
+      },
+      {
+        "title": "Backup and restore",
+        "description": "Multiple backups protect your data on the same device.",
+        "items": [
+          "Download backup files for long-term storage or device migration.",
+          "Import backups to merge rather than overwrite your current data.",
+          "Restore from device backup if storage needs recovery."
+        ]
+      }
+    ]
+  }
+}

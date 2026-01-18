@@ -1371,6 +1371,7 @@ export default function App() {
                 <li>Typeahead suggestions remember previous items and restore unit/details instantly.</li>
                 <li>PDF export opens a print-ready layout matching your reference equipment lists.</li>
                 <li>Backups stay on-device and can be shared offline without external links.</li>
+                <li>Theme switcher keeps your bright, dark, pink-light, or pink-dark preference saved locally for offline use.</li>
               </ul>
             </div>
           </aside>

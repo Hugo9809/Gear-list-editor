@@ -408,15 +408,6 @@ export default function App() {
   }, [projects, templates, history, activeProjectId, isHydrated, theme]);
 
   useEffect(() => {
-    if (!isHydrated) {
-      return;
-    }
-    if (!activeProjectId && projects.length > 0) {
-      setActiveProjectId(projects[0].id);
-    }
-  }, [activeProjectId, isHydrated, projects]);
-
-  useEffect(() => {
     if (templates.length === 0) {
       setSelectedTemplateId('');
       return;
@@ -427,7 +418,7 @@ export default function App() {
   }, [templates]);
 
   const activeProject = useMemo(
-    () => projects.find((project) => project.id === activeProjectId) || projects[0] || null,
+    () => projects.find((project) => project.id === activeProjectId) || null,
     [projects, activeProjectId]
   );
   const activeProjectIndex = useMemo(
@@ -523,15 +514,22 @@ export default function App() {
     };
     setProjects((prev) => [newProject, ...prev]);
     setActiveProjectId(newProject.id);
+    setActiveTab('project');
     setProjectDraft(emptyProjectDraft);
     setStatus(t('status.projectCreated', 'New project created and protected by autosave.'));
+  };
+
+  const openProject = (projectId) => {
+    setActiveProjectId(projectId);
+    setActiveTab('project');
   };
 
   const deleteProject = (projectId) => {
     setProjects((prev) => {
       const remaining = prev.filter((project) => project.id !== projectId);
       if (activeProjectId === projectId) {
-        setActiveProjectId(remaining[0]?.id || null);
+        setActiveProjectId(null);
+        setActiveTab('dashboard');
       }
       return remaining;
     });
@@ -996,7 +994,6 @@ export default function App() {
   const navigationTabs = useMemo(
     () => [
       { id: 'dashboard', label: t('navigation.sidebar.dashboard', 'Dashboard') },
-      { id: 'project', label: t('navigation.sidebar.project', 'Project') },
       { id: 'templates', label: t('navigation.sidebar.templates', 'Templates') },
       { id: 'help', label: t('navigation.sidebar.help', 'Help') }
     ],
@@ -1170,7 +1167,7 @@ export default function App() {
           </aside>
 
           <main className="flex flex-1 flex-col gap-6">
-            {activeProject && activeTab !== 'help' ? (
+            {activeProject && activeTab === 'project' ? (
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
                 <div className="flex min-w-[200px] flex-col gap-1">
                   <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
@@ -1296,7 +1293,7 @@ export default function App() {
                     <p className="text-sm text-text-secondary">
                       {t(
                         'project.dashboard.description',
-                        'Track multiple productions and always know which list is active. New projects are autosaved the moment they are created.'
+                        'Track multiple productions and open a project to start editing the gear list. New projects are autosaved the moment they are created.'
                       )}
                     </p>
                   </div>
@@ -1369,7 +1366,7 @@ export default function App() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <h2 className="text-xl font-semibold text-text-primary">
-                        {t('project.list.title', 'Active projects')}
+                        {t('project.list.title', 'Projects')}
                       </h2>
                       <p className="text-sm text-text-secondary">
                         {tPlural(
@@ -1398,7 +1395,6 @@ export default function App() {
                       </div>
                     ) : (
                       projects.map((project, projectIndex) => {
-                        const isActive = project.id === activeProject?.id;
                         const itemTotal = project.categories.reduce(
                           (sum, category) => sum + category.items.length,
                           0
@@ -1406,11 +1402,7 @@ export default function App() {
                         return (
                           <div
                             key={project.id}
-                            className={`flex h-full flex-col gap-4 rounded-xl border p-4 transition ${
-                              isActive
-                                ? 'border-brand/60 bg-brand/10 shadow-[0_0_0_1px_rgb(var(--v2-brand-primary)/0.35)]'
-                                : 'border-surface-sunken bg-surface-muted/60'
-                            }`}
+                            className="flex h-full flex-col gap-4 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4 transition"
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
@@ -1426,11 +1418,6 @@ export default function App() {
                                   {project.shootDate || t('project.shootDate.empty', 'Date not set')}
                                 </p>
                               </div>
-                              {isActive && (
-                                <span className="rounded-full border border-brand/50 bg-brand/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-brand">
-                                  {t('project.active.badge', 'Selected')}
-                                </span>
-                              )}
                             </div>
                             <div className="grid gap-2 text-xs text-text-secondary md:grid-cols-2">
                               <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
@@ -1452,16 +1439,10 @@ export default function App() {
                             <div className="mt-auto flex flex-wrap gap-2">
                               <button
                                 type="button"
-                                onClick={() => setActiveProjectId(project.id)}
-                                className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
-                                  isActive
-                                    ? 'bg-brand text-brand-foreground'
-                                    : 'border border-surface-sunken text-text-primary hover:border-brand'
-                                }`}
+                                onClick={() => openProject(project.id)}
+                                className="rounded-lg bg-brand px-3 py-1 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
                               >
-                                {isActive
-                                  ? t('project.actions.active', 'Active')
-                                  : t('project.actions.open', 'Open')}
+                                {t('project.actions.open', 'Open')}
                               </button>
                               <button
                                 type="button"
@@ -1503,13 +1484,22 @@ export default function App() {
                         : t('project.workspace.empty', 'Select a project to start editing.')}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={exportPdf}
-                    className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
-                  >
-                    {t('project.actions.exportPdf', 'Export PDF')}
-                  </button>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('dashboard')}
+                      className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    >
+                      {t('project.actions.backToDashboard', 'Back to dashboard')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={exportPdf}
+                      className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                    >
+                      {t('project.actions.exportPdf', 'Export PDF')}
+                    </button>
+                  </div>
                 </div>
 
                 {activeProject ? (

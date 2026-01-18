@@ -11,7 +11,6 @@
   "navigation": {
     "sidebar": {
       "dashboard": "Dashboard",
-      "project": "Projekt",
       "templates": "Vorlagen",
       "help": "Hilfe"
     },
@@ -27,8 +26,8 @@
       "importBackup": "Backup importieren"
     },
     "helper": {
-      "dashboard": "Hier starten: Projekt auswählen oder erstellen, Importe verwalten und Backups offline schützen.",
-      "project": "Aktive Equipmentliste mit Autosave bearbeiten. Exporte und Teilen liegen oben in der Leiste.",
+      "dashboard": "Hier starten: Projekt-Kachel öffnen oder erstellen, Importe verwalten und Backups offline schützen.",
+      "project": "Projekt-Kachel öffnen, um die Equipmentliste mit Autosave und Exporten zu bearbeiten.",
       "templates": "Kits sicher wiederverwenden. Vorlagen sind hier und ergänzen ohne Überschreiben.",
       "help": "Offline-fokussierte Hilfe zu Autosave, Backups, Wiederherstellung und Exporten."
     }
@@ -39,7 +38,7 @@
     "emptyValue": "—",
     "sidebar": {
       "title": "Sicherer Offline-Arbeitsbereich",
-      "description": "Tabs halten deinen Workflow fokussiert, während Autosave im Hintergrund läuft."
+      "description": "Dein Dashboard hält Projekte griffbereit, während Autosave im Hintergrund läuft."
     },
     "hero": {
       "title": "Projektfertige Equipmentlisten mit Offline-Schutz.",
@@ -87,7 +86,7 @@
     "untitled": "Unbenanntes Projekt",
     "dashboard": {
       "title": "Projekt-Dashboard",
-      "description": "Behalte mehrere Produktionen im Blick und sieh immer, welche Liste aktiv ist. Neue Projekte werden sofort automatisch gespeichert."
+      "description": "Behalte mehrere Produktionen im Blick und öffne ein Projekt, um die Equipmentliste zu bearbeiten. Neue Projekte werden sofort automatisch gespeichert."
     },
     "fields": {
       "name": "Projektname",
@@ -108,11 +107,12 @@
       "exportPdf": "PDF exportieren",
       "importProject": "Projekt importieren",
       "active": "Aktiv",
-      "open": "Öffnen",
+      "open": "Projekt öffnen",
+      "backToDashboard": "Zurück zum Dashboard",
       "archive": "Archivieren"
     },
     "list": {
-      "title": "Aktive Projekte",
+      "title": "Projekte",
       "empty": "Noch keine Projekte. Erstelle dein erstes Projekt, um eine Equipmentliste zu beginnen."
     },
     "count": {
@@ -325,12 +325,12 @@
     "sections": [
       {
         "title": "Start im Dashboard",
-        "description": "Dashboard → Projekt auswählen/erstellen → Equipmentliste im Projekt-Tab bearbeiten.",
+        "description": "Dashboard → Projekt-Kachel auswählen/erstellen → Projekt-Arbeitsbereich öffnet sich.",
         "items": [
           "Projekt anlegen, damit es sofort lokal gespeichert wird, auch offline.",
           "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
           "Dashboard-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
-          "Im Projekt-Tab oben exportieren, PDF erstellen oder teilen.",
+          "Im Projekt-Arbeitsbereich oben exportieren, PDF erstellen oder teilen.",
           "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben."
         ]
       },
@@ -350,7 +350,7 @@
         "items": [
           "Aktives Projekt als Vorlage speichern, wenn ein Kit wiederkehrt.",
           "Vorlagen aus dem Vorlagen-Tab hinzufügen, ohne Einträge zu verlieren.",
-          "Projekt-Export und PDF-Export findest du im Projekt-Tab."
+          "Projekt-Export und PDF-Export findest du im Projekt-Arbeitsbereich."
         ]
       }
     ]
@@ -388,7 +388,7 @@
           "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
           "Projekt-Export lädt nur das aktive Projekt für sichere Übergaben herunter.",
           "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
-          "Aktionen im Projekt-Tab halten Exporte und Teilen direkt an der Liste."
+          "Aktionen im Projekt-Arbeitsbereich halten Exporte und Teilen direkt an der Liste."
         ]
       },
       {

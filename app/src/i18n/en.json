@@ -11,7 +11,6 @@
   "navigation": {
     "sidebar": {
       "dashboard": "Dashboard",
-      "project": "Project",
       "templates": "Templates",
       "help": "Help"
     },
@@ -27,8 +26,8 @@
       "importBackup": "Import backup"
     },
     "helper": {
-      "dashboard": "Start here: select or create a project, manage imports, and protect backups while offline.",
-      "project": "Edit the active gear list with autosave. Exports and sharing live in the top bar.",
+      "dashboard": "Start here: create or open a project tile, manage imports, and protect backups while offline.",
+      "project": "Open a project tile to edit the gear list with autosave and exports.",
       "templates": "Reuse kits safely. Templates live here and add gear without overwriting your list.",
       "help": "Offline-first guidance for autosave, backups, restores, and safe exports."
     }
@@ -39,7 +38,7 @@
     "emptyValue": "—",
     "sidebar": {
       "title": "Safe offline workspace",
-      "description": "Tabs keep your workflow focused while autosave runs in the background."
+      "description": "Your dashboard keeps projects close while autosave runs in the background."
     }
   },
   "theme": {
@@ -77,7 +76,7 @@
     "untitled": "Untitled project",
     "dashboard": {
       "title": "Project dashboard",
-      "description": "Track multiple productions and always know which list is active. New projects are autosaved the moment they are created."
+      "description": "Track multiple productions and open a project to start editing the gear list. New projects are autosaved the moment they are created."
     },
     "fields": {
       "name": "Project name",
@@ -98,11 +97,12 @@
       "exportPdf": "Export PDF",
       "importProject": "Import project",
       "active": "Active",
-      "open": "Open",
+      "open": "Open project",
+      "backToDashboard": "Back to dashboard",
       "archive": "Archive"
     },
     "list": {
-      "title": "Active projects",
+      "title": "Projects",
       "empty": "No projects yet. Create your first project to begin building a gear list."
     },
     "count": {
@@ -315,12 +315,12 @@
     "sections": [
       {
         "title": "Start from the dashboard",
-        "description": "Dashboard → select/create project → edit the gear list in the Project tab.",
+        "description": "Dashboard → select/create a project tile → the project workspace opens.",
         "items": [
           "Create a project to save locally the moment it exists, even offline.",
           "Select a project to continue editing without losing data.",
           "Dashboard actions handle imports, restores, and device backups.",
-          "Use the Project tab top bar for export, PDF, and share actions.",
+          "Use the project workspace header for export, PDF, and share actions.",
           "Templates live in the Templates tab and can be added without overwriting gear."
         ]
       },
@@ -340,7 +340,7 @@
         "items": [
           "Save the active project as a template for repeat kits.",
           "Apply templates from the Templates tab to extend your list safely.",
-          "Project export and PDF export live in the Project tab top bar."
+          "Project export and PDF export live in the project workspace header."
         ]
       }
     ]
@@ -378,7 +378,7 @@
           "Clipboard sharing copies a full backup for quick handoffs.",
           "Project export downloads only the active project for safe handoffs.",
           "PDF export opens a print-ready list for production reference.",
-          "Project tab actions keep exports and sharing next to your gear list."
+          "Project workspace actions keep exports and sharing next to your gear list."
         ]
       },
       {

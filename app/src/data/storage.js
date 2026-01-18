@@ -9,6 +9,7 @@ const OPFS_BACKUP_FILE = 'gear-list-backup.json';
 const OPFS_BACKUP_PREVIOUS_FILE = 'gear-list-backup-prev.json';
 const AUTOSAVE_DELAY = 700;
 const MAX_AUTOSAVE_DELAY = 5000;
+const OPFS_BACKUP_INTERVAL = 30 * 60 * 1000;
 
 const hasIndexedDb = () => typeof indexedDB !== 'undefined';
 const hasOpfs = () => typeof navigator !== 'undefined' && navigator.storage?.getDirectory;
@@ -455,6 +456,8 @@ export const createStorageService = (options = {}) => {
   let autosaveStart = null;
   let pendingState = null;
   let saveQueue = Promise.resolve();
+  let lastKnownState = null;
+  let opfsBackupInterval = null;
 
   const queueSave = (task) => {
     saveQueue = saveQueue.then(task).catch((error) => {
@@ -535,6 +538,8 @@ export const createStorageService = (options = {}) => {
       await queueSave(() => persist(state, 'rehydrate'));
     }
 
+    lastKnownState = state;
+
     return {
       state,
       source,
@@ -542,8 +547,23 @@ export const createStorageService = (options = {}) => {
     };
   };
 
+  const startOpfsBackupInterval = () => {
+    if (opfsBackupInterval) {
+      return;
+    }
+    opfsBackupInterval = setInterval(() => {
+      if (!lastKnownState) {
+        return;
+      }
+      queueSave(() => persist(lastKnownState, 'opfs-interval'));
+    }, OPFS_BACKUP_INTERVAL);
+  };
+
+  startOpfsBackupInterval();
+
   const scheduleAutosave = (state) => {
     pendingState = state;
+    lastKnownState = state;
     const now = Date.now();
     if (!autosaveStart) {
       autosaveStart = now;
@@ -564,7 +584,10 @@ export const createStorageService = (options = {}) => {
     }
   };
 
-  const saveNow = (state) => queueSave(() => persist(state, 'explicit'));
+  const saveNow = (state) => {
+    lastKnownState = state;
+    return queueSave(() => persist(state, 'explicit'));
+  };
 
   const exportBackup = (state) => exportState(state);
 
@@ -605,9 +628,14 @@ export const createStorageService = (options = {}) => {
     if (autosaveTimer) {
       clearTimeout(autosaveTimer);
     }
+    if (opfsBackupInterval) {
+      clearInterval(opfsBackupInterval);
+    }
     autosaveTimer = null;
     autosaveStart = null;
     pendingState = null;
+    opfsBackupInterval = null;
+    lastKnownState = null;
   };
 
   return {

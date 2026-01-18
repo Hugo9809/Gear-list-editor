@@ -173,6 +173,31 @@ h6 {
     @apply rounded-lg border border-surface-sunken bg-surface-input text-left text-sm text-text-primary;
     box-shadow: var(--v2-shadow-popover);
   }
+
+  .ui-sidebar {
+    @apply rounded-3xl border border-surface-sunken bg-surface-base/75 backdrop-blur;
+    box-shadow: var(--v2-shadow-tile);
+  }
+
+  .ui-sidebar-section {
+    @apply rounded-2xl border border-surface-sunken/70 bg-surface-elevated/70 p-4;
+    box-shadow: var(--v2-shadow-xs);
+  }
+
+  .ui-sidebar-tab {
+    @apply ui-button w-full justify-between border border-surface-sunken bg-surface-base/80 text-left text-text-primary;
+    box-shadow: var(--v2-shadow-sm);
+  }
+
+  .ui-sidebar-tab:hover {
+    @apply border-brand/40 text-brand;
+    box-shadow: var(--v2-shadow-md);
+  }
+
+  .ui-sidebar-tab-active {
+    @apply bg-brand text-brand-foreground;
+    box-shadow: var(--v2-shadow-md);
+  }
 }
 
 @layer utilities {

@@ -1,0 +1,249 @@
+{
+  "app": {
+    "kicker": "Gear List Editor",
+    "tagline": "Project-ready gear lists with offline protection.",
+    "intro": "Build equipment lists that match your production PDFs. Create projects, reuse templates, and export print-ready gear lists without leaving offline mode. Every edit is saved locally with redundant backups.",
+    "badges": {
+      "autosave": "Autosave active",
+      "dashboard": "Project dashboard",
+      "templateLibrary": "Template library",
+      "pdfExport": "PDF export ready"
+    }
+  },
+  "language": {
+    "label": "Language",
+    "options": {
+      "en": "English"
+    }
+  },
+  "status": {
+    "loading": "Loading your saved gear list...",
+    "autosaveComplete": "Autosave complete. Your project dashboard is safe.",
+    "savedExplicit": "Saved safely to device storage and backups.",
+    "rehydrate": "Storage repaired and redundancies refreshed.",
+    "noData": "No saved data yet. Start a project and autosave will protect it.",
+    "loadedFrom": "Loaded safely from {source}.",
+    "needProjectName": "Please name the project before creating it.",
+    "projectCreated": "New project created and protected by autosave.",
+    "projectArchived": "Project archived. Backups remain intact.",
+    "needProjectBeforeCategory": "Create a project before adding categories.",
+    "needCategoryName": "Please name the category before adding it.",
+    "categoryAdded": "Category added.",
+    "needItemName": "Please provide an item name before adding.",
+    "itemAdded": "Item added. Autosave will secure it immediately.",
+    "categoryRemoved": "Category removed.",
+    "itemRemoved": "Item removed. Backups remain available.",
+    "changesQueued": "Changes queued for autosave.",
+    "categoryUpdated": "Category updated.",
+    "projectUpdated": "Project details updated.",
+    "projectNotesSaved": "Project notes saved for autosave.",
+    "suggestionApplied": "Suggestion applied and ready for autosave.",
+    "needProjectBeforeTemplate": "Create a project before saving a template.",
+    "needTemplateName": "Please name the template.",
+    "templateSaved": "Template saved from the current project.",
+    "selectProjectForTemplate": "Select a project before applying a template.",
+    "templateApplied": "Template applied. Autosave will secure the updated list.",
+    "templateUpdated": "Template updated.",
+    "templateRemoved": "Template removed.",
+    "selectProjectForExport": "Select a project before exporting.",
+    "popupBlocked": "Popup blocked. Please allow popups for PDF export.",
+    "pdfReady": "PDF export ready. Confirm printing to save the file.",
+    "backupDownloaded": "Backup downloaded. Store it somewhere safe.",
+    "restoredFrom": "Restored from {source}.",
+    "importComplete": "Import complete. Existing data was preserved.",
+    "clipboardCopied": "Copied your gear list to the clipboard for sharing.",
+    "clipboardBlocked": "Clipboard access was blocked. Use the download backup option instead.",
+    "clipboardUnavailable": "Clipboard sharing is not available. Use the download backup option instead.",
+    "autosaveError": "Autosave encountered a storage error.",
+    "autosaveErrorMemory": "Autosave encountered a storage error. Your data is still safe in memory.",
+    "storagePartial": "Some storage locations could not be updated. Your latest data is still preserved in other backups.",
+    "indexedDbUnavailable": "IndexedDB was unavailable. Checking device backups instead.",
+    "importFailed": "Import failed. Please choose a valid backup file.",
+    "noDeviceBackup": "No device backup was found yet.",
+    "payloadInvalid": "Payload is missing or invalid.",
+    "projectsInvalid": "Projects must be an array.",
+    "templatesInvalid": "Templates must be an array.",
+    "historyInvalid": "History must be an object when provided.",
+    "versionInvalid": "Version must be numeric when provided.",
+    "languageUpdated": "Language updated for this session."
+  },
+  "counts": {
+    "projects": {
+      "one": "{count} project",
+      "other": "{count} projects"
+    },
+    "categories": {
+      "one": "{count} category",
+      "other": "{count} categories"
+    },
+    "items": {
+      "one": "{count} item",
+      "other": "{count} items"
+    }
+  },
+  "projects": {
+    "dashboardTitle": "Project dashboard",
+    "dashboardDescription": "Track multiple productions and always know which list is active. New projects are autosaved the moment they are created.",
+    "form": {
+      "projectName": "Project name",
+      "projectNamePlaceholder": "e.g. October studio shoot",
+      "client": "Client / production",
+      "clientPlaceholder": "Client, agency, or show",
+      "shootDate": "Shoot date",
+      "location": "Location",
+      "locationPlaceholder": "Studio, city, or venue",
+      "contact": "Lead contact",
+      "contactPlaceholder": "Producer or department contact",
+      "createButton": "Create project"
+    },
+    "listTitle": "Active projects",
+    "stored": "{countLabel} stored locally.",
+    "lastSaved": "Last saved: {date}",
+    "notSavedYet": "Not saved yet",
+    "empty": "No projects yet. Create your first project to begin building a gear list.",
+    "card": {
+      "clientMissing": "Client not set",
+      "dateMissing": "Date not set",
+      "active": "Active",
+      "open": "Open",
+      "archive": "Archive"
+    },
+    "workspace": {
+      "title": "Active project workspace",
+      "summary": "{categoriesLabel} · {itemsLabel}",
+      "noSelection": "Select a project to start editing.",
+      "empty": "Select or create a project to unlock the gear list editor.",
+      "exportPdf": "Export PDF",
+      "categoriesTitle": "Categories",
+      "categoriesHint": "Use templates for faster setups.",
+      "addCategoryPlaceholder": "Add a category (e.g. Camera, Lighting)",
+      "addCategoryButton": "Add category",
+      "noCategories": "No categories yet. Add one above or apply a template.",
+      "categoryNotesPlaceholder": "Category notes or rental references",
+      "removeCategoryButton": "Remove category",
+      "itemsEmpty": "No items yet. Add the first item above.",
+      "projectNotesTitle": "Project notes",
+      "projectNotesDescription": "Notes appear in exports and are included in backups for every project.",
+      "projectNotesPlaceholder": "Crew notes, pickup info, or return instructions"
+    }
+  },
+  "items": {
+    "fields": {
+      "name": "Item name",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "details": "Details / notes"
+    },
+    "defaultUnit": "pcs",
+    "noDetails": "No details saved",
+    "status": {
+      "needed": "Needed",
+      "packed": "Packed",
+      "missing": "Missing",
+      "rented": "Rented"
+    },
+    "addButton": "Add",
+    "removeButton": "Remove"
+  },
+  "templates": {
+    "title": "Template management",
+    "description": "Save reusable setups for recurring shoots. Templates can be applied to any project without overwriting existing data.",
+    "form": {
+      "name": "Template name",
+      "namePlaceholder": "e.g. Standard documentary kit",
+      "description": "Description",
+      "descriptionPlaceholder": "Key details or usage",
+      "saveButton": "Save current project as template"
+    },
+    "empty": "No templates yet. Save the active project to build your library.",
+    "card": {
+      "nameLabel": "Name",
+      "descriptionLabel": "Description",
+      "meta": "{categoriesLabel} · Last used {date}",
+      "never": "Never",
+      "applyButton": "Apply to active project",
+      "removeButton": "Remove"
+    }
+  },
+  "sidebar": {
+    "saveShareTitle": "Save, share, restore",
+    "saveShareDescription": "Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices.",
+    "saveNow": "Save now",
+    "downloadBackup": "Download backup",
+    "importBackup": "Import backup file",
+    "restoreBackup": "Restore from device backup",
+    "shareClipboard": "Share via clipboard",
+    "statusPlaceholder": "Status updates appear here to confirm data safety."
+  },
+  "help": {
+    "title": "Help & documentation",
+    "tabs": {
+      "overview": "Overview",
+      "offline": "Offline workflows",
+      "backups": "Saving & backups",
+      "sharing": "Sharing & exports"
+    },
+    "views": {
+      "overview": {
+        "title": "Plan your production with confidence",
+        "description": "Use the dashboard, workspace, and templates together to keep every project organized.",
+        "bullets": [
+          "Create one project per shoot to keep gear lists separated and secure.",
+          "Use categories to mirror departments, then add items with quantities and status tracking.",
+          "Templates let you reuse proven setups without overwriting live project data.",
+          "Typeahead suggestions remember past items, units, and details for faster entry."
+        ]
+      },
+      "offline": {
+        "title": "Work fully offline",
+        "description": "Every workflow is designed for offline use, from autosave to PDF export.",
+        "bullets": [
+          "Autosave runs after each change and writes to multiple on-device locations.",
+          "Export PDF uses your browser print dialog without any network calls.",
+          "Use backup downloads to move data between devices without external services.",
+          "Restore from device backup to recover data even when you are offline."
+        ]
+      },
+      "backups": {
+        "title": "Protect every update",
+        "description": "Backup, import, and restore tools protect your data in case of device changes.",
+        "bullets": [
+          "Click Save now before travel or power changes to force a full sync.",
+          "Download backups regularly to keep offline copies in secure storage.",
+          "Import backups to merge data with what you already have locally.",
+          "Restore from device backup if you need to recover the last autosave."
+        ]
+      },
+      "sharing": {
+        "title": "Share and export safely",
+        "description": "Share gear lists with your team while keeping the source data local.",
+        "bullets": [
+          "Share via clipboard to paste a backup into chats or notes apps.",
+          "Download backups before sharing to preserve an offline copy.",
+          "PDF export creates a print-ready layout for rental houses.",
+          "Project notes are included in exports for pickup and return instructions."
+        ]
+      }
+    }
+  },
+  "print": {
+    "titleSuffix": "Gear List",
+    "emptyValue": "—",
+    "table": {
+      "quantity": "Qty",
+      "unit": "Unit",
+      "item": "Item",
+      "details": "Details",
+      "status": "Status",
+      "noItems": "No items listed."
+    },
+    "meta": {
+      "client": "Client",
+      "date": "Date",
+      "location": "Location",
+      "contact": "Contact"
+    },
+    "projectNotesLabel": "Project notes:",
+    "projectNotesEmpty": "No notes added."
+  }
+}

@@ -31,7 +31,19 @@ Because Pages serves this repo under a base path, the build must include `--base
 
 The app keeps all data local, autosaves after every change to IndexedDB, and mirrors redundant backups to the
 Origin Private File System (OPFS). Backup export, import, and restore are built in so your data stays protected
-even without network access.
+even without network access. The in-app Help & documentation views detail offline workflows, saving, backup,
+restore, and sharing flows so crews can operate fully offline.
+
+## In-app help and documentation
+
+The Help & documentation panel inside the app now includes multiple views (overview, offline workflows, saving
+& backups, and sharing & exports). Keep these views aligned with new features, especially any changes to
+autosave, backup, restore, and export behavior.
+
+## Localization
+
+All user-facing UI strings are sourced from locale files under `app/src/i18n/`. Add new strings to the locale
+JSON files and use the translation helpers so the interface stays fully translatable.
 
 ## GitHub Pages base path
 

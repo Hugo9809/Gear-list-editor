@@ -1,5 +1,12 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { createId, createStorageService } from './data/storage.js';
+import {
+  createListTranslator,
+  createTranslator,
+  getInitialLocale,
+  storeLocale,
+  supportedLocales
+} from './i18n/index.js';
 
 const emptyItemDraft = {
   name: '',
@@ -29,7 +36,14 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildPrintableHtml = (project) => {
+const buildPrintableHtml = (project, t) => {
+  const defaultUnit = t('items.defaultUnit');
+  const emptyValue = t('print.emptyValue');
+  const getStatusLabel = (status) => {
+    const key = `items.status.${status}`;
+    const translated = t(key);
+    return translated === key ? status : translated;
+  };
   const categoriesHtml = project.categories
     .map((category) => {
       const rows = category.items
@@ -37,10 +51,10 @@ const buildPrintableHtml = (project) => {
           (item) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
-              <td>${escapeHtml(item.unit || 'pcs')}</td>
+              <td>${escapeHtml(item.unit || defaultUnit)}</td>
               <td>${escapeHtml(item.name)}</td>
               <td>${escapeHtml(item.details)}</td>
-              <td>${escapeHtml(item.status)}</td>
+              <td>${escapeHtml(getStatusLabel(item.status))}</td>
             </tr>
           `
         )
@@ -51,15 +65,17 @@ const buildPrintableHtml = (project) => {
           <table>
             <thead>
               <tr>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Item</th>
-                <th>Details</th>
-                <th>Status</th>
+                <th>${escapeHtml(t('print.table.quantity'))}</th>
+                <th>${escapeHtml(t('print.table.unit'))}</th>
+                <th>${escapeHtml(t('print.table.item'))}</th>
+                <th>${escapeHtml(t('print.table.details'))}</th>
+                <th>${escapeHtml(t('print.table.status'))}</th>
               </tr>
             </thead>
             <tbody>
-              ${rows || '<tr><td colspan="5">No items listed.</td></tr>'}
+              ${
+                rows || `<tr><td colspan="5">${escapeHtml(t('print.table.noItems'))}</td></tr>`
+              }
             </tbody>
           </table>
         </section>
@@ -72,7 +88,7 @@ const buildPrintableHtml = (project) => {
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>${escapeHtml(project.name)} - Gear List</title>
+        <title>${escapeHtml(project.name)} - ${escapeHtml(t('print.titleSuffix'))}</title>
         <style>
           body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -129,15 +145,15 @@ const buildPrintableHtml = (project) => {
         <header>
           <h1>${escapeHtml(project.name)}</h1>
           <div class="meta">
-            <div><strong>Client:</strong> ${escapeHtml(project.client || '—')}</div>
-            <div><strong>Date:</strong> ${escapeHtml(project.shootDate || '—')}</div>
-            <div><strong>Location:</strong> ${escapeHtml(project.location || '—')}</div>
-            <div><strong>Contact:</strong> ${escapeHtml(project.contact || '—')}</div>
+            <div><strong>${escapeHtml(t('print.meta.client'))}:</strong> ${escapeHtml(project.client || emptyValue)}</div>
+            <div><strong>${escapeHtml(t('print.meta.date'))}:</strong> ${escapeHtml(project.shootDate || emptyValue)}</div>
+            <div><strong>${escapeHtml(t('print.meta.location'))}:</strong> ${escapeHtml(project.location || emptyValue)}</div>
+            <div><strong>${escapeHtml(t('print.meta.contact'))}:</strong> ${escapeHtml(project.contact || emptyValue)}</div>
           </div>
         </header>
         ${categoriesHtml}
         <div class="notes">
-          <strong>Project notes:</strong> ${escapeHtml(project.notes || 'No notes added.')}
+          <strong>${escapeHtml(t('print.projectNotesLabel'))}</strong> ${escapeHtml(project.notes || t('print.projectNotesEmpty'))}
         </div>
       </body>
     </html>
@@ -152,7 +168,9 @@ const TypeaheadInput = ({
   placeholder,
   inputClassName,
   listClassName,
-  label
+  label,
+  unitFallback,
+  detailsFallback
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const filteredSuggestions = useMemo(() => {
@@ -200,7 +218,7 @@ const TypeaheadInput = ({
             >
               <span className="font-medium text-white">{suggestion.name}</span>
               <span className="text-xs text-slate-400">
-                {suggestion.unit || 'pcs'} · {suggestion.details || 'No details saved'}
+                {suggestion.unit || unitFallback} · {suggestion.details || detailsFallback}
               </span>
             </button>
           ))}
@@ -211,37 +229,81 @@ const TypeaheadInput = ({
 };
 
 export default function App() {
+  const [locale, setLocale] = useState(getInitialLocale);
+  const t = useMemo(() => createTranslator(locale), [locale]);
+  const tList = useMemo(() => createListTranslator(locale), [locale]);
+  const tRef = useRef(t);
+  const localeInitialized = useRef(false);
   const [projects, setProjects] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
   const [activeProjectId, setActiveProjectId] = useState(null);
   const [lastSaved, setLastSaved] = useState(null);
-  const [status, setStatus] = useState('Loading your saved gear list...');
+  const [status, setStatus] = useState(() => t('status.loading'));
   const [isHydrated, setIsHydrated] = useState(false);
   const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
   const [templateDraft, setTemplateDraft] = useState(emptyTemplateDraft);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [itemDrafts, setItemDrafts] = useState({});
+  const [activeHelpView, setActiveHelpView] = useState('overview');
   const fileInputRef = useRef(null);
   const storageRef = useRef(null);
+
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
+
+  useEffect(() => {
+    storeLocale(locale);
+    if (localeInitialized.current) {
+      setStatus(t('status.languageUpdated'));
+    }
+    localeInitialized.current = true;
+  }, [locale, t]);
+
+  const formatCount = (key, count) =>
+    count === 1 ? t(`counts.${key}.one`, { count }) : t(`counts.${key}.other`, { count });
+
+  const translateWarning = (message) => {
+    const translate = tRef.current;
+    const translations = {
+      'Autosave encountered a storage error.': translate('status.autosaveError'),
+      'Autosave encountered a storage error. Your data is still safe in memory.': translate(
+        'status.autosaveErrorMemory'
+      ),
+      'Some storage locations could not be updated. Your latest data is still preserved in other backups.':
+        translate('status.storagePartial'),
+      'IndexedDB was unavailable. Checking device backups instead.': translate(
+        'status.indexedDbUnavailable'
+      ),
+      'Import failed. Please choose a valid backup file.': translate('status.importFailed'),
+      'No device backup was found yet.': translate('status.noDeviceBackup'),
+      'Payload is missing or invalid.': translate('status.payloadInvalid'),
+      'Projects must be an array.': translate('status.projectsInvalid'),
+      'Templates must be an array.': translate('status.templatesInvalid'),
+      'History must be an object when provided.': translate('status.historyInvalid'),
+      'Version must be numeric when provided.': translate('status.versionInvalid')
+    };
+    return translations[message] || message;
+  };
 
   if (!storageRef.current) {
     storageRef.current = createStorageService({
       onSaved: (payload, { reason, warnings }) => {
         setLastSaved(payload.lastSaved);
         if (warnings?.length) {
-          setStatus(warnings[0]);
+          setStatus(translateWarning(warnings[0]));
           return;
         }
         if (reason === 'autosave') {
-          setStatus('Autosave complete. Your project dashboard is safe.');
+          setStatus(tRef.current('status.autosaveComplete'));
         } else if (reason === 'explicit') {
-          setStatus('Saved safely to device storage and backups.');
+          setStatus(tRef.current('status.savedExplicit'));
         } else if (reason === 'rehydrate') {
-          setStatus('Storage repaired and redundancies refreshed.');
+          setStatus(tRef.current('status.rehydrate'));
         }
       },
-      onWarning: (message) => setStatus(message)
+      onWarning: (message) => setStatus(translateWarning(message))
     });
   }
 
@@ -258,12 +320,12 @@ export default function App() {
       setActiveProjectId(result.state.activeProjectId);
       setLastSaved(result.state.lastSaved);
       if (result.warnings.length > 0) {
-        setStatus(result.warnings[0]);
+        setStatus(translateWarning(result.warnings[0]));
       } else {
         setStatus(
           result.source === 'Empty'
-            ? 'No saved data yet. Start a project and autosave will protect it.'
-            : `Loaded safely from ${result.source}.`
+            ? tRef.current('status.noData')
+            : tRef.current('status.loadedFrom', { source: result.source })
         );
       }
       setIsHydrated(true);
@@ -372,7 +434,7 @@ export default function App() {
     event.preventDefault();
     const name = projectDraft.name.trim();
     if (!name) {
-      setStatus('Please name the project before creating it.');
+      setStatus(t('status.needProjectName'));
       return;
     }
     const newProject = {
@@ -388,7 +450,7 @@ export default function App() {
     setProjects((prev) => [newProject, ...prev]);
     setActiveProjectId(newProject.id);
     setProjectDraft(emptyProjectDraft);
-    setStatus('New project created and protected by autosave.');
+    setStatus(t('status.projectCreated'));
   };
 
   const deleteProject = (projectId) => {
@@ -399,18 +461,18 @@ export default function App() {
       }
       return remaining;
     });
-    setStatus('Project archived. Backups remain intact.');
+    setStatus(t('status.projectArchived'));
   };
 
   const addCategory = (event) => {
     event.preventDefault();
     if (!activeProject) {
-      setStatus('Create a project before adding categories.');
+      setStatus(t('status.needProjectBeforeCategory'));
       return;
     }
     const name = newCategoryName.trim();
     if (!name) {
-      setStatus('Please name the category before adding it.');
+      setStatus(t('status.needCategoryName'));
       return;
     }
     updateProject(activeProject.id, (project) => ({
@@ -427,7 +489,7 @@ export default function App() {
     }));
     rememberCategory(name);
     setNewCategoryName('');
-    setStatus('Category added.');
+    setStatus(t('status.categoryAdded'));
   };
 
   const addItemToCategory = (event, categoryId) => {
@@ -438,7 +500,7 @@ export default function App() {
     const draft = itemDrafts[categoryId] || emptyItemDraft;
     const name = draft.name.trim();
     if (!name) {
-      setStatus('Please provide an item name before adding.');
+      setStatus(t('status.needItemName'));
       return;
     }
     const newItem = {
@@ -458,7 +520,7 @@ export default function App() {
       ...prev,
       [categoryId]: { ...emptyItemDraft }
     }));
-    setStatus('Item added. Autosave will secure it immediately.');
+    setStatus(t('status.itemAdded'));
   };
 
   const removeCategory = (categoryId) => {
@@ -469,7 +531,7 @@ export default function App() {
       ...project,
       categories: project.categories.filter((category) => category.id !== categoryId)
     }));
-    setStatus('Category removed.');
+    setStatus(t('status.categoryRemoved'));
   };
 
   const removeItem = (categoryId, itemId) => {
@@ -480,7 +542,7 @@ export default function App() {
       ...category,
       items: category.items.filter((item) => item.id !== itemId)
     }));
-    setStatus('Item removed. Backups remain available.');
+    setStatus(t('status.itemRemoved'));
   };
 
   const updateItemField = (categoryId, itemId, field, value) => {
@@ -495,7 +557,7 @@ export default function App() {
       rememberItem(next);
       return next;
     });
-    setStatus('Changes queued for autosave.');
+    setStatus(t('status.changesQueued'));
   };
 
   const updateCategoryField = (categoryId, field, value) => {
@@ -509,7 +571,7 @@ export default function App() {
     if (field === 'name') {
       rememberCategory(value);
     }
-    setStatus('Category updated.');
+    setStatus(t('status.categoryUpdated'));
   };
 
   const updateProjectField = (field, value) => {
@@ -520,7 +582,7 @@ export default function App() {
       ...project,
       [field]: value
     }));
-    setStatus('Project details updated.');
+    setStatus(t('status.projectUpdated'));
   };
 
   const updateProjectNotes = (value) => {
@@ -531,7 +593,7 @@ export default function App() {
       ...project,
       notes: value
     }));
-    setStatus('Project notes saved for autosave.');
+    setStatus(t('status.projectNotesSaved'));
   };
 
   const updateDraftItem = (categoryId, field, value) => {
@@ -570,18 +632,18 @@ export default function App() {
       ...updated
     }));
     rememberItem(updated);
-    setStatus('Suggestion applied and ready for autosave.');
+    setStatus(t('status.suggestionApplied'));
   };
 
   const saveTemplateFromProject = (event) => {
     event.preventDefault();
     if (!activeProject) {
-      setStatus('Create a project before saving a template.');
+      setStatus(t('status.needProjectBeforeTemplate'));
       return;
     }
     const name = templateDraft.name.trim();
     if (!name) {
-      setStatus('Please name the template.');
+      setStatus(t('status.needTemplateName'));
       return;
     }
     const template = {
@@ -601,12 +663,12 @@ export default function App() {
     };
     setTemplates((prev) => [template, ...prev]);
     setTemplateDraft(emptyTemplateDraft);
-    setStatus('Template saved from the current project.');
+    setStatus(t('status.templateSaved'));
   };
 
   const applyTemplateToProject = (templateId) => {
     if (!activeProject) {
-      setStatus('Select a project before applying a template.');
+      setStatus(t('status.selectProjectForTemplate'));
       return;
     }
     const template = templates.find((item) => item.id === templateId);
@@ -633,7 +695,7 @@ export default function App() {
     setTemplates((prev) =>
       prev.map((item) => (item.id === templateId ? { ...item, lastUsed: new Date().toISOString() } : item))
     );
-    setStatus('Template applied. Autosave will secure the updated list.');
+    setStatus(t('status.templateApplied'));
   };
 
   const updateTemplateField = (templateId, field, value) => {
@@ -647,30 +709,30 @@ export default function App() {
           : template
       )
     );
-    setStatus('Template updated.');
+    setStatus(t('status.templateUpdated'));
   };
 
   const removeTemplate = (templateId) => {
     setTemplates((prev) => prev.filter((template) => template.id !== templateId));
-    setStatus('Template removed.');
+    setStatus(t('status.templateRemoved'));
   };
 
   const exportPdf = () => {
     if (!activeProject) {
-      setStatus('Select a project before exporting.');
+      setStatus(t('status.selectProjectForExport'));
       return;
     }
     const printWindow = window.open('', '_blank', 'noopener,noreferrer');
     if (!printWindow) {
-      setStatus('Popup blocked. Please allow popups for PDF export.');
+      setStatus(t('status.popupBlocked'));
       return;
     }
     printWindow.document.open();
-    printWindow.document.write(buildPrintableHtml(activeProject));
+    printWindow.document.write(buildPrintableHtml(activeProject, t));
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
-    setStatus('PDF export ready. Confirm printing to save the file.');
+    setStatus(t('status.pdfReady'));
   };
 
   const downloadBackup = () => {
@@ -690,7 +752,7 @@ export default function App() {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    setStatus('Backup downloaded. Store it somewhere safe.');
+    setStatus(t('status.backupDownloaded'));
   };
 
   const restoreFromDeviceBackup = async () => {
@@ -701,10 +763,10 @@ export default function App() {
     setActiveProjectId(result.state.activeProjectId);
     setLastSaved(result.state.lastSaved);
     if (result.warnings.length > 0) {
-      setStatus(result.warnings[0]);
+      setStatus(translateWarning(result.warnings[0]));
       return;
     }
-    setStatus(`Restored from ${result.source}.`);
+    setStatus(t('status.restoredFrom', { source: result.source }));
   };
 
   const handleImport = (event) => {
@@ -726,9 +788,9 @@ export default function App() {
       setHistory(state.history);
       setActiveProjectId(state.activeProjectId);
       if (warnings.length > 0) {
-        setStatus(warnings[0]);
+        setStatus(translateWarning(warnings[0]));
       } else {
-        setStatus('Import complete. Existing data was preserved.');
+        setStatus(t('status.importComplete'));
       }
     };
     reader.readAsText(file);
@@ -759,13 +821,13 @@ export default function App() {
     if (navigator.clipboard?.writeText) {
       try {
         await navigator.clipboard.writeText(json);
-        setStatus('Copied your gear list to the clipboard for sharing.');
+        setStatus(t('status.clipboardCopied'));
         return;
       } catch {
-        setStatus('Clipboard access was blocked. Use the download backup option instead.');
+        setStatus(t('status.clipboardBlocked'));
       }
     } else {
-      setStatus('Clipboard sharing is not available. Use the download backup option instead.');
+      setStatus(t('status.clipboardUnavailable'));
     }
   };
 
@@ -782,23 +844,83 @@ export default function App() {
     return { categories, items };
   }, [activeProject]);
 
+  const helpTabs = useMemo(
+    () => [
+      { id: 'overview', label: t('help.tabs.overview') },
+      { id: 'offline', label: t('help.tabs.offline') },
+      { id: 'backups', label: t('help.tabs.backups') },
+      { id: 'sharing', label: t('help.tabs.sharing') }
+    ],
+    [t]
+  );
+
+  const helpViews = useMemo(
+    () => ({
+      overview: {
+        title: t('help.views.overview.title'),
+        description: t('help.views.overview.description'),
+        bullets: tList('help.views.overview.bullets')
+      },
+      offline: {
+        title: t('help.views.offline.title'),
+        description: t('help.views.offline.description'),
+        bullets: tList('help.views.offline.bullets')
+      },
+      backups: {
+        title: t('help.views.backups.title'),
+        description: t('help.views.backups.description'),
+        bullets: tList('help.views.backups.bullets')
+      },
+      sharing: {
+        title: t('help.views.sharing.title'),
+        description: t('help.views.sharing.description'),
+        bullets: tList('help.views.sharing.bullets')
+      }
+    }),
+    [t, tList]
+  );
+
+  const activeHelpContent = helpViews[activeHelpView] || helpViews.overview;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-10">
         <header className="flex flex-col gap-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Gear List Editor</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">{t('app.kicker')}</p>
           <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
-            <h1 className="text-3xl font-semibold text-white">Project-ready gear lists with offline protection.</h1>
+            <h1 className="text-3xl font-semibold text-white">{t('app.tagline')}</h1>
             <p className="max-w-3xl text-base text-slate-300">
-              Build equipment lists that match your production PDFs. Create projects, reuse templates, and
-              export print-ready gear lists without leaving offline mode. Every edit is saved locally with
-              redundant backups.
+              {t('app.intro')}
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
-              <span className="rounded-full border border-slate-700 px-3 py-1">Autosave active</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Project dashboard</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">Template library</span>
-              <span className="rounded-full border border-slate-700 px-3 py-1">PDF export ready</span>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+                <span className="rounded-full border border-slate-700 px-3 py-1">
+                  {t('app.badges.autosave')}
+                </span>
+                <span className="rounded-full border border-slate-700 px-3 py-1">
+                  {t('app.badges.dashboard')}
+                </span>
+                <span className="rounded-full border border-slate-700 px-3 py-1">
+                  {t('app.badges.templateLibrary')}
+                </span>
+                <span className="rounded-full border border-slate-700 px-3 py-1">
+                  {t('app.badges.pdfExport')}
+                </span>
+              </div>
+              <label className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+                <span>{t('language.label')}</span>
+                <select
+                  value={locale}
+                  onChange={(event) => setLocale(event.target.value)}
+                  className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-1 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
+                >
+                  {supportedLocales.map((value) => (
+                    <option key={value} value={value}>
+                      {t(`language.options.${value}`)}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           </div>
         </header>
@@ -810,33 +932,32 @@ export default function App() {
               className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
             >
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold text-white">Project dashboard</h2>
+                <h2 className="text-xl font-semibold text-white">{t('projects.dashboardTitle')}</h2>
                 <p className="text-sm text-slate-400">
-                  Track multiple productions and always know which list is active. New projects are
-                  autosaved the moment they are created.
+                  {t('projects.dashboardDescription')}
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Project name
+                  {t('projects.form.projectName')}
                   <input
                     value={projectDraft.name}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, name: event.target.value }))}
-                    placeholder="e.g. October studio shoot"
+                    placeholder={t('projects.form.projectNamePlaceholder')}
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
                 </label>
                 <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Client / production
+                  {t('projects.form.client')}
                   <input
                     value={projectDraft.client}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, client: event.target.value }))}
-                    placeholder="Client, agency, or show"
+                    placeholder={t('projects.form.clientPlaceholder')}
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
                 </label>
                 <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Shoot date
+                  {t('projects.form.shootDate')}
                   <input
                     type="date"
                     value={projectDraft.shootDate}
@@ -847,20 +968,20 @@ export default function App() {
                   />
                 </label>
                 <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Location
+                  {t('projects.form.location')}
                   <input
                     value={projectDraft.location}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, location: event.target.value }))}
-                    placeholder="Studio, city, or venue"
+                    placeholder={t('projects.form.locationPlaceholder')}
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
                 </label>
                 <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
-                  Lead contact
+                  {t('projects.form.contact')}
                   <input
                     value={projectDraft.contact}
                     onChange={(event) => setProjectDraft((prev) => ({ ...prev, contact: event.target.value }))}
-                    placeholder="Producer or department contact"
+                    placeholder={t('projects.form.contactPlaceholder')}
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
                 </label>
@@ -869,26 +990,30 @@ export default function App() {
                 type="submit"
                 className="inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
               >
-                Create project
+                {t('projects.form.createButton')}
               </button>
             </form>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-white">Active projects</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('projects.listTitle')}</h2>
                   <p className="text-sm text-slate-400">
-                    {projects.length} project{projects.length === 1 ? '' : 's'} stored locally.
+                    {t('projects.stored', {
+                      countLabel: formatCount('projects', projects.length)
+                    })}
                   </p>
                 </div>
                 <div className="text-xs text-slate-500">
-                  Last saved: {lastSaved ? new Date(lastSaved).toLocaleString() : 'Not saved yet'}
+                  {t('projects.lastSaved', {
+                    date: lastSaved ? new Date(lastSaved).toLocaleString() : t('projects.notSavedYet')
+                  })}
                 </div>
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {projects.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
-                    No projects yet. Create your first project to begin building a gear list.
+                    {t('projects.empty')}
                   </div>
                 ) : (
                   projects.map((project) => {
@@ -897,6 +1022,8 @@ export default function App() {
                       (sum, category) => sum + category.items.length,
                       0
                     );
+                    const categoryLabel = formatCount('categories', project.categories.length);
+                    const itemLabel = formatCount('items', itemTotal);
                     return (
                       <div
                         key={project.id}
@@ -909,11 +1036,12 @@ export default function App() {
                         <div>
                           <h3 className="text-lg font-semibold text-white">{project.name}</h3>
                           <p className="text-xs text-slate-400">
-                            {project.client || 'Client not set'} · {project.shootDate || 'Date not set'}
+                            {project.client || t('projects.card.clientMissing')} ·{' '}
+                            {project.shootDate || t('projects.card.dateMissing')}
                           </p>
                         </div>
                         <div className="text-xs text-slate-500">
-                          {project.categories.length} categories · {itemTotal} items
+                          {categoryLabel} · {itemLabel}
                         </div>
                         <div className="mt-auto flex flex-wrap gap-2">
                           <button
@@ -925,14 +1053,14 @@ export default function App() {
                                 : 'border border-slate-700 text-slate-200 hover:border-emerald-400'
                             }`}
                           >
-                            {isActive ? 'Active' : 'Open'}
+                            {isActive ? t('projects.card.active') : t('projects.card.open')}
                           </button>
                           <button
                             type="button"
                             onClick={() => deleteProject(project.id)}
                             className="rounded-lg border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
                           >
-                            Archive
+                            {t('projects.card.archive')}
                           </button>
                         </div>
                       </div>
@@ -945,11 +1073,14 @@ export default function App() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-white">Active project workspace</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('projects.workspace.title')}</h2>
                   <p className="text-sm text-slate-400">
                     {activeProject
-                      ? `${totals.categories} categories · ${totals.items} items`
-                      : 'Select a project to start editing.'}
+                      ? t('projects.workspace.summary', {
+                          categoriesLabel: formatCount('categories', totals.categories),
+                          itemsLabel: formatCount('items', totals.items)
+                        })
+                      : t('projects.workspace.noSelection')}
                   </p>
                 </div>
                 <button
@@ -957,7 +1088,7 @@ export default function App() {
                   onClick={exportPdf}
                   className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
                 >
-                  Export PDF
+                  {t('projects.workspace.exportPdf')}
                 </button>
               </div>
 
@@ -965,7 +1096,7 @@ export default function App() {
                 <div className="mt-6 flex flex-col gap-6">
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="flex flex-col gap-2 text-sm text-slate-300">
-                      Project name
+                      {t('projects.form.projectName')}
                       <input
                         value={activeProject.name}
                         onChange={(event) => updateProjectField('name', event.target.value)}
@@ -973,7 +1104,7 @@ export default function App() {
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-slate-300">
-                      Client / production
+                      {t('projects.form.client')}
                       <input
                         value={activeProject.client}
                         onChange={(event) => updateProjectField('client', event.target.value)}
@@ -981,7 +1112,7 @@ export default function App() {
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-slate-300">
-                      Shoot date
+                      {t('projects.form.shootDate')}
                       <input
                         type="date"
                         value={activeProject.shootDate}
@@ -990,7 +1121,7 @@ export default function App() {
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-slate-300">
-                      Location
+                      {t('projects.form.location')}
                       <input
                         value={activeProject.location}
                         onChange={(event) => updateProjectField('location', event.target.value)}
@@ -998,7 +1129,7 @@ export default function App() {
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
-                      Lead contact
+                      {t('projects.form.contact')}
                       <input
                         value={activeProject.contact}
                         onChange={(event) => updateProjectField('contact', event.target.value)}
@@ -1012,21 +1143,21 @@ export default function App() {
                     className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-white">Categories</h3>
-                      <span className="text-xs text-slate-500">Use templates for faster setups.</span>
+                      <h3 className="text-lg font-semibold text-white">{t('projects.workspace.categoriesTitle')}</h3>
+                      <span className="text-xs text-slate-500">{t('projects.workspace.categoriesHint')}</span>
                     </div>
                     <div className="flex flex-wrap gap-3">
                       <input
                         value={newCategoryName}
                         onChange={(event) => setNewCategoryName(event.target.value)}
-                        placeholder="Add a category (e.g. Camera, Lighting)"
+                        placeholder={t('projects.workspace.addCategoryPlaceholder')}
                         className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                       />
                       <button
                         type="submit"
                         className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
                       >
-                        Add category
+                        {t('projects.workspace.addCategoryButton')}
                       </button>
                     </div>
                   </form>
@@ -1034,7 +1165,7 @@ export default function App() {
                   <div className="flex flex-col gap-4">
                     {activeProject.categories.length === 0 ? (
                       <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
-                        No categories yet. Add one above or apply a template.
+                        {t('projects.workspace.noCategories')}
                       </div>
                     ) : (
                       activeProject.categories.map((category) => (
@@ -1056,7 +1187,7 @@ export default function App() {
                                 onChange={(event) =>
                                   updateCategoryField(category.id, 'notes', event.target.value)
                                 }
-                                placeholder="Category notes or rental references"
+                                placeholder={t('projects.workspace.categoryNotesPlaceholder')}
                                 rows={2}
                                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                               />
@@ -1066,7 +1197,7 @@ export default function App() {
                               onClick={() => removeCategory(category.id)}
                               className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
                             >
-                              Remove category
+                              {t('projects.workspace.removeCategoryButton')}
                             </button>
                           </div>
 
@@ -1081,8 +1212,10 @@ export default function App() {
                                 applySuggestionToDraft(category.id, suggestion)
                               }
                               suggestions={itemSuggestions}
-                              placeholder="Item name"
-                              label="Item name"
+                              placeholder={t('items.fields.name')}
+                              label={t('items.fields.name')}
+                              unitFallback={t('items.defaultUnit')}
+                              detailsFallback={t('items.noDetails')}
                               inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                             />
                             <input
@@ -1090,32 +1223,35 @@ export default function App() {
                               min="1"
                               value={(itemDrafts[category.id] || emptyItemDraft).quantity}
                               onChange={(event) => updateDraftItem(category.id, 'quantity', event.target.value)}
+                              aria-label={t('items.fields.quantity')}
                               className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                             />
                             <input
                               value={(itemDrafts[category.id] || emptyItemDraft).unit}
                               onChange={(event) => updateDraftItem(category.id, 'unit', event.target.value)}
-                              placeholder="Unit"
+                              placeholder={t('items.fields.unit')}
+                              aria-label={t('items.fields.unit')}
                               className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                             />
                             <input
                               value={(itemDrafts[category.id] || emptyItemDraft).details}
                               onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
-                              placeholder="Details / notes"
+                              placeholder={t('items.fields.details')}
+                              aria-label={t('items.fields.details')}
                               className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                             />
                             <button
                               type="submit"
                               className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
                             >
-                              Add
+                              {t('items.addButton')}
                             </button>
                           </form>
 
                           <div className="flex flex-col gap-3">
                             {category.items.length === 0 ? (
                               <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-4 text-center text-xs text-slate-500">
-                                No items yet. Add the first item above.
+                                {t('projects.workspace.itemsEmpty')}
                               </div>
                             ) : (
                               category.items.map((item) => (
@@ -1132,8 +1268,10 @@ export default function App() {
                                       applySuggestionToItem(category.id, item.id, suggestion)
                                     }
                                     suggestions={itemSuggestions}
-                                    placeholder="Item name"
-                                    label="Item name"
+                                    placeholder={t('items.fields.name')}
+                                    label={t('items.fields.name')}
+                                    unitFallback={t('items.defaultUnit')}
+                                    detailsFallback={t('items.noDetails')}
                                     inputClassName="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                                   />
                                   <input
@@ -1143,6 +1281,7 @@ export default function App() {
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'quantity', event.target.value)
                                     }
+                                    aria-label={t('items.fields.quantity')}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                                   />
                                   <input
@@ -1150,6 +1289,7 @@ export default function App() {
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'unit', event.target.value)
                                     }
+                                    aria-label={t('items.fields.unit')}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                                   />
                                   <input
@@ -1157,6 +1297,7 @@ export default function App() {
                                     onChange={(event) =>
                                       updateItemField(category.id, item.id, 'details', event.target.value)
                                     }
+                                    aria-label={t('items.fields.details')}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                                   />
                                   <select
@@ -1166,17 +1307,17 @@ export default function App() {
                                     }
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-400 focus:outline-none"
                                   >
-                                    <option value="needed">Needed</option>
-                                    <option value="packed">Packed</option>
-                                    <option value="missing">Missing</option>
-                                    <option value="rented">Rented</option>
+                                    <option value="needed">{t('items.status.needed')}</option>
+                                    <option value="packed">{t('items.status.packed')}</option>
+                                    <option value="missing">{t('items.status.missing')}</option>
+                                    <option value="rented">{t('items.status.rented')}</option>
                                   </select>
                                   <button
                                     type="button"
                                     onClick={() => removeItem(category.id, item.id)}
                                     className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-rose-500 hover:text-rose-200"
                                   >
-                                    Remove
+                                    {t('items.removeButton')}
                                   </button>
                                 </div>
                               ))
@@ -1188,14 +1329,14 @@ export default function App() {
                   </div>
 
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-                    <h3 className="text-lg font-semibold text-white">Project notes</h3>
+                    <h3 className="text-lg font-semibold text-white">{t('projects.workspace.projectNotesTitle')}</h3>
                     <p className="text-sm text-slate-400">
-                      Notes appear in exports and are included in backups for every project.
+                      {t('projects.workspace.projectNotesDescription')}
                     </p>
                     <textarea
                       value={activeProject.notes}
                       onChange={(event) => updateProjectNotes(event.target.value)}
-                      placeholder="Crew notes, pickup info, or return instructions"
+                      placeholder={t('projects.workspace.projectNotesPlaceholder')}
                       rows={4}
                       className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                     />
@@ -1203,7 +1344,7 @@ export default function App() {
                 </div>
               ) : (
                 <div className="mt-6 rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500">
-                  Select or create a project to unlock the gear list editor.
+                  {t('projects.workspace.empty')}
                 </div>
               )}
             </div>
@@ -1213,30 +1354,29 @@ export default function App() {
               className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
             >
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold text-white">Template management</h2>
+                <h2 className="text-xl font-semibold text-white">{t('templates.title')}</h2>
                 <p className="text-sm text-slate-400">
-                  Save reusable setups for recurring shoots. Templates can be applied to any project without
-                  overwriting existing data.
+                  {t('templates.description')}
                 </p>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Template name
+                  {t('templates.form.name')}
                   <input
                     value={templateDraft.name}
                     onChange={(event) => setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))}
-                    placeholder="e.g. Standard documentary kit"
+                    placeholder={t('templates.form.namePlaceholder')}
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
                 </label>
                 <label className="flex flex-col gap-2 text-sm text-slate-300">
-                  Description
+                  {t('templates.form.description')}
                   <input
                     value={templateDraft.description}
                     onChange={(event) =>
                       setTemplateDraft((prev) => ({ ...prev, description: event.target.value }))
                     }
-                    placeholder="Key details or usage"
+                    placeholder={t('templates.form.descriptionPlaceholder')}
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-base text-slate-100 placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
                   />
                 </label>
@@ -1245,13 +1385,13 @@ export default function App() {
                 type="submit"
                 className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
               >
-                Save current project as template
+                {t('templates.form.saveButton')}
               </button>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {templates.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/70 px-4 py-6 text-center text-sm text-slate-500 md:col-span-2">
-                    No templates yet. Save the active project to build your library.
+                    {t('templates.empty')}
                   </div>
                 ) : (
                   templates.map((template) => (
@@ -1260,7 +1400,7 @@ export default function App() {
                       className="flex h-full flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4"
                     >
                       <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
-                        Name
+                        {t('templates.card.nameLabel')}
                         <input
                           value={template.name}
                           onChange={(event) =>
@@ -1270,7 +1410,7 @@ export default function App() {
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-slate-400">
-                        Description
+                        {t('templates.card.descriptionLabel')}
                         <input
                           value={template.description}
                           onChange={(event) =>
@@ -1280,8 +1420,12 @@ export default function App() {
                         />
                       </label>
                       <div className="text-xs text-slate-500">
-                        {template.categories.length} categories · Last used{' '}
-                        {template.lastUsed ? new Date(template.lastUsed).toLocaleDateString() : 'Never'}
+                        {t('templates.card.meta', {
+                          categoriesLabel: formatCount('categories', template.categories.length),
+                          date: template.lastUsed
+                            ? new Date(template.lastUsed).toLocaleDateString()
+                            : t('templates.card.never')
+                        })}
                       </div>
                       <div className="mt-auto flex flex-wrap gap-2">
                         <button
@@ -1289,14 +1433,14 @@ export default function App() {
                           onClick={() => applyTemplateToProject(template.id)}
                           className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-semibold text-emerald-950 transition hover:bg-emerald-400"
                         >
-                          Apply to active project
+                          {t('templates.card.applyButton')}
                         </button>
                         <button
                           type="button"
                           onClick={() => removeTemplate(template.id)}
                           className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-rose-500 hover:text-rose-200"
                         >
-                          Remove
+                          {t('templates.card.removeButton')}
                         </button>
                       </div>
                     </div>
@@ -1308,10 +1452,9 @@ export default function App() {
 
           <aside className="flex flex-col gap-6">
             <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
+              <h2 className="text-lg font-semibold text-white">{t('sidebar.saveShareTitle')}</h2>
               <p className="text-sm text-slate-400">
-                Your data stays on-device. Save immediately, create offline backups, and restore if you ever
-                switch devices.
+                {t('sidebar.saveShareDescription')}
               </p>
               <div className="mt-4 flex flex-col gap-3">
                 <button
@@ -1319,21 +1462,21 @@ export default function App() {
                   onClick={saveNow}
                   className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"
                 >
-                  Save now
+                  {t('sidebar.saveNow')}
                 </button>
                 <button
                   type="button"
                   onClick={downloadBackup}
                   className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
                 >
-                  Download backup
+                  {t('sidebar.downloadBackup')}
                 </button>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
                 >
-                  Import backup file
+                  {t('sidebar.importBackup')}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -1347,31 +1490,53 @@ export default function App() {
                   onClick={restoreFromDeviceBackup}
                   className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
                 >
-                  Restore from device backup
+                  {t('sidebar.restoreBackup')}
                 </button>
                 <button
                   type="button"
                   onClick={shareData}
                   className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
                 >
-                  Share via clipboard
+                  {t('sidebar.shareClipboard')}
                 </button>
               </div>
             </div>
 
             <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
-              {status || 'Status updates appear here to confirm data safety.'}
+              {status || t('sidebar.statusPlaceholder')}
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
-              <h2 className="text-lg font-semibold text-white">Help & documentation</h2>
-              <ul className="mt-3 flex flex-col gap-3 text-sm text-slate-300">
-                <li>Project dashboard keeps every production separate with safe autosaves.</li>
-                <li>Templates let you reuse proven setups without overwriting existing gear lists.</li>
-                <li>Typeahead suggestions remember previous items and restore unit/details instantly.</li>
-                <li>PDF export opens a print-ready layout matching your reference equipment lists.</li>
-                <li>Backups stay on-device and can be shared offline without external links.</li>
-              </ul>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">{t('help.title')}</h2>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {helpTabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveHelpView(tab.id)}
+                      className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                        activeHelpView === tab.id
+                          ? 'border-emerald-400 bg-emerald-400/20 text-emerald-100'
+                          : 'border-slate-700 text-slate-300 hover:border-emerald-400 hover:text-emerald-100'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <h3 className="text-base font-semibold text-white">{activeHelpContent.title}</h3>
+                  <p className="mt-2 text-sm text-slate-300">{activeHelpContent.description}</p>
+                  <ul className="mt-3 flex list-disc flex-col gap-2 pl-5 text-sm text-slate-300">
+                    {activeHelpContent.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </aside>
         </section>

@@ -17,7 +17,8 @@
         "items": [
           "Name the project and add client, location, or contact details.",
           "New projects are saved locally the moment they are created.",
-          "Switch projects any time to keep each production separate."
+          "Switch projects any time to keep each production separate.",
+          "Use the dashboard to load templates or import projects without losing saved gear."
         ]
       },
       {
@@ -80,7 +81,8 @@
         "items": [
           "Download backup files for long-term storage or device migration.",
           "Import backups to merge rather than overwrite your current data.",
-          "Restore from device backup if storage needs recovery."
+          "Restore from device backup if storage needs recovery.",
+          "Dashboard quick actions keep template loading and imports close to your projects."
         ]
       }
     ]

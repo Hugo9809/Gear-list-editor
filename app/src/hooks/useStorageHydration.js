@@ -224,41 +224,36 @@ export const useStorageHydration = ({
   const importBackupFile = useCallback(
     (file) => {
       if (!file) {
-        return;
+        return Promise.resolve(null);
       }
-      const reader = new FileReader();
-      reader.onload = () => {
-        const { state, warnings } = storageRef.current.importBackup(reader.result, {
-          projects,
-          templates,
-          history,
-          activeProjectId,
-          lastSaved
-        });
-        setProjects(state.projects);
-        setTemplates(state.templates);
-        setHistory(state.history);
-        setActiveProjectId(state.activeProjectId);
-        if (warnings.length > 0) {
-          setStatus(resolveStorageMessage(warnings[0]));
-        } else {
-          setStatus(t('status.importComplete', 'Import complete. Existing data was preserved.'));
-        }
-      };
-      reader.readAsText(file);
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const { state, warnings } = storageRef.current.importBackup(reader.result, {
+            projects,
+            templates,
+            history,
+            activeProjectId,
+            lastSaved
+          });
+          setProjects(state.projects);
+          setTemplates(state.templates);
+          setHistory(state.history);
+          setActiveProjectId(state.activeProjectId);
+          resolve({ state, warnings });
+        };
+        reader.readAsText(file);
+      });
     },
     [
       activeProjectId,
       history,
       lastSaved,
       projects,
-      resolveStorageMessage,
       setActiveProjectId,
       setHistory,
       setProjects,
-      setStatus,
       setTemplates,
-      t,
       templates
     ]
   );
@@ -274,8 +269,13 @@ export const useStorageHydration = ({
       setStatus(resolveStorageMessage(result.warnings[0]));
       return;
     }
+    const saveResult = await storageRef.current.saveNow(result.state);
+    if (saveResult?.warnings?.length) {
+      setStatus(resolveStorageMessage(saveResult.warnings[0]));
+      return;
+    }
     setStatus(
-      t('status.restoredFromSource', 'Restored from {source}.', {
+      t('status.restoredFromSource', 'Restored from {source} and saved safely.', {
         source: resolveStorageSource(result.source)
       })
     );

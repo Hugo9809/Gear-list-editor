@@ -81,6 +81,7 @@ export default function App() {
     exportProjectBackup,
     importBackupFile,
     restoreFromDeviceBackup,
+    resolveStorageMessage,
     resolveStorageSource
   } = useStorageHydration({
     t,
@@ -146,15 +147,28 @@ export default function App() {
   );
 
   const handleImport = useCallback(
-    (event) => {
+    async (event) => {
       const file = event.target.files?.[0];
       if (!file) {
         return;
       }
-      importBackupFile(file);
+      const result = await importBackupFile(file);
       event.target.value = '';
+      if (!result) {
+        return;
+      }
+      if (result.warnings.length > 0) {
+        setStatus(resolveStorageMessage(result.warnings[0]));
+        return;
+      }
+      const saveResult = await storageRef.current.saveNow(result.state);
+      if (saveResult?.warnings?.length) {
+        setStatus(resolveStorageMessage(saveResult.warnings[0]));
+        return;
+      }
+      setStatus(t('status.importComplete', 'Import complete and saved safely.'));
     },
-    [importBackupFile]
+    [importBackupFile, resolveStorageMessage, setStatus, storageRef, t]
   );
 
   const exportPdf = useCallback(() => {

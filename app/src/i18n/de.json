@@ -7,36 +7,58 @@
     "helper": "Lokal gespeichert für die Offline-Nutzung.",
     "status": "Sprache aktualisiert und lokal gespeichert."
   },
+  "navigation": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "project": "Projekt",
+      "templates": "Vorlagen",
+      "help": "Hilfe"
+    },
+    "topBar": {
+      "saveNow": "Jetzt speichern",
+      "shareBackup": "Backup teilen",
+      "exportPdf": "PDF exportieren",
+      "downloadBackup": "Backup speichern",
+      "restoreBackup": "Daten wiederherstellen"
+    }
+  },
+  "helpers": {
+    "dashboard": "Projekt auswählen oder erstellen, um zu starten.",
+    "project": "Alle Änderungen werden lokal per Autosave gespeichert.",
+    "templates": "Vorlagen sind hier gespeichert und können vom Dashboard aus angewendet werden.",
+    "exports": "Exporte und Backups findest du in den Dashboard-Aktionen."
+  },
   "help": {
     "title": "Hilfe & Dokumentation",
-    "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",
+    "subtitle": "Dashboard → Projekt auswählen oder erstellen → Equipment-Liste bearbeiten.",
     "sections": [
       {
-        "title": "Mit einem geschützten Projekt starten",
-        "description": "Erstelle zuerst ein Projekt, damit Autosave jede Änderung schützt.",
+        "title": "Im Dashboard starten",
+        "description": "Das Dashboard führt dich durch den gesamten Ablauf, auch offline.",
         "items": [
-          "Projekt benennen und Kunde, Ort oder Kontakt ergänzen.",
-          "Neue Projekte werden sofort lokal gespeichert.",
-          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben.",
-          "Im Dashboard Vorlagen laden oder Projekte importieren, ohne gespeichertes Equipment zu verlieren."
+          "Projekt auswählen oder neu erstellen.",
+          "Im Tab „Projekt“ die aktive Liste bearbeiten.",
+          "Vorlagen liegen im Tab „Vorlagen“ und werden im Dashboard angewendet.",
+          "Exporte, Importe, Backups und Wiederherstellung sind in den Dashboard-Aktionen."
         ]
       },
       {
-        "title": "Kategorien und Items aufbauen",
-        "description": "Strukturiere Equipment nach Abteilung oder Case für schnelleres Packen.",
+        "title": "Equipment sicher bearbeiten",
+        "description": "Autosave schützt jede Änderung, auch ohne Verbindung.",
         "items": [
           "Kategorien anlegen und Items mit Menge, Einheit und Status erfassen.",
           "Die Vorschläge merken frühere Items und übernehmen Details schnell.",
-          "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen."
+          "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen.",
+          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben."
         ]
       },
       {
-        "title": "Vorlagen sicher wiederverwenden",
-        "description": "Vorlagen kopieren Equipment, ohne bestehende Listen zu überschreiben.",
+        "title": "Vorlagen nutzen und teilen",
+        "description": "Wiederverwendbare Kits und Exporte bleiben geschützt.",
         "items": [
-          "Aktives Projekt als Vorlage speichern, wenn ein Kit wiederkehrt.",
-          "Vorlagen hinzufügen, ohne vorhandene Einträge zu verlieren.",
-          "Die Nutzung wird gespeichert, damit häufige Kits sichtbar bleiben."
+          "Aktives Projekt als Vorlage speichern, wenn ein Setup wiederkehrt.",
+          "Vorlagen fügen Equipment hinzu, ohne vorhandene Einträge zu überschreiben.",
+          "Zwischenablage-Teilen und PDF-Export bleiben lokal, bis du Dateien weitergibst."
         ]
       }
     ]
@@ -69,11 +91,11 @@
       },
       {
         "title": "Teilen und Export",
-        "description": "Teilen ohne Online-Abhängigkeit oder externe Dienste.",
+        "description": "Exporte liegen im Dashboard und bleiben standardmäßig offline.",
         "items": [
-          "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
-          "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
-          "Teilen bleibt lokal, solange Dateien nicht manuell weitergegeben werden."
+          "Top-Bar-Aktionen nutzen, um ein Backup zu teilen oder eine PDF zu exportieren.",
+          "Exporte und Downloads werden lokal gespeichert und in den Dashboard-Aktionen gelistet.",
+          "Teilen bleibt offline, solange Dateien nicht manuell weitergegeben werden."
         ]
       },
       {
@@ -83,7 +105,7 @@
           "Backup-Dateien für Langzeitablage oder Gerätewechsel speichern.",
           "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
           "Bei Problemen vom Geräte-Backup wiederherstellen.",
-          "Dashboard-Aktionen halten Vorlagen und Importe nah an deinen Projekten."
+          "Vorlagen und Projektdaten bleiben zusammen im lokalen Speicher."
         ]
       }
     ]

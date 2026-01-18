@@ -387,6 +387,39 @@ const writeLegacyBackups = (payload) => {
   }
 };
 
+const clearLegacyStorage = () => {
+  try {
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    localStorage.removeItem(LEGACY_BACKUP_KEY);
+  } catch {
+    // Ignore failures; other storage layers may still clear.
+  }
+};
+
+const deleteIndexedDb = () =>
+  new Promise((resolve) => {
+    if (!hasIndexedDb()) {
+      resolve();
+      return;
+    }
+    const request = indexedDB.deleteDatabase(DB_NAME);
+    request.onsuccess = () => resolve();
+    request.onerror = () => resolve();
+    request.onblocked = () => resolve();
+  });
+
+const clearOpfsDirectory = async () => {
+  if (!hasOpfs()) {
+    return;
+  }
+  try {
+    const root = await navigator.storage.getDirectory();
+    await root.removeEntry(OPFS_DIR, { recursive: true });
+  } catch {
+    // Ignore; OPFS might not exist or be accessible.
+  }
+};
+
 const preparePayload = (state, reason = 'autosave') => {
   const migrated = migratePayload(state);
   return {
@@ -671,6 +704,28 @@ export const createStorageService = (options = {}) => {
     };
   };
 
+  const factoryReset = async () => {
+    if (autosaveTimer) {
+      clearTimeout(autosaveTimer);
+    }
+    autosaveTimer = null;
+    autosaveStart = null;
+    pendingState = null;
+
+    await deleteIndexedDb();
+    clearLegacyStorage();
+    await clearOpfsDirectory();
+
+    const emptyState = createEmptyState();
+    lastKnownState = emptyState;
+    await queueSave(() => persist(emptyState, 'factory-reset'));
+
+    return {
+      state: emptyState,
+      warnings: []
+    };
+  };
+
   const dispose = () => {
     if (autosaveTimer) {
       clearTimeout(autosaveTimer);
@@ -693,6 +748,7 @@ export const createStorageService = (options = {}) => {
     exportProjectBackup: exportProjectBackupWithId,
     importBackup,
     restoreFromBackup,
+    factoryReset,
     dispose
   };
 };

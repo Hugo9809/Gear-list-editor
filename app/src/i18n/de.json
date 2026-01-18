@@ -12,6 +12,7 @@
     "sidebar": {
       "dashboard": "Alle Projekte",
       "templates": "Vorlagen",
+      "settings": "Einstellungen",
       "help": "Hilfe"
     },
     "topbar": {
@@ -29,6 +30,7 @@
       "dashboard": "In Alle Projekte starten: Projekt-Kachel öffnen oder erstellen, Importe verwalten und Backups offline schützen.",
       "project": "Projekt-Kachel öffnen, um die Equipmentliste mit Autosave und Exporten zu bearbeiten.",
       "templates": "Kits sicher wiederverwenden. Vorlagen sind hier und ergänzen ohne Überschreiben.",
+      "settings": "Vollständige Backups, Importe, Geräte-Wiederherstellungen und Werksreset sicher verwalten.",
       "help": "Offline-fokussierte Hilfe zu Autosave, Backups, Wiederherstellung und Exporten."
     }
   },
@@ -300,12 +302,37 @@
     "sharedToClipboard": "Deine Equipmentliste wurde zum Teilen in die Zwischenablage kopiert.",
     "clipboardBlocked": "Zwischenablage-Zugriff blockiert. Nutze stattdessen den Backup-Download.",
     "clipboardUnavailable": "Teilen über die Zwischenablage ist nicht verfügbar. Nutze stattdessen den Backup-Download.",
+    "factoryResetComplete": "Werksreset abgeschlossen. Dein Backup-Download ist bereit und die App wurde zurückgesetzt.",
+    "factoryResetFailed": "Werksreset konnte nicht abgeschlossen werden. Deine Daten sind weiterhin in Backups geschützt.",
+    "factoryResetCancelled": "Werksreset abgebrochen. Es wurden keine Daten entfernt.",
     "empty": "Statusupdates erscheinen hier, um die Datensicherheit zu bestätigen.",
     "labels": {
       "needed": "Benötigt",
       "packed": "Gepackt",
       "missing": "Fehlt",
       "rented": "Gemietet"
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalte vollständige Backups, Importe und Geräte-Resets ohne den Offline-Modus zu verlassen.",
+    "backup": {
+      "title": "Vollständige Backup-Steuerung",
+      "description": "Lade ein vollständiges Backup herunter oder importiere eines, um es sicher mit deinen lokalen Daten zu verbinden.",
+      "actions": {
+        "download": "Vollständiges Backup herunterladen",
+        "import": "Vollständiges Backup importieren",
+        "restore": "Vom Geräte-Backup wiederherstellen"
+      },
+      "helper": "Importe führen Daten zusammen, statt sie zu überschreiben. Geräte-Wiederherstellungen nutzen das neueste Backup auf dem Gerät."
+    },
+    "factoryReset": {
+      "title": "Werksreset",
+      "description": "Der Werksreset lädt ein vollständiges Backup herunter und entfernt dann alle lokalen Projekte, Vorlagen und Backups auf diesem Gerät.",
+      "action": "Werksreset starten",
+      "helper": "Bewahre das heruntergeladene Backup sicher auf, bevor du fortfährst.",
+      "confirmPrimary": "Der Werksreset lädt ein vollständiges Backup herunter und löscht danach alle lokalen Daten auf diesem Gerät.",
+      "confirmSecondary": "Dadurch werden Projekte, Vorlagen und lokale Backups von diesem Gerät entfernt. Fortfahren?"
     }
   },
   "help": {
@@ -320,7 +347,8 @@
           "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
           "Alle-Projekte-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
           "Im Projekt-Arbeitsbereich oben exportieren, PDF erstellen oder teilen.",
-          "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben."
+          "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben.",
+          "In den Einstellungen findest du vollständige Backups, Importe und den Werksreset."
         ]
       },
       {
@@ -352,7 +380,8 @@
       "„Jetzt speichern“ vor Übergabe oder Schließen des Geräts nutzen.",
       "Backup-Datei für Übergabe oder Langzeitablage herunterladen.",
       "Backup auf einem anderen Gerät importieren, um Listen sicher zu kombinieren.",
-      "„Vom Geräte-Backup wiederherstellen“ nutzen, wenn Speicher repariert werden muss."
+      "„Vom Geräte-Backup wiederherstellen“ nutzen, wenn Speicher repariert werden muss.",
+      "Öffne die Einstellungen für vollständige Backups und Werksreset."
     ],
     "footer": "Backups bleiben auf dem Gerät, sofern du sie nicht exportierst oder teilst."
   },
@@ -387,6 +416,7 @@
           "Backup-Dateien für Langzeitablage oder Gerätewechsel speichern.",
           "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
           "Bei Problemen vom Geräte-Backup wiederherstellen.",
+          "Einstellungen bieten vollständige Backups, Importe, Wiederherstellungen und Werksreset-Steuerungen.",
           "Alle-Projekte-Aktionen halten Importe und Wiederherstellung nah an deinen Projekten.",
           "Vorlagen werden im Vorlagen-Tab verwaltet und überschreiben keine Daten."
         ]

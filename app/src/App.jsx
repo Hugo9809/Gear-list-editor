@@ -948,6 +948,54 @@ export default function App() {
     }
   };
 
+  const handleFactoryReset = async () => {
+    const confirmed = window.confirm(
+      t(
+        'settings.factoryReset.confirmPrimary',
+        'Factory reset will download a full backup, then erase all local data on this device.'
+      )
+    );
+    if (!confirmed) {
+      setStatus(t('status.factoryResetCancelled', 'Factory reset cancelled. No data was removed.'));
+      return;
+    }
+    const confirmedAgain = window.confirm(
+      t(
+        'settings.factoryReset.confirmSecondary',
+        'This will remove projects, templates, and local backups from this device. Continue?'
+      )
+    );
+    if (!confirmedAgain) {
+      setStatus(t('status.factoryResetCancelled', 'Factory reset cancelled. No data was removed.'));
+      return;
+    }
+
+    downloadBackup();
+    try {
+      const result = await storageRef.current.factoryReset();
+      setProjects(result.state.projects);
+      setTemplates(result.state.templates);
+      setHistory(result.state.history);
+      setActiveProjectId(result.state.activeProjectId);
+      setLastSaved(result.state.lastSaved);
+      setTheme(result.state.theme || 'light');
+      setActiveTab('dashboard');
+      setStatus(
+        t(
+          'status.factoryResetComplete',
+          'Factory reset complete. Your backup download is ready and the app has been reset.'
+        )
+      );
+    } catch {
+      setStatus(
+        t(
+          'status.factoryResetFailed',
+          'Factory reset could not finish. Your data is still protected in backups.'
+        )
+      );
+    }
+  };
+
   const handleLocaleChange = (event) => {
     const nextLocale = event.target.value;
     setLocale(nextLocale);
@@ -982,6 +1030,7 @@ export default function App() {
     () => [
       { id: 'dashboard', label: t('navigation.sidebar.dashboard', 'All Projects') },
       { id: 'templates', label: t('navigation.sidebar.templates', 'Templates') },
+      { id: 'settings', label: t('navigation.sidebar.settings', 'Settings') },
       { id: 'help', label: t('navigation.sidebar.help', 'Help') }
     ],
     [t]
@@ -1089,6 +1138,13 @@ export default function App() {
           </aside>
 
           <main className="flex flex-1 flex-col gap-6">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json"
+              onChange={handleImport}
+              className="hidden"
+            />
             {activeProject && activeTab === 'project' ? (
               <>
                 <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
@@ -1865,6 +1921,89 @@ export default function App() {
                   )}
                 </div>
               </form>
+            ) : null}
+
+            {activeTab === 'settings' ? (
+              <section className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-lg font-semibold text-text-primary title-shadow">
+                    {t('settings.title', 'Settings')}
+                  </h2>
+                  <p className="text-sm text-text-secondary">
+                    {t(
+                      'settings.subtitle',
+                      'Manage full backups, imports, and device resets without leaving offline mode.'
+                    )}
+                  </p>
+                </div>
+                <div className="mt-5 grid gap-4">
+                  <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
+                    <h3 className="text-base font-semibold text-text-primary title-shadow">
+                      {t('settings.backup.title', 'Full backup controls')}
+                    </h3>
+                    <p className="mt-1 text-sm text-text-secondary">
+                      {t(
+                        'settings.backup.description',
+                        'Download a full backup or import one to merge it safely with your local data.'
+                      )}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={downloadBackup}
+                        className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
+                      >
+                        {t('settings.backup.actions.download', 'Download full backup')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                      >
+                        {t('settings.backup.actions.import', 'Import full backup')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={restoreFromDeviceBackup}
+                        className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                      >
+                        {t('settings.backup.actions.restore', 'Restore from device backup')}
+                      </button>
+                    </div>
+                    <p className="mt-3 text-xs text-text-muted">
+                      {t(
+                        'settings.backup.helper',
+                        'Imports merge data instead of overwriting it. Device restores use the latest on-device backup.'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
+                    <h3 className="text-base font-semibold text-text-primary title-shadow">
+                      {t('settings.factoryReset.title', 'Factory reset')}
+                    </h3>
+                    <p className="mt-1 text-sm text-text-secondary">
+                      {t(
+                        'settings.factoryReset.description',
+                        'Factory reset downloads a full backup, then removes all local projects, templates, and backups on this device.'
+                      )}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleFactoryReset}
+                      className="mt-4 rounded-lg border border-status-error px-4 py-2 text-sm font-semibold text-status-error transition hover:border-status-error hover:bg-status-error/10"
+                    >
+                      {t('settings.factoryReset.action', 'Run factory reset')}
+                    </button>
+                    <p className="mt-3 text-xs text-text-muted">
+                      {t(
+                        'settings.factoryReset.helper',
+                        'Keep the downloaded backup in a safe place before continuing.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </section>
             ) : null}
 
             {activeTab === 'help' ? (

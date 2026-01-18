@@ -1353,7 +1353,7 @@ export default function App() {
               <h2 className="text-lg font-semibold text-white">Save, share, restore</h2>
               <p className="text-sm text-slate-400">
                 Your data stays on-device. Save immediately, create offline backups, and restore if you ever
-                switch devices.
+                switch devices. Device backups refresh every 30 minutes, even while idle.
               </p>
               <div className="mt-4 flex flex-col gap-3">
                 <button

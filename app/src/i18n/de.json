@@ -61,6 +61,7 @@
         "description": "Änderungen werden sofort geschützt und in Backups gespiegelt.",
         "items": [
           "Autosave läuft nach jeder Änderung und hält redundante Kopien.",
+          "Geräte-Backups werden alle 30 Minuten aktualisiert, auch im Leerlauf.",
           "„Jetzt speichern“ erzwingt eine sofortige Synchronisierung lokal.",
           "Statusmeldungen bestätigen, wenn Speichern oder Reparatur fertig ist."
         ]

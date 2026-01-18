@@ -61,6 +61,7 @@
         "description": "Edits are protected immediately and mirrored to backups.",
         "items": [
           "Autosave runs after every change and keeps redundant copies.",
+          "Device backups refresh every 30 minutes, even while idle.",
           "“Save now” forces an immediate sync across local storage locations.",
           "Status updates confirm when saves and repairs are complete."
         ]

@@ -27,10 +27,10 @@
       "importBackup": "Backup importieren"
     },
     "helper": {
-      "dashboard": "Projekte, Importe und Backups verwalten, komplett offline.",
-      "project": "Aktive Equipmentliste bearbeiten. Autosave schützt jede Änderung.",
-      "templates": "Kits sicher wiederverwenden. Vorlagen ergänzen, ohne zu überschreiben.",
-      "help": "Hinweise zu Offline-Arbeit, Backups und sicheren Exporten."
+      "dashboard": "Hier starten: Projekt auswählen oder erstellen, Importe verwalten und Backups offline schützen.",
+      "project": "Aktive Equipmentliste mit Autosave bearbeiten. Exporte und Teilen liegen oben in der Leiste.",
+      "templates": "Kits sicher wiederverwenden. Vorlagen sind hier und ergänzen ohne Überschreiben.",
+      "help": "Offline-fokussierte Hilfe zu Autosave, Backups, Wiederherstellung und Exporten."
     }
   },
   "help": {
@@ -39,12 +39,12 @@
     "sections": [
       {
         "title": "Start im Dashboard",
-        "description": "Im Dashboard ein Projekt auswählen oder erstellen und dann im Projekt-Tab die Liste bearbeiten.",
+        "description": "Dashboard → Projekt auswählen/erstellen → Equipmentliste im Projekt-Tab bearbeiten.",
         "items": [
-          "Projekt anlegen, damit es sofort lokal gespeichert wird.",
+          "Projekt anlegen, damit es sofort lokal gespeichert wird, auch offline.",
           "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
           "Dashboard-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
-          "Im Projekt-Tab oben exportieren oder teilen.",
+          "Im Projekt-Tab oben exportieren, PDF erstellen oder teilen.",
           "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben."
         ]
       },

@@ -27,10 +27,10 @@
       "importBackup": "Import backup"
     },
     "helper": {
-      "dashboard": "Manage projects, imports, and backups without leaving offline mode.",
-      "project": "Edit the active gear list. Autosave protects every change.",
-      "templates": "Reuse kits safely. Templates add gear without overwriting your list.",
-      "help": "Find guidance on offline work, backups, and safe exports."
+      "dashboard": "Start here: select or create a project, manage imports, and protect backups while offline.",
+      "project": "Edit the active gear list with autosave. Exports and sharing live in the top bar.",
+      "templates": "Reuse kits safely. Templates live here and add gear without overwriting your list.",
+      "help": "Offline-first guidance for autosave, backups, restores, and safe exports."
     }
   },
   "help": {
@@ -39,12 +39,12 @@
     "sections": [
       {
         "title": "Start from the dashboard",
-        "description": "Use the dashboard to select or create a project, then edit the gear list in the Project tab.",
+        "description": "Dashboard → select/create project → edit the gear list in the Project tab.",
         "items": [
-          "Create a project to save locally the moment it exists.",
+          "Create a project to save locally the moment it exists, even offline.",
           "Select a project to continue editing without losing data.",
           "Dashboard actions handle imports, restores, and device backups.",
-          "Use the Project tab top bar to export or share the active project.",
+          "Use the Project tab top bar for export, PDF, and share actions.",
           "Templates live in the Templates tab and can be added without overwriting gear."
         ]
       },

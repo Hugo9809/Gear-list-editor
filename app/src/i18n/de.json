@@ -33,6 +33,250 @@
       "help": "Offline-fokussierte Hilfe zu Autosave, Backups, Wiederherstellung und Exporten."
     }
   },
+  "ui": {
+    "appName": "Equipmentlisten-Editor",
+    "gearList": "Equipmentliste",
+    "emptyValue": "—",
+    "sidebar": {
+      "title": "Sicherer Offline-Arbeitsbereich",
+      "description": "Tabs halten deinen Workflow fokussiert, während Autosave im Hintergrund läuft."
+    },
+    "hero": {
+      "title": "Projektfertige Equipmentlisten mit Offline-Schutz.",
+      "description": "Erstelle Equipmentlisten passend zu deinen Produktions-PDFs. Lege Projekte an, nutze Vorlagen erneut und exportiere druckfertige Listen, ohne den Offline-Modus zu verlassen. Jede Änderung wird lokal mit redundanten Backups gespeichert."
+    },
+    "badges": {
+      "autosave": "Autosave aktiv",
+      "dashboard": "Projekt-Dashboard",
+      "templates": "Vorlagenbibliothek",
+      "pdf": "PDF-Export bereit"
+    }
+  },
+  "theme": {
+    "label": "Theme",
+    "helper": "Theme bleibt in deinem gespeicherten Arbeitsbereich.",
+    "options": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "pink": "Pink"
+    }
+  },
+  "backup": {
+    "title": "Speichern, teilen, wiederherstellen",
+    "description": "Deine Daten bleiben auf dem Gerät. Sofort speichern, Offline-Backups erstellen und bei Bedarf wiederherstellen, wenn du Geräte wechselst. Geräte-Backups werden alle 30 Minuten aktualisiert, auch im Leerlauf.",
+    "actions": {
+      "saveNow": "Jetzt speichern",
+      "download": "Backup herunterladen",
+      "import": "Backup-Datei importieren",
+      "restoreDevice": "Vom Geräte-Backup wiederherstellen",
+      "shareClipboard": "Über Zwischenablage teilen"
+    }
+  },
+  "dashboard": {
+    "quickActions": {
+      "title": "Dashboard-Schnellaktionen",
+      "description": "Vertrauenswürdige Vorlagen laden oder ein Projekt-Backup in deine lokale Bibliothek zurückholen."
+    }
+  },
+  "project": {
+    "active": {
+      "label": "Aktives Projekt",
+      "helper": "Exportiere die aktuelle Liste oder speichere sie als wiederverwendbare Vorlage.",
+      "badge": "Ausgewählt"
+    },
+    "untitled": "Unbenanntes Projekt",
+    "dashboard": {
+      "title": "Projekt-Dashboard",
+      "description": "Behalte mehrere Produktionen im Blick und sieh immer, welche Liste aktiv ist. Neue Projekte werden sofort automatisch gespeichert."
+    },
+    "fields": {
+      "name": "Projektname",
+      "client": "Kunde / Produktion",
+      "shootDate": "Drehtag",
+      "location": "Ort",
+      "contact": "Hauptkontakt"
+    },
+    "placeholders": {
+      "name": "z. B. Studioshoot im Oktober",
+      "client": "Kunde, Agentur oder Show",
+      "location": "Studio, Stadt oder Venue",
+      "contact": "Produktion oder Abteilungskontakt"
+    },
+    "actions": {
+      "create": "Projekt erstellen",
+      "export": "Projekt exportieren",
+      "exportPdf": "PDF exportieren",
+      "importProject": "Projekt importieren",
+      "active": "Aktiv",
+      "open": "Öffnen",
+      "archive": "Archivieren"
+    },
+    "list": {
+      "title": "Aktive Projekte",
+      "empty": "Noch keine Projekte. Erstelle dein erstes Projekt, um eine Equipmentliste zu beginnen."
+    },
+    "count": {
+      "one": "{count} Projekt lokal gespeichert.",
+      "other": "{count} Projekte lokal gespeichert."
+    },
+    "lastSaved": {
+      "label": "Zuletzt gespeichert: {time}",
+      "empty": "Noch nicht gespeichert"
+    },
+    "client": {
+      "empty": "Kunde nicht gesetzt"
+    },
+    "shootDate": {
+      "empty": "Datum nicht gesetzt"
+    },
+    "workspace": {
+      "title": "Arbeitsbereich für das aktive Projekt",
+      "summary": "{categories} · {items}",
+      "empty": "Wähle ein Projekt, um mit der Bearbeitung zu beginnen.",
+      "emptyState": "Wähle oder erstelle ein Projekt, um den Equipmentlisten-Editor zu öffnen."
+    },
+    "notes": {
+      "title": "Projekt-Notizen",
+      "helper": "Notizen erscheinen in Exporten und sind in Backups für jedes Projekt enthalten.",
+      "placeholder": "Crew-Notizen, Abholinfos oder Rückgabeanweisungen",
+      "empty": "Keine Notizen hinzugefügt."
+    }
+  },
+  "template": {
+    "management": {
+      "title": "Vorlagenverwaltung",
+      "description": "Speichere wiederverwendbare Setups für wiederkehrende Drehs. Vorlagen lassen sich auf jedes Projekt anwenden, ohne bestehende Daten zu überschreiben."
+    },
+    "fields": {
+      "name": "Vorlagenname",
+      "shortName": "Name",
+      "description": "Beschreibung"
+    },
+    "placeholders": {
+      "name": "z. B. Standard-Doku-Set",
+      "description": "Wichtige Details oder Einsatz"
+    },
+    "actions": {
+      "saveCurrent": "Aktuelles Projekt als Vorlage speichern",
+      "saveFromProject": "Als Vorlage speichern",
+      "loadIntoProject": "Aus Vorlage laden",
+      "apply": "Auf aktives Projekt anwenden",
+      "remove": "Entfernen"
+    },
+    "library": {
+      "label": "Vorlagenbibliothek",
+      "emptyOption": "Keine Vorlagen gespeichert",
+      "helper": "Vorlagen ergänzen Equipment im ausgewählten Projekt, ohne vorhandene Einträge zu überschreiben."
+    },
+    "list": {
+      "empty": "Noch keine Vorlagen. Speichere das aktive Projekt, um deine Bibliothek aufzubauen."
+    },
+    "card": {
+      "meta": "{categories} · Zuletzt verwendet {date}"
+    },
+    "lastUsed": {
+      "never": "Nie"
+    }
+  },
+  "categories": {
+    "title": "Kategorien",
+    "label": "Kategorien",
+    "helper": "Nutze Vorlagen für schnellere Setups.",
+    "placeholder": "Kategorie hinzufügen (z. B. Kamera, Licht)",
+    "actions": {
+      "add": "Kategorie hinzufügen",
+      "remove": "Kategorie entfernen"
+    },
+    "empty": "Noch keine Kategorien. Füge oben eine hinzu oder wende eine Vorlage an.",
+    "notes": {
+      "placeholder": "Kategorie-Notizen oder Rental-Referenzen"
+    },
+    "count": {
+      "one": "{count} Kategorie",
+      "other": "{count} Kategorien"
+    }
+  },
+  "items": {
+    "label": "Items",
+    "fields": {
+      "name": "Item-Name",
+      "unit": "Einheit",
+      "details": "Details / Notizen"
+    },
+    "actions": {
+      "add": "Hinzufügen",
+      "remove": "Entfernen"
+    },
+    "empty": "Noch keine Items. Füge oben das erste Item hinzu.",
+    "suggestion": {
+      "detailsFallback": "Keine Details gespeichert"
+    },
+    "count": {
+      "one": "{count} Item",
+      "other": "{count} Items"
+    },
+    "print": {
+      "headers": {
+        "quantity": "Menge",
+        "unit": "Einheit",
+        "item": "Item",
+        "details": "Details",
+        "status": "Status"
+      },
+      "empty": "Keine Items aufgeführt."
+    }
+  },
+  "units": {
+    "pcs": "Stk."
+  },
+  "status": {
+    "loading": "Gespeicherte Equipmentliste wird geladen...",
+    "autosaveComplete": "Autosave abgeschlossen. Dein Projekt-Dashboard ist sicher.",
+    "saveComplete": "Sicher in Gerätespeicher und Backups gespeichert.",
+    "storageRepaired": "Speicher repariert und Redundanzen aufgefrischt.",
+    "noSavedData": "Noch keine gespeicherten Daten. Starte ein Projekt und Autosave schützt es.",
+    "loadedFromSource": "Sicher aus {source} geladen.",
+    "projectNameRequired": "Bitte benenne das Projekt, bevor du es erstellst.",
+    "projectCreated": "Neues Projekt erstellt und durch Autosave geschützt.",
+    "projectArchived": "Projekt archiviert. Backups bleiben erhalten.",
+    "projectNeededForCategories": "Erstelle ein Projekt, bevor du Kategorien hinzufügst.",
+    "categoryNameRequired": "Bitte benenne die Kategorie, bevor du sie hinzufügst.",
+    "categoryAdded": "Kategorie hinzugefügt.",
+    "itemNameRequired": "Bitte gib einen Item-Namen an, bevor du es hinzufügst.",
+    "itemAdded": "Item hinzugefügt. Autosave sichert es sofort.",
+    "categoryRemoved": "Kategorie entfernt.",
+    "itemRemoved": "Item entfernt. Backups bleiben verfügbar.",
+    "changesQueued": "Änderungen für Autosave vorgemerkt.",
+    "categoryUpdated": "Kategorie aktualisiert.",
+    "projectDetailsUpdated": "Projektdetails aktualisiert.",
+    "projectNotesSaved": "Projekt-Notizen für Autosave gespeichert.",
+    "suggestionApplied": "Vorschlag übernommen und bereit für Autosave.",
+    "projectNeededForTemplate": "Erstelle ein Projekt, bevor du eine Vorlage speicherst.",
+    "templateNameRequired": "Bitte benenne die Vorlage.",
+    "templateSaved": "Vorlage aus dem aktuellen Projekt gespeichert.",
+    "projectNeededForApplyTemplate": "Wähle ein Projekt, bevor du eine Vorlage anwendest.",
+    "templateApplied": "Vorlage angewendet. Autosave sichert die aktualisierte Liste.",
+    "templateSelectionRequired": "Wähle eine Vorlage, die in das aktive Projekt geladen werden soll.",
+    "templateUpdated": "Vorlage aktualisiert.",
+    "templateRemoved": "Vorlage entfernt.",
+    "projectNeededForExport": "Wähle ein Projekt, bevor du exportierst.",
+    "popupBlocked": "Popup blockiert. Bitte Popups für den PDF-Export erlauben.",
+    "pdfReady": "PDF-Export bereit. Drucken bestätigen, um die Datei zu speichern.",
+    "projectExported": "Projekt-Export heruntergeladen. Bitte sicher aufbewahren.",
+    "backupDownloaded": "Backup heruntergeladen. Bitte sicher aufbewahren.",
+    "restoredFromSource": "Aus {source} wiederhergestellt.",
+    "importComplete": "Import abgeschlossen. Vorhandene Daten wurden beibehalten.",
+    "sharedToClipboard": "Deine Equipmentliste wurde zum Teilen in die Zwischenablage kopiert.",
+    "clipboardBlocked": "Zwischenablage-Zugriff blockiert. Nutze stattdessen den Backup-Download.",
+    "clipboardUnavailable": "Teilen über die Zwischenablage ist nicht verfügbar. Nutze stattdessen den Backup-Download.",
+    "empty": "Statusupdates erscheinen hier, um die Datensicherheit zu bestätigen.",
+    "labels": {
+      "needed": "Benötigt",
+      "packed": "Gepackt",
+      "missing": "Fehlt",
+      "rented": "Gemietet"
+    }
+  },
   "help": {
     "title": "Hilfe & Dokumentation",
     "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",

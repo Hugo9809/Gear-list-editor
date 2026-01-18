@@ -8,19 +8,44 @@
     "helper": "Lokal gespeichert für die Offline-Nutzung.",
     "status": "Sprache aktualisiert und lokal gespeichert."
   },
+  "navigation": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "project": "Projekt",
+      "templates": "Vorlagen",
+      "help": "Hilfe"
+    },
+    "topbar": {
+      "newProject": "Neues Projekt",
+      "openProject": "Projekt öffnen",
+      "saveNow": "Jetzt speichern",
+      "exportProject": "Projekt exportieren",
+      "exportPdf": "PDF exportieren",
+      "shareBackup": "Backup kopieren",
+      "downloadBackup": "Backup herunterladen",
+      "restoreData": "Daten wiederherstellen",
+      "importBackup": "Backup importieren"
+    },
+    "helper": {
+      "dashboard": "Projekte, Importe und Backups verwalten, komplett offline.",
+      "project": "Aktive Equipmentliste bearbeiten. Autosave schützt jede Änderung.",
+      "templates": "Kits sicher wiederverwenden. Vorlagen ergänzen, ohne zu überschreiben.",
+      "help": "Hinweise zu Offline-Arbeit, Backups und sicheren Exporten."
+    }
+  },
   "help": {
     "title": "Hilfe & Dokumentation",
     "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",
     "sections": [
       {
-        "title": "Mit einem geschützten Projekt starten",
-        "description": "Erstelle zuerst ein Projekt, damit Autosave jede Änderung schützt.",
+        "title": "Start im Dashboard",
+        "description": "Im Dashboard ein Projekt auswählen oder erstellen und dann im Projekt-Tab die Liste bearbeiten.",
         "items": [
-          "Projekt benennen und Kunde, Ort oder Kontakt ergänzen.",
-          "Neue Projekte werden sofort lokal gespeichert.",
-          "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben.",
-          "Im Dashboard Vorlagen laden oder Projekte importieren, ohne gespeichertes Equipment zu verlieren.",
-          "Die Aktionsleiste des Projekts nutzt du für Exporte oder um Vorlagen zu sichern."
+          "Projekt anlegen, damit es sofort lokal gespeichert wird.",
+          "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
+          "Dashboard-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
+          "Im Projekt-Tab oben exportieren oder teilen.",
+          "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben."
         ]
       },
       {
@@ -29,16 +54,17 @@
         "items": [
           "Kategorien anlegen und Items mit Menge, Einheit und Status erfassen.",
           "Die Vorschläge merken frühere Items und übernehmen Details schnell.",
-          "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen."
+          "Projekt-Notizen für Crew-Infos, Abholung oder Rückgabe nutzen.",
+          "Autosave schützt jede Änderung während der Bearbeitung."
         ]
       },
       {
-        "title": "Vorlagen sicher wiederverwenden",
-        "description": "Vorlagen kopieren Equipment, ohne bestehende Listen zu überschreiben.",
+        "title": "Vorlagen und Exporte sicher nutzen",
+        "description": "Vorlagen ergänzen Equipment, ohne bestehende Listen zu ersetzen.",
         "items": [
           "Aktives Projekt als Vorlage speichern, wenn ein Kit wiederkehrt.",
-          "Vorlagen hinzufügen, ohne vorhandene Einträge zu verlieren.",
-          "Die Nutzung wird gespeichert, damit häufige Kits sichtbar bleiben."
+          "Vorlagen aus dem Vorlagen-Tab hinzufügen, ohne Einträge zu verlieren.",
+          "Projekt-Export und PDF-Export findest du im Projekt-Tab."
         ]
       }
     ]
@@ -76,7 +102,7 @@
           "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
           "Projekt-Export lädt nur das aktive Projekt für sichere Übergaben herunter.",
           "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
-          "Teilen bleibt lokal, solange Dateien nicht manuell weitergegeben werden."
+          "Aktionen im Projekt-Tab halten Exporte und Teilen direkt an der Liste."
         ]
       },
       {
@@ -86,7 +112,8 @@
           "Backup-Dateien für Langzeitablage oder Gerätewechsel speichern.",
           "Backups importieren, um Daten zusammenzuführen statt zu überschreiben.",
           "Bei Problemen vom Geräte-Backup wiederherstellen.",
-          "Dashboard-Aktionen halten Vorlagen und Importe nah an deinen Projekten."
+          "Dashboard-Aktionen halten Importe und Wiederherstellung nah an deinen Projekten.",
+          "Vorlagen werden im Vorlagen-Tab verwaltet und überschreiben keine Daten."
         ]
       }
     ]

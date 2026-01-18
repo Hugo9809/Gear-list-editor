@@ -140,6 +140,17 @@
       "helper": "Notizen erscheinen in Exporten und sind in Backups für jedes Projekt enthalten.",
       "placeholder": "Crew-Notizen, Abholinfos oder Rückgabeanweisungen",
       "empty": "Keine Notizen hinzugefügt."
+    },
+    "print": {
+      "labels": {
+        "client": "Kunde",
+        "date": "Datum",
+        "location": "Ort",
+        "contact": "Kontakt"
+      },
+      "notes": {
+        "title": "Projekt-Notizen"
+      }
     }
   },
   "template": {
@@ -209,6 +220,7 @@
     },
     "empty": "Noch keine Items. Füge oben das erste Item hinzu.",
     "suggestion": {
+      "unitFallback": "Stk.",
       "detailsFallback": "Keine Details gespeichert"
     },
     "count": {

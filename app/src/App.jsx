@@ -30,7 +30,11 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildPrintableHtml = (project, t, getStatusLabel) => {
+const buildPrintableHtml = (project, dictionaryOrT, getStatusLabel) => {
+  const t =
+    typeof dictionaryOrT === 'function'
+      ? dictionaryOrT
+      : (key, fallback, variables) => translate(dictionaryOrT, key, fallback, variables);
   const categoriesHtml = project.categories
     .map((category) => {
       const rows = category.items
@@ -135,15 +139,15 @@ const buildPrintableHtml = (project, t, getStatusLabel) => {
         <header>
           <h1>${escapeHtml(project.name)}</h1>
           <div class="meta">
-            <div><strong>${escapeHtml(t('project.fields.client', 'Client / production'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.fields.shootDate', 'Shoot date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.fields.location', 'Location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.fields.contact', 'Contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.client', 'Client'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.date', 'Date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.location', 'Location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.contact', 'Contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
           </div>
         </header>
         ${categoriesHtml}
         <div class="notes">
-          <strong>${escapeHtml(t('project.notes.title', 'Project notes'))}:</strong> ${escapeHtml(
+          <strong>${escapeHtml(t('project.print.notes.title', 'Project notes'))}:</strong> ${escapeHtml(
             project.notes || t('project.notes.empty', 'No notes added.')
           )}
         </div>
@@ -728,13 +732,14 @@ export default function App() {
       setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
       return;
     }
+    const dictionary = getDictionary(locale);
     const printWindow = window.open('', '_blank', 'noopener,noreferrer');
     if (!printWindow) {
       setStatus(t('status.popupBlocked', 'Popup blocked. Please allow popups for PDF export.'));
       return;
     }
     printWindow.document.open();
-    printWindow.document.write(buildPrintableHtml(activeProject, t, getStatusLabel));
+    printWindow.document.write(buildPrintableHtml(activeProject, dictionary, getStatusLabel));
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -1575,7 +1580,7 @@ export default function App() {
                                 suggestions={itemSuggestions}
                                 placeholder={t('items.fields.name', 'Item name')}
                                 label={t('items.fields.name', 'Item name')}
-                                unitFallback={t('units.pcs', 'pcs')}
+                                unitFallback={t('items.suggestion.unitFallback', 'pcs')}
                                 detailsFallback={t('items.suggestion.detailsFallback', 'No details saved')}
                                 inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                               />
@@ -1630,7 +1635,7 @@ export default function App() {
                                       suggestions={itemSuggestions}
                                       placeholder={t('items.fields.name', 'Item name')}
                                       label={t('items.fields.name', 'Item name')}
-                                      unitFallback={t('units.pcs', 'pcs')}
+                                      unitFallback={t('items.suggestion.unitFallback', 'pcs')}
                                       detailsFallback={t(
                                         'items.suggestion.detailsFallback',
                                         'No details saved'

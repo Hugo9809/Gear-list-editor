@@ -140,6 +140,17 @@
       "helper": "Notes appear in exports and are included in backups for every project.",
       "placeholder": "Crew notes, pickup info, or return instructions",
       "empty": "No notes added."
+    },
+    "print": {
+      "labels": {
+        "client": "Client",
+        "date": "Date",
+        "location": "Location",
+        "contact": "Contact"
+      },
+      "notes": {
+        "title": "Project notes"
+      }
     }
   },
   "template": {
@@ -209,6 +220,7 @@
     },
     "empty": "No items yet. Add the first item above.",
     "suggestion": {
+      "unitFallback": "pcs",
       "detailsFallback": "No details saved"
     },
     "count": {

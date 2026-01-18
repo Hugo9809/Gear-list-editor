@@ -435,6 +435,19 @@ export const exportState = (state) => {
   return { json, fileName, payload };
 };
 
+export const exportProjectBackup = (state, projectId) => {
+  const migrated = migratePayload(state);
+  const project = migrated.projects.find((entry) => entry.id === projectId) || null;
+  const filteredState = {
+    ...migrated,
+    projects: project ? [project] : [],
+    templates: [],
+    history: { items: [], categories: [] },
+    activeProjectId: project?.id || null
+  };
+  return exportState(filteredState);
+};
+
 const getBestBackup = async () => {
   const opfsLatest = await readFromOpfsFile(OPFS_BACKUP_FILE);
   if (opfsLatest) {
@@ -590,6 +603,7 @@ export const createStorageService = (options = {}) => {
   };
 
   const exportBackup = (state) => exportState(state);
+  const exportProjectBackupWithId = (state, projectId) => exportProjectBackup(state, projectId);
 
   const importBackup = (rawText, currentState) => {
     const parsed = safeParse(rawText);
@@ -643,6 +657,7 @@ export const createStorageService = (options = {}) => {
     scheduleAutosave,
     saveNow,
     exportBackup,
+    exportProjectBackup: exportProjectBackupWithId,
     importBackup,
     restoreFromBackup,
     dispose

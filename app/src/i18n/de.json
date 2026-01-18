@@ -18,7 +18,8 @@
           "Projekt benennen und Kunde, Ort oder Kontakt ergänzen.",
           "Neue Projekte werden sofort lokal gespeichert.",
           "Projekte jederzeit wechseln, damit Produktionen getrennt bleiben.",
-          "Im Dashboard Vorlagen laden oder Projekte importieren, ohne gespeichertes Equipment zu verlieren."
+          "Im Dashboard Vorlagen laden oder Projekte importieren, ohne gespeichertes Equipment zu verlieren.",
+          "Die Aktionsleiste des Projekts nutzt du für Exporte oder um Vorlagen zu sichern."
         ]
       },
       {
@@ -72,6 +73,7 @@
         "description": "Teilen ohne Online-Abhängigkeit oder externe Dienste.",
         "items": [
           "Zwischenablage-Teilen kopiert ein vollständiges Backup für Übergaben.",
+          "Projekt-Export lädt nur das aktive Projekt für sichere Übergaben herunter.",
           "PDF-Export öffnet eine druckfertige Liste für die Produktion.",
           "Teilen bleibt lokal, solange Dateien nicht manuell weitergegeben werden."
         ]

@@ -18,7 +18,8 @@
           "Name the project and add client, location, or contact details.",
           "New projects are saved locally the moment they are created.",
           "Switch projects any time to keep each production separate.",
-          "Use the dashboard to load templates or import projects without losing saved gear."
+          "Use the dashboard to load templates or import projects without losing saved gear.",
+          "Use the active project bar to export a single project or save it as a template."
         ]
       },
       {
@@ -72,6 +73,7 @@
         "description": "Share without leaving offline mode or exposing data online.",
         "items": [
           "Clipboard sharing copies a full backup for quick handoffs.",
+          "Project export downloads only the active project for safe handoffs.",
           "PDF export opens a print-ready list for production reference.",
           "All sharing stays local unless you move files manually."
         ]

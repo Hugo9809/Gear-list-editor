@@ -599,8 +599,7 @@ export default function App() {
     setStatus('Suggestion applied and ready for autosave.');
   };
 
-  const saveTemplateFromProject = (event) => {
-    event.preventDefault();
+  const saveTemplateFromProject = () => {
     if (!activeProject) {
       setStatus('Create a project before saving a template.');
       return;
@@ -628,6 +627,11 @@ export default function App() {
     setTemplates((prev) => [template, ...prev]);
     setTemplateDraft(emptyTemplateDraft);
     setStatus('Template saved from the current project.');
+  };
+
+  const handleTemplateSubmit = (event) => {
+    event.preventDefault();
+    saveTemplateFromProject();
   };
 
   const applyTemplateToProject = (templateId) => {
@@ -705,6 +709,33 @@ export default function App() {
     printWindow.focus();
     printWindow.print();
     setStatus('PDF export ready. Confirm printing to save the file.');
+  };
+
+  const exportProject = () => {
+    if (!activeProject) {
+      setStatus('Select a project before exporting.');
+      return;
+    }
+    const { json, fileName } = storageRef.current.exportProjectBackup(
+      {
+        projects,
+        templates,
+        history,
+        activeProjectId,
+        lastSaved
+      },
+      activeProject.id
+    );
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setStatus('Project export downloaded. Store it somewhere safe.');
   };
 
   const downloadBackup = () => {
@@ -892,6 +923,43 @@ export default function App() {
             );
           })}
         </nav>
+
+        {activeProject ? (
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 px-5 py-4 shadow-lg">
+            <div className="flex min-w-[200px] flex-col gap-1">
+              <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Active project</span>
+              <span className="text-lg font-semibold text-white">
+                {activeProject.name || 'Untitled project'}
+              </span>
+              <span className="text-xs text-slate-400">
+                Export the current list or save it as a reusable template.
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-3 text-sm">
+              <button
+                type="button"
+                onClick={exportProject}
+                className="rounded-full border border-slate-700 px-4 py-2 font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Export project
+              </button>
+              <button
+                type="button"
+                onClick={exportPdf}
+                className="rounded-full border border-slate-700 px-4 py-2 font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-200"
+              >
+                Export PDF
+              </button>
+              <button
+                type="button"
+                onClick={saveTemplateFromProject}
+                className="rounded-full bg-emerald-500 px-4 py-2 font-semibold text-emerald-950 transition hover:bg-emerald-400"
+              >
+                Save as template
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
           <div className="flex flex-col gap-6">
@@ -1389,7 +1457,7 @@ export default function App() {
                 </div>
 
                 <form
-                  onSubmit={saveTemplateFromProject}
+                  onSubmit={handleTemplateSubmit}
                   className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6"
                 >
                   <div className="flex flex-col gap-2">

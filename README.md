@@ -21,6 +21,12 @@ The Vite dev server requires Node.js because it uses the Vite tooling chain for 
 If you need a non-Node development strategy, you can serve the built static files (`npm run build` and then host
 `app/dist/`) with any simple static file server, but you will still need Node.js for the build step.
 
+## GitHub Pages deployment
+
+The GitHub Pages workflow builds the app with `npm run build` and publishes the static output in `app/dist/`.
+Because Pages serves this repo under a base path, the build must include `--base=/<repo-name>/` (for example,
+`/Gear-list-editor/`). Update the base path if the repository name changes or if you deploy from a fork.
+
 ## Data safety and offline use
 
 The app keeps all data local, autosaves after every change to IndexedDB, and mirrors redundant backups to the

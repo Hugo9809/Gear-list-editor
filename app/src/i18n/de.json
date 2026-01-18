@@ -7,6 +7,212 @@
     "helper": "Lokal gespeichert für die Offline-Nutzung.",
     "status": "Sprache aktualisiert und lokal gespeichert."
   },
+  "hero": {
+    "kicker": "Gear-List-Editor",
+    "title": "Produktionsbereite Gear-Listen mit Offline-Schutz.",
+    "description": "Erstelle Equipment-Listen, die zu deinen Produktions-PDFs passen. Lege Projekte an, nutze Vorlagen wieder und exportiere druckfertige Listen, ohne den Offline-Modus zu verlassen. Jede Änderung wird lokal mit redundanten Backups gesichert.",
+    "badges": {
+      "autosave": "Autosave aktiv",
+      "dashboard": "Projektübersicht",
+      "templates": "Vorlagenbibliothek",
+      "pdf": "PDF-Export bereit"
+    }
+  },
+  "counts": {
+    "projects": {
+      "one": "{count} Projekt",
+      "other": "{count} Projekte"
+    },
+    "categories": {
+      "one": "{count} Kategorie",
+      "other": "{count} Kategorien"
+    },
+    "items": {
+      "one": "{count} Item",
+      "other": "{count} Items"
+    }
+  },
+  "project": {
+    "dashboard": {
+      "title": "Projektübersicht",
+      "description": "Behalte mehrere Produktionen im Blick und sieh immer, welche Liste aktiv ist. Neue Projekte werden sofort automatisch gespeichert."
+    },
+    "active": {
+      "title": "Aktive Projekte"
+    },
+    "workspace": {
+      "title": "Aktiver Projektbereich",
+      "summary": "{categories} · {items}",
+      "empty": "Wähle ein Projekt, um mit der Bearbeitung zu starten.",
+      "noProject": "Wähle oder erstelle ein Projekt, um den Gear-List-Editor zu nutzen."
+    },
+    "fields": {
+      "name": "Projektname",
+      "client": "Kunde / Produktion",
+      "shootDate": "Drehtag",
+      "location": "Ort",
+      "contact": "Hauptkontakt"
+    },
+    "placeholders": {
+      "name": "z. B. Studio-Shoot im Oktober",
+      "client": "Kunde, Agentur oder Show",
+      "location": "Studio, Stadt oder Location",
+      "contact": "Produktion oder Ansprechpartner"
+    },
+    "actions": {
+      "create": "Projekt erstellen",
+      "active": "Aktiv",
+      "open": "Öffnen",
+      "archive": "Archivieren",
+      "exportPdf": "PDF exportieren"
+    },
+    "storedSummary": {
+      "one": "{count} Projekt lokal gespeichert.",
+      "other": "{count} Projekte lokal gespeichert."
+    },
+    "lastSavedLabel": "Zuletzt gespeichert:",
+    "lastSavedFallback": "Noch nicht gespeichert",
+    "empty": "Noch keine Projekte. Erstelle dein erstes Projekt, um eine Gear-Liste aufzubauen.",
+    "fallbacks": {
+      "client": "Kunde nicht gesetzt",
+      "shootDate": "Datum nicht gesetzt"
+    },
+    "categoryItemSummary": "{categories} · {items}",
+    "notes": {
+      "title": "Projekt-Notizen",
+      "helper": "Notizen erscheinen im Export und sind in den Backups jedes Projekts enthalten.",
+      "placeholder": "Crew-Notizen, Abholung oder Rückgabehinweise"
+    }
+  },
+  "categories": {
+    "title": "Kategorien",
+    "helper": "Nutze Vorlagen für schnellere Setups.",
+    "placeholders": {
+      "new": "Kategorie hinzufügen (z. B. Kamera, Licht)",
+      "notes": "Kategorie-Notizen oder Mietverweise"
+    },
+    "actions": {
+      "add": "Kategorie hinzufügen",
+      "remove": "Kategorie entfernen"
+    },
+    "empty": "Noch keine Kategorien. Füge oben eine hinzu oder nutze eine Vorlage."
+  },
+  "items": {
+    "labels": {
+      "name": "Item-Name"
+    },
+    "placeholders": {
+      "name": "Item-Name",
+      "unit": "Einheit",
+      "details": "Details / Notizen"
+    },
+    "actions": {
+      "add": "Hinzufügen",
+      "remove": "Entfernen"
+    },
+    "status": {
+      "needed": "Benötigt",
+      "packed": "Gepackt",
+      "missing": "Fehlt",
+      "rented": "Gemietet"
+    },
+    "defaultUnit": "Stk.",
+    "noDetails": "Keine Details gespeichert",
+    "empty": "Noch keine Items. Füge oben das erste Item hinzu."
+  },
+  "templates": {
+    "title": "Vorlagenverwaltung",
+    "description": "Speichere wiederverwendbare Setups für wiederkehrende Drehs. Vorlagen können auf jedes Projekt angewendet werden, ohne bestehende Daten zu überschreiben.",
+    "fields": {
+      "name": "Vorlagenname",
+      "description": "Beschreibung"
+    },
+    "placeholders": {
+      "name": "z. B. Standard-Doku-Kit",
+      "description": "Wichtige Details oder Einsatz"
+    },
+    "actions": {
+      "save": "Aktuelles Projekt als Vorlage speichern",
+      "apply": "Auf aktives Projekt anwenden",
+      "remove": "Entfernen"
+    },
+    "empty": "Noch keine Vorlagen. Speichere das aktive Projekt, um deine Bibliothek aufzubauen.",
+    "summary": "{categories} · Zuletzt genutzt {lastUsed}",
+    "neverUsed": "Nie"
+  },
+  "backup": {
+    "title": "Speichern, teilen, wiederherstellen",
+    "description": "Deine Daten bleiben auf dem Gerät. Speichere sofort, erstelle Offline-Backups und stelle sie wieder her, wenn du das Gerät wechselst.",
+    "actions": {
+      "save": "Jetzt speichern",
+      "download": "Backup herunterladen",
+      "import": "Backup-Datei importieren",
+      "restore": "Vom Geräte-Backup wiederherstellen",
+      "share": "Per Zwischenablage teilen"
+    }
+  },
+  "status": {
+    "loading": "Gespeicherte Gear-Liste wird geladen...",
+    "autosaveComplete": "Autosave abgeschlossen. Deine Projektübersicht ist sicher.",
+    "explicitSave": "Sicher auf dem Gerät und in Backups gespeichert.",
+    "rehydrate": "Speicher repariert und Redundanzen aktualisiert.",
+    "emptyState": "Noch keine gespeicherten Daten. Starte ein Projekt und Autosave schützt es.",
+    "loadedSource": "Sicher geladen von {source}.",
+    "projectNameRequired": "Bitte gib dem Projekt einen Namen, bevor du es erstellst.",
+    "projectCreated": "Neues Projekt erstellt und durch Autosave geschützt.",
+    "projectArchived": "Projekt archiviert. Backups bleiben erhalten.",
+    "projectRequiredForCategory": "Erstelle ein Projekt, bevor du Kategorien hinzufügst.",
+    "categoryNameRequired": "Bitte benenne die Kategorie, bevor du sie hinzufügst.",
+    "categoryAdded": "Kategorie hinzugefügt.",
+    "itemNameRequired": "Bitte gib einen Item-Namen an, bevor du ihn hinzufügst.",
+    "itemAdded": "Item hinzugefügt. Autosave sichert es sofort.",
+    "categoryRemoved": "Kategorie entfernt.",
+    "itemRemoved": "Item entfernt. Backups bleiben verfügbar.",
+    "autosaveQueued": "Änderungen für Autosave vorgemerkt.",
+    "categoryUpdated": "Kategorie aktualisiert.",
+    "projectUpdated": "Projektdetails aktualisiert.",
+    "projectNotesUpdated": "Projekt-Notizen für Autosave gespeichert.",
+    "suggestionApplied": "Vorschlag übernommen und bereit für Autosave.",
+    "projectRequiredForTemplate": "Erstelle ein Projekt, bevor du eine Vorlage speicherst.",
+    "templateNameRequired": "Bitte gib der Vorlage einen Namen.",
+    "templateSaved": "Vorlage aus dem aktuellen Projekt gespeichert.",
+    "projectRequiredForApplyTemplate": "Wähle ein Projekt, bevor du eine Vorlage anwendest.",
+    "templateApplied": "Vorlage angewendet. Autosave sichert die aktualisierte Liste.",
+    "templateUpdated": "Vorlage aktualisiert.",
+    "templateRemoved": "Vorlage entfernt.",
+    "projectRequiredForExport": "Wähle ein Projekt, bevor du exportierst.",
+    "popupBlocked": "Popup blockiert. Bitte erlaube Popups für den PDF-Export.",
+    "pdfReady": "PDF-Export bereit. Bestätige den Druck, um die Datei zu speichern.",
+    "backupDownloaded": "Backup heruntergeladen. Bitte sicher aufbewahren.",
+    "restoreSource": "Wiederhergestellt von {source}.",
+    "importComplete": "Import abgeschlossen. Bestehende Daten wurden beibehalten.",
+    "clipboardCopied": "Gear-Liste zum Teilen in die Zwischenablage kopiert.",
+    "clipboardBlocked": "Zugriff auf die Zwischenablage wurde blockiert. Nutze stattdessen den Backup-Download.",
+    "clipboardUnavailable": "Teilen per Zwischenablage ist nicht verfügbar. Nutze stattdessen den Backup-Download.",
+    "placeholder": "Statusmeldungen erscheinen hier, um die Datensicherheit zu bestätigen."
+  },
+  "print": {
+    "headers": {
+      "quantity": "Menge",
+      "unit": "Einheit",
+      "item": "Item",
+      "details": "Details",
+      "status": "Status"
+    },
+    "emptyItems": "Keine Items aufgelistet.",
+    "titleSuffix": "Gear-Liste",
+    "meta": {
+      "client": "Kunde",
+      "date": "Datum",
+      "location": "Ort",
+      "contact": "Kontakt"
+    },
+    "emptyValue": "—",
+    "notes": {
+      "label": "Projekt-Notizen",
+      "empty": "Keine Notizen hinzugefügt."
+    }
+  },
   "help": {
     "title": "Hilfe & Dokumentation",
     "subtitle": "Offline-fokussierte Hinweise für sichere Equipment-Listen.",

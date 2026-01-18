@@ -23,73 +23,6 @@ const ProjectDashboard = ({
   resolveStorageSource
 }) => (
   <>
-    <div className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h2 className="text-xl font-semibold ui-heading">
-            {t('dashboard.quickActions.title', 'Dashboard quick actions')}
-          </h2>
-          <p className="text-sm text-text-secondary">
-            {t(
-              'dashboard.quickActions.description',
-              'Load trusted templates or bring a project backup back into your local library.'
-            )}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="flex min-w-[200px] flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
-            {t('template.library.label', 'Template library')}
-            <select
-              value={selectedTemplateId}
-              onChange={(event) => onTemplateSelect(event.target.value)}
-              className="ui-select"
-            >
-              {templates.length === 0 ? (
-                <option value="">
-                  {t('template.library.emptyOption', 'No templates saved')}
-                </option>
-              ) : (
-                templates.map((template, templateIndex) => (
-                  <option key={template.id} value={template.id}>
-                    {resolveDisplayName(
-                      template.name,
-                      { index: templateIndex + 1 },
-                      'defaults.untitled_template'
-                    )}
-                  </option>
-                ))
-              )}
-            </select>
-          </label>
-          <button
-            type="button"
-            onClick={onLoadTemplate}
-            disabled={!selectedTemplateId}
-            className={`ui-button ${
-              selectedTemplateId
-                ? 'ui-button-primary'
-                : 'cursor-not-allowed bg-surface-sunken text-text-muted'
-            }`}
-          >
-            {t('template.actions.loadIntoProject', 'Load from template')}
-          </button>
-          <button
-            type="button"
-            onClick={onImportProject}
-            className="ui-button ui-button-outline"
-          >
-            {t('project.actions.importProject', 'Import project')}
-          </button>
-        </div>
-      </div>
-      <p className="text-xs text-text-muted">
-        {t(
-          'template.library.helper',
-          'Templates add gear to the selected project without overwriting existing entries.'
-        )}
-      </p>
-    </div>
-
     <form onSubmit={onCreateProject} className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6">
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-semibold ui-heading">
@@ -99,6 +32,72 @@ const ProjectDashboard = ({
           {t(
             'project.dashboard.description',
             'Track multiple productions and open a project to start editing the gear list. New projects are autosaved the moment they are created.'
+          )}
+        </p>
+      </div>
+      <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold ui-heading">
+              {t('dashboard.quickActions.title', 'Dashboard quick actions')}
+            </h3>
+            <p className="text-sm text-text-secondary">
+              {t(
+                'dashboard.quickActions.description',
+                'Load trusted templates or bring a project backup back into your local library.'
+              )}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="flex min-w-[200px] flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
+              {t('template.library.label', 'Template library')}
+              <select
+                value={selectedTemplateId}
+                onChange={(event) => onTemplateSelect(event.target.value)}
+                className="ui-select"
+              >
+                {templates.length === 0 ? (
+                  <option value="">
+                    {t('template.library.emptyOption', 'No templates saved')}
+                  </option>
+                ) : (
+                  templates.map((template, templateIndex) => (
+                    <option key={template.id} value={template.id}>
+                      {resolveDisplayName(
+                        template.name,
+                        { index: templateIndex + 1 },
+                        'defaults.untitled_template'
+                      )}
+                    </option>
+                  ))
+                )}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={onLoadTemplate}
+              disabled={!selectedTemplateId}
+              className={`ui-button ${
+                selectedTemplateId
+                  ? 'ui-button-primary'
+                  : 'cursor-not-allowed bg-surface-sunken text-text-muted'
+              }`}
+            >
+              {t('template.actions.loadIntoProject', 'Load from template')}
+            </button>
+            <button
+              type="button"
+              onClick={onImportProject}
+              className="ui-button ui-button-outline"
+            >
+              {t('project.actions.importProject', 'Import project')}
+            </button>
+          </div>
+        </div>
+        <p className="mt-3 text-xs text-text-muted">
+          {t(
+            'template.library.helper',
+            'Templates add gear to the selected project without overwriting existing entries.'
           )}
         </p>
       </div>

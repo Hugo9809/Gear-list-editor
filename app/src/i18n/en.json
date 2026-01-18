@@ -363,7 +363,7 @@
         "title": "Build categories and items",
         "description": "Organize gear by department or case for faster packing.",
         "items": [
-          "Add categories, then list items with quantity, notes, and status.",
+          "Add categories, then list items with quantity and notes.",
           "Typeahead remembers previous items so you can reuse details quickly.",
           "Use project notes for crew instructions, pickup info, or returns.",
           "Autosave keeps every change protected while you edit."

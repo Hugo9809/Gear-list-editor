@@ -4,10 +4,95 @@
 
 :root {
   color-scheme: light;
+
+  --v2-brand-primary: 0 21 137;
+  --v2-brand-primary-hover: 0 16 106;
+  --v2-brand-primary-active: 0 10 75;
+  --v2-brand-primary-foreground: 255 255 255;
+  --v2-brand-secondary: 255 105 180;
+  --v2-brand-secondary-hover: 242 85 168;
+  --v2-brand-secondary-active: 209 48 138;
+  --v2-brand-secondary-foreground: 24 24 27;
+
+  --v2-surface-app-bg: 245 247 250;
+  --v2-surface-base: 255 255 255;
+  --v2-surface-elevated: 255 255 255;
+  --v2-surface-muted: 240 240 240;
+  --v2-surface-sunken: 232 232 232;
+  --v2-surface-input: 255 255 255;
+  --v2-surface-inverse: 26 26 46;
+
+  --v2-text-primary: 26 26 26;
+  --v2-text-secondary: 102 102 102;
+  --v2-text-muted: 153 153 153;
+  --v2-text-inverse: 255 255 255;
+  --v2-text-link: 0 21 137;
+
+  --v2-status-success: 40 167 69;
+  --v2-status-success-bg: 212 237 218;
+  --v2-status-warning: 255 193 7;
+  --v2-status-warning-bg: 255 243 205;
+  --v2-status-error: 220 53 69;
+  --v2-status-error-bg: 248 215 218;
+  --v2-status-info: 23 162 184;
+  --v2-status-info-bg: 209 236 241;
+
+  --v2-project-blue: 33 150 243;
+  --v2-project-green: 76 175 80;
+  --v2-project-orange: 255 152 0;
+  --v2-project-purple: 156 39 176;
+  --v2-project-red: 244 67 54;
+  --v2-project-pink: 233 30 99;
+  --v2-project-teal: 0 150 136;
+  --v2-project-indigo: 63 81 181;
+
+  --v2-space-xs: 4px;
+  --v2-space-sm: 8px;
+  --v2-space-md: 16px;
+  --v2-space-lg: 24px;
+  --v2-space-xl: 32px;
+  --v2-space-2xl: 48px;
+  --v2-space-3xl: 64px;
+
+  --v2-radius-sm: 4px;
+  --v2-radius-md: 8px;
+  --v2-radius-lg: 12px;
+  --v2-radius-xl: 16px;
+  --v2-radius-full: 9999px;
+
+  --v2-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --v2-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --v2-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --v2-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12);
+  --v2-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
+
+  --v2-surface-app-bg: 26 26 46;
+  --v2-surface-base: 0 8 53;
+  --v2-surface-elevated: 0 10 75;
+  --v2-surface-muted: 0 16 106;
+  --v2-surface-sunken: 0 8 53;
+  --v2-surface-input: 0 8 53;
+  --v2-surface-inverse: 245 247 250;
+
+  --v2-text-primary: 255 255 255;
+  --v2-text-secondary: 153 153 153;
+  --v2-text-muted: 102 102 102;
+  --v2-text-inverse: 26 26 26;
+}
+
+:root[data-theme='pink'] {
+  color-scheme: light;
+
+  --v2-brand-primary: 255 105 180;
+  --v2-brand-primary-hover: 242 85 168;
+  --v2-brand-primary-active: 209 48 138;
+  --v2-brand-primary-foreground: 24 24 27;
+
+  --v2-text-link: 255 105 180;
 }
 
 body {

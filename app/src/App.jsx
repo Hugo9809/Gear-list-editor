@@ -917,37 +917,6 @@ export default function App() {
     event.target.value = '';
   };
 
-  const shareData = async () => {
-    const { json } = storageRef.current.exportBackup({
-      projects,
-      templates,
-      history,
-      activeProjectId,
-      lastSaved
-    });
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(json);
-        setStatus(t('status.sharedToClipboard', 'Copied your gear list to the clipboard for sharing.'));
-        return;
-      } catch {
-        setStatus(
-          t(
-            'status.clipboardBlocked',
-            'Clipboard access was blocked. Use the download backup option instead.'
-          )
-        );
-      }
-    } else {
-      setStatus(
-        t(
-          'status.clipboardUnavailable',
-          'Clipboard sharing is not available. Use the download backup option instead.'
-        )
-      );
-    }
-  };
-
   const handleFactoryReset = async () => {
     const confirmed = window.confirm(
       t(
@@ -1172,13 +1141,6 @@ export default function App() {
                       className="ui-button ui-button-outline"
                     >
                       {t('project.actions.exportPdf', 'Export PDF')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={shareData}
-                      className="ui-button ui-button-outline"
-                    >
-                      {t('backup.actions.shareClipboard', 'Share via clipboard')}
                     </button>
                     <button
                       type="button"

@@ -1012,16 +1012,6 @@ export default function App() {
     [t]
   );
 
-  const featureBadges = useMemo(
-    () => [
-      t('ui.badges.autosave', 'Autosave active'),
-      t('ui.badges.dashboard', 'Project dashboard'),
-      t('ui.badges.templates', 'Template library'),
-      t('ui.badges.pdf', 'PDF export ready')
-    ],
-    [t]
-  );
-
   const helpSections = t('help.sections', []);
   const documentationSections = t('documentation.sections', []);
   const offlineSteps = t('offline.steps', []);
@@ -1180,27 +1170,6 @@ export default function App() {
           </aside>
 
           <main className="flex flex-1 flex-col gap-6">
-            <header className="flex flex-col gap-4">
-              <div className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 p-6 shadow-lg">
-                <h1 className="text-3xl font-semibold text-text-primary">
-                  {t('ui.hero.title', 'Project-ready gear lists with offline protection.')}
-                </h1>
-                <p className="max-w-3xl text-base text-text-secondary">
-                  {t(
-                    'ui.hero.description',
-                    'Build equipment lists that match your production PDFs. Create projects, reuse templates, and export print-ready gear lists without leaving offline mode. Every edit is saved locally with redundant backups.'
-                  )}
-                </p>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
-                  {featureBadges.map((badge) => (
-                    <span key={badge} className="rounded-full border border-surface-sunken px-3 py-1">
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </header>
-
             {activeProject && activeTab !== 'help' ? (
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
                 <div className="flex min-w-[200px] flex-col gap-1">

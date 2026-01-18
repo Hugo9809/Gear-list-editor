@@ -90,8 +90,9 @@
   --v2-brand-primary: 255 105 180;
   --v2-brand-primary-hover: 242 85 168;
   --v2-brand-primary-active: 209 48 138;
-  --v2-brand-primary-foreground: 24 24 27;
+  --v2-brand-primary-foreground: 255 255 255;
 
+  --v2-text-inverse: 255 255 255;
   --v2-text-link: 255 105 180;
 }
 

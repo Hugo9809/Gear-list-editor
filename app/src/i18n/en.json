@@ -8,19 +8,44 @@
     "helper": "Saved locally for offline use.",
     "status": "Language updated and saved locally."
   },
+  "navigation": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "project": "Project",
+      "templates": "Templates",
+      "help": "Help"
+    },
+    "topbar": {
+      "newProject": "New project",
+      "openProject": "Open project",
+      "saveNow": "Save now",
+      "exportProject": "Export project",
+      "exportPdf": "Export PDF",
+      "shareBackup": "Copy backup",
+      "downloadBackup": "Download backup",
+      "restoreData": "Restore data",
+      "importBackup": "Import backup"
+    },
+    "helper": {
+      "dashboard": "Manage projects, imports, and backups without leaving offline mode.",
+      "project": "Edit the active gear list. Autosave protects every change.",
+      "templates": "Reuse kits safely. Templates add gear without overwriting your list.",
+      "help": "Find guidance on offline work, backups, and safe exports."
+    }
+  },
   "help": {
     "title": "Help & documentation",
     "subtitle": "Offline-first guidance for safe gear lists.",
     "sections": [
       {
-        "title": "Start with a protected project",
-        "description": "Create a project first so autosave can protect every edit.",
+        "title": "Start from the dashboard",
+        "description": "Use the dashboard to select or create a project, then edit the gear list in the Project tab.",
         "items": [
-          "Name the project and add client, location, or contact details.",
-          "New projects are saved locally the moment they are created.",
-          "Switch projects any time to keep each production separate.",
-          "Use the dashboard to load templates or import projects without losing saved gear.",
-          "Use the active project bar to export a single project or save it as a template."
+          "Create a project to save locally the moment it exists.",
+          "Select a project to continue editing without losing data.",
+          "Dashboard actions handle imports, restores, and device backups.",
+          "Use the Project tab top bar to export or share the active project.",
+          "Templates live in the Templates tab and can be added without overwriting gear."
         ]
       },
       {
@@ -29,16 +54,17 @@
         "items": [
           "Add categories, then list items with quantity, unit, and status.",
           "Typeahead remembers previous items so you can reuse details quickly.",
-          "Use project notes for crew instructions, pickup info, or returns."
+          "Use project notes for crew instructions, pickup info, or returns.",
+          "Autosave keeps every change protected while you edit."
         ]
       },
       {
-        "title": "Reuse templates safely",
-        "description": "Templates copy gear without overwriting existing lists.",
+        "title": "Use templates and exports safely",
+        "description": "Templates add gear without replacing what you already have.",
         "items": [
-          "Save the active project as a template whenever you repeat a kit.",
-          "Apply templates to add gear while keeping what is already listed.",
-          "Template usage is tracked so your most-used kits stay visible."
+          "Save the active project as a template for repeat kits.",
+          "Apply templates from the Templates tab to extend your list safely.",
+          "Project export and PDF export live in the Project tab top bar."
         ]
       }
     ]
@@ -76,7 +102,7 @@
           "Clipboard sharing copies a full backup for quick handoffs.",
           "Project export downloads only the active project for safe handoffs.",
           "PDF export opens a print-ready list for production reference.",
-          "All sharing stays local unless you move files manually."
+          "Project tab actions keep exports and sharing next to your gear list."
         ]
       },
       {
@@ -86,7 +112,8 @@
           "Download backup files for long-term storage or device migration.",
           "Import backups to merge rather than overwrite your current data.",
           "Restore from device backup if storage needs recovery.",
-          "Dashboard quick actions keep template loading and imports close to your projects."
+          "Dashboard quick actions keep imports and restores close to your projects.",
+          "Templates are managed in the Templates tab and never overwrite your data."
         ]
       }
     ]

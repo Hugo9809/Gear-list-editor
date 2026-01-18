@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { createId, createStorageService } from './data/storage.js';
 import { getDictionary, translate, useI18n } from './i18n/index.js';
 
@@ -30,7 +30,7 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildPrintableHtml = (project) => {
+const buildPrintableHtml = (project, t, getStatusLabel) => {
   const categoriesHtml = project.categories
     .map((category) => {
       const rows = category.items
@@ -38,10 +38,10 @@ const buildPrintableHtml = (project) => {
           (item) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
-              <td>${escapeHtml(item.unit || 'pcs')}</td>
+              <td>${escapeHtml(item.unit || t('units.pcs', 'pcs'))}</td>
               <td>${escapeHtml(item.name)}</td>
               <td>${escapeHtml(item.details)}</td>
-              <td>${escapeHtml(item.status)}</td>
+              <td>${escapeHtml(getStatusLabel(item.status))}</td>
             </tr>
           `
         )
@@ -52,15 +52,20 @@ const buildPrintableHtml = (project) => {
           <table>
             <thead>
               <tr>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Item</th>
-                <th>Details</th>
-                <th>Status</th>
+                <th>${escapeHtml(t('items.print.headers.quantity', 'Qty'))}</th>
+                <th>${escapeHtml(t('items.print.headers.unit', 'Unit'))}</th>
+                <th>${escapeHtml(t('items.print.headers.item', 'Item'))}</th>
+                <th>${escapeHtml(t('items.print.headers.details', 'Details'))}</th>
+                <th>${escapeHtml(t('items.print.headers.status', 'Status'))}</th>
               </tr>
             </thead>
             <tbody>
-              ${rows || '<tr><td colspan="5">No items listed.</td></tr>'}
+              ${
+                rows ||
+                `<tr><td colspan="5">${escapeHtml(
+                  t('items.print.empty', 'No items listed.')
+                )}</td></tr>`
+              }
             </tbody>
           </table>
         </section>
@@ -73,7 +78,7 @@ const buildPrintableHtml = (project) => {
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>${escapeHtml(project.name)} - Gear List</title>
+        <title>${escapeHtml(project.name)} - ${escapeHtml(t('ui.gearList', 'Gear list'))}</title>
         <style>
           body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -130,15 +135,17 @@ const buildPrintableHtml = (project) => {
         <header>
           <h1>${escapeHtml(project.name)}</h1>
           <div class="meta">
-            <div><strong>Client:</strong> ${escapeHtml(project.client || '—')}</div>
-            <div><strong>Date:</strong> ${escapeHtml(project.shootDate || '—')}</div>
-            <div><strong>Location:</strong> ${escapeHtml(project.location || '—')}</div>
-            <div><strong>Contact:</strong> ${escapeHtml(project.contact || '—')}</div>
+            <div><strong>${escapeHtml(t('project.fields.client', 'Client / production'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.fields.shootDate', 'Shoot date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.fields.location', 'Location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.fields.contact', 'Contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
           </div>
         </header>
         ${categoriesHtml}
         <div class="notes">
-          <strong>Project notes:</strong> ${escapeHtml(project.notes || 'No notes added.')}
+          <strong>${escapeHtml(t('project.notes.title', 'Project notes'))}:</strong> ${escapeHtml(
+            project.notes || t('project.notes.empty', 'No notes added.')
+          )}
         </div>
       </body>
     </html>
@@ -153,7 +160,9 @@ const TypeaheadInput = ({
   placeholder,
   inputClassName,
   listClassName,
-  label
+  label,
+  unitFallback = '',
+  detailsFallback = ''
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const filteredSuggestions = useMemo(() => {
@@ -201,7 +210,7 @@ const TypeaheadInput = ({
             >
               <span className="font-medium text-text-primary">{suggestion.name}</span>
               <span className="text-xs text-text-secondary">
-                {suggestion.unit || 'pcs'} · {suggestion.details || 'No details saved'}
+                {suggestion.unit || unitFallback} · {suggestion.details || detailsFallback}
               </span>
             </button>
           ))}
@@ -212,6 +221,7 @@ const TypeaheadInput = ({
 };
 
 export default function App() {
+  const { locale, locales, setLocale, t, tPlural } = useI18n();
   const [projects, setProjects] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
@@ -220,7 +230,9 @@ export default function App() {
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [lastSaved, setLastSaved] = useState(null);
   const [theme, setTheme] = useState('light');
-  const [status, setStatus] = useState('Loading your saved gear list...');
+  const [status, setStatus] = useState(() =>
+    t('status.loading', 'Loading your saved gear list...')
+  );
   const [isHydrated, setIsHydrated] = useState(false);
   const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
   const [templateDraft, setTemplateDraft] = useState(emptyTemplateDraft);
@@ -228,7 +240,11 @@ export default function App() {
   const [itemDrafts, setItemDrafts] = useState({});
   const fileInputRef = useRef(null);
   const storageRef = useRef(null);
-  const { locale, locales, setLocale, t } = useI18n();
+  const tRef = useRef(t);
+
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -238,17 +254,27 @@ export default function App() {
   if (!storageRef.current) {
     storageRef.current = createStorageService({
       onSaved: (payload, { reason, warnings }) => {
+        const tCurrent = tRef.current;
         setLastSaved(payload.lastSaved);
         if (warnings?.length) {
           setStatus(warnings[0]);
           return;
         }
         if (reason === 'autosave') {
-          setStatus('Autosave complete. Your project dashboard is safe.');
+          setStatus(
+            tCurrent(
+              'status.autosaveComplete',
+              'Autosave complete. Your project dashboard is safe.'
+            )
+          );
         } else if (reason === 'explicit') {
-          setStatus('Saved safely to device storage and backups.');
+          setStatus(
+            tCurrent('status.saveComplete', 'Saved safely to device storage and backups.')
+          );
         } else if (reason === 'rehydrate') {
-          setStatus('Storage repaired and redundancies refreshed.');
+          setStatus(
+            tCurrent('status.storageRepaired', 'Storage repaired and redundancies refreshed.')
+          );
         }
       },
       onWarning: (message) => setStatus(message)
@@ -273,8 +299,10 @@ export default function App() {
       } else {
         setStatus(
           result.source === 'Empty'
-            ? 'No saved data yet. Start a project and autosave will protect it.'
-            : `Loaded safely from ${result.source}.`
+            ? t('status.noSavedData', 'No saved data yet. Start a project and autosave will protect it.')
+            : t('status.loadedFromSource', 'Loaded safely from {source}.', {
+                source: result.source
+              })
         );
       }
       setIsHydrated(true);
@@ -398,7 +426,7 @@ export default function App() {
     event.preventDefault();
     const name = projectDraft.name.trim();
     if (!name) {
-      setStatus('Please name the project before creating it.');
+      setStatus(t('status.projectNameRequired', 'Please name the project before creating it.'));
       return;
     }
     const newProject = {
@@ -414,7 +442,7 @@ export default function App() {
     setProjects((prev) => [newProject, ...prev]);
     setActiveProjectId(newProject.id);
     setProjectDraft(emptyProjectDraft);
-    setStatus('New project created and protected by autosave.');
+    setStatus(t('status.projectCreated', 'New project created and protected by autosave.'));
   };
 
   const deleteProject = (projectId) => {
@@ -425,18 +453,18 @@ export default function App() {
       }
       return remaining;
     });
-    setStatus('Project archived. Backups remain intact.');
+    setStatus(t('status.projectArchived', 'Project archived. Backups remain intact.'));
   };
 
   const addCategory = (event) => {
     event.preventDefault();
     if (!activeProject) {
-      setStatus('Create a project before adding categories.');
+      setStatus(t('status.projectNeededForCategories', 'Create a project before adding categories.'));
       return;
     }
     const name = newCategoryName.trim();
     if (!name) {
-      setStatus('Please name the category before adding it.');
+      setStatus(t('status.categoryNameRequired', 'Please name the category before adding it.'));
       return;
     }
     updateProject(activeProject.id, (project) => ({
@@ -453,7 +481,7 @@ export default function App() {
     }));
     rememberCategory(name);
     setNewCategoryName('');
-    setStatus('Category added.');
+    setStatus(t('status.categoryAdded', 'Category added.'));
   };
 
   const addItemToCategory = (event, categoryId) => {
@@ -464,7 +492,7 @@ export default function App() {
     const draft = itemDrafts[categoryId] || emptyItemDraft;
     const name = draft.name.trim();
     if (!name) {
-      setStatus('Please provide an item name before adding.');
+      setStatus(t('status.itemNameRequired', 'Please provide an item name before adding.'));
       return;
     }
     const newItem = {
@@ -484,7 +512,7 @@ export default function App() {
       ...prev,
       [categoryId]: { ...emptyItemDraft }
     }));
-    setStatus('Item added. Autosave will secure it immediately.');
+    setStatus(t('status.itemAdded', 'Item added. Autosave will secure it immediately.'));
   };
 
   const removeCategory = (categoryId) => {
@@ -495,7 +523,7 @@ export default function App() {
       ...project,
       categories: project.categories.filter((category) => category.id !== categoryId)
     }));
-    setStatus('Category removed.');
+    setStatus(t('status.categoryRemoved', 'Category removed.'));
   };
 
   const removeItem = (categoryId, itemId) => {
@@ -506,7 +534,7 @@ export default function App() {
       ...category,
       items: category.items.filter((item) => item.id !== itemId)
     }));
-    setStatus('Item removed. Backups remain available.');
+    setStatus(t('status.itemRemoved', 'Item removed. Backups remain available.'));
   };
 
   const updateItemField = (categoryId, itemId, field, value) => {
@@ -521,7 +549,7 @@ export default function App() {
       rememberItem(next);
       return next;
     });
-    setStatus('Changes queued for autosave.');
+    setStatus(t('status.changesQueued', 'Changes queued for autosave.'));
   };
 
   const updateCategoryField = (categoryId, field, value) => {
@@ -535,7 +563,7 @@ export default function App() {
     if (field === 'name') {
       rememberCategory(value);
     }
-    setStatus('Category updated.');
+    setStatus(t('status.categoryUpdated', 'Category updated.'));
   };
 
   const updateProjectField = (field, value) => {
@@ -546,7 +574,7 @@ export default function App() {
       ...project,
       [field]: value
     }));
-    setStatus('Project details updated.');
+    setStatus(t('status.projectDetailsUpdated', 'Project details updated.'));
   };
 
   const updateProjectNotes = (value) => {
@@ -557,7 +585,7 @@ export default function App() {
       ...project,
       notes: value
     }));
-    setStatus('Project notes saved for autosave.');
+    setStatus(t('status.projectNotesSaved', 'Project notes saved for autosave.'));
   };
 
   const updateDraftItem = (categoryId, field, value) => {
@@ -596,17 +624,17 @@ export default function App() {
       ...updated
     }));
     rememberItem(updated);
-    setStatus('Suggestion applied and ready for autosave.');
+    setStatus(t('status.suggestionApplied', 'Suggestion applied and ready for autosave.'));
   };
 
   const saveTemplateFromProject = () => {
     if (!activeProject) {
-      setStatus('Create a project before saving a template.');
+      setStatus(t('status.projectNeededForTemplate', 'Create a project before saving a template.'));
       return;
     }
     const name = templateDraft.name.trim();
     if (!name) {
-      setStatus('Please name the template.');
+      setStatus(t('status.templateNameRequired', 'Please name the template.'));
       return;
     }
     const template = {
@@ -626,7 +654,7 @@ export default function App() {
     };
     setTemplates((prev) => [template, ...prev]);
     setTemplateDraft(emptyTemplateDraft);
-    setStatus('Template saved from the current project.');
+    setStatus(t('status.templateSaved', 'Template saved from the current project.'));
   };
 
   const handleTemplateSubmit = (event) => {
@@ -636,7 +664,7 @@ export default function App() {
 
   const applyTemplateToProject = (templateId) => {
     if (!activeProject) {
-      setStatus('Select a project before applying a template.');
+      setStatus(t('status.projectNeededForApplyTemplate', 'Select a project before applying a template.'));
       return;
     }
     const template = templates.find((item) => item.id === templateId);
@@ -663,12 +691,14 @@ export default function App() {
     setTemplates((prev) =>
       prev.map((item) => (item.id === templateId ? { ...item, lastUsed: new Date().toISOString() } : item))
     );
-    setStatus('Template applied. Autosave will secure the updated list.');
+    setStatus(t('status.templateApplied', 'Template applied. Autosave will secure the updated list.'));
   };
 
   const handleLoadTemplate = () => {
     if (!selectedTemplateId) {
-      setStatus('Select a template to load into the active project.');
+      setStatus(
+        t('status.templateSelectionRequired', 'Select a template to load into the active project.')
+      );
       return;
     }
     applyTemplateToProject(selectedTemplateId);
@@ -685,35 +715,35 @@ export default function App() {
           : template
       )
     );
-    setStatus('Template updated.');
+    setStatus(t('status.templateUpdated', 'Template updated.'));
   };
 
   const removeTemplate = (templateId) => {
     setTemplates((prev) => prev.filter((template) => template.id !== templateId));
-    setStatus('Template removed.');
+    setStatus(t('status.templateRemoved', 'Template removed.'));
   };
 
   const exportPdf = () => {
     if (!activeProject) {
-      setStatus('Select a project before exporting.');
+      setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
       return;
     }
     const printWindow = window.open('', '_blank', 'noopener,noreferrer');
     if (!printWindow) {
-      setStatus('Popup blocked. Please allow popups for PDF export.');
+      setStatus(t('status.popupBlocked', 'Popup blocked. Please allow popups for PDF export.'));
       return;
     }
     printWindow.document.open();
-    printWindow.document.write(buildPrintableHtml(activeProject));
+    printWindow.document.write(buildPrintableHtml(activeProject, t, getStatusLabel));
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
-    setStatus('PDF export ready. Confirm printing to save the file.');
+    setStatus(t('status.pdfReady', 'PDF export ready. Confirm printing to save the file.'));
   };
 
   const exportProject = () => {
     if (!activeProject) {
-      setStatus('Select a project before exporting.');
+      setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
       return;
     }
     const { json, fileName } = storageRef.current.exportProjectBackup(
@@ -735,7 +765,7 @@ export default function App() {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    setStatus('Project export downloaded. Store it somewhere safe.');
+    setStatus(t('status.projectExported', 'Project export downloaded. Store it somewhere safe.'));
   };
 
   const downloadBackup = () => {
@@ -755,7 +785,7 @@ export default function App() {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    setStatus('Backup downloaded. Store it somewhere safe.');
+    setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
   };
 
   const restoreFromDeviceBackup = async () => {
@@ -769,7 +799,7 @@ export default function App() {
       setStatus(result.warnings[0]);
       return;
     }
-    setStatus(`Restored from ${result.source}.`);
+    setStatus(t('status.restoredFromSource', 'Restored from {source}.', { source: result.source }));
   };
 
   const handleImport = (event) => {
@@ -793,7 +823,7 @@ export default function App() {
       if (warnings.length > 0) {
         setStatus(warnings[0]);
       } else {
-        setStatus('Import complete. Existing data was preserved.');
+        setStatus(t('status.importComplete', 'Import complete. Existing data was preserved.'));
       }
     };
     reader.readAsText(file);
@@ -824,13 +854,23 @@ export default function App() {
     if (navigator.clipboard?.writeText) {
       try {
         await navigator.clipboard.writeText(json);
-        setStatus('Copied your gear list to the clipboard for sharing.');
+        setStatus(t('status.sharedToClipboard', 'Copied your gear list to the clipboard for sharing.'));
         return;
       } catch {
-        setStatus('Clipboard access was blocked. Use the download backup option instead.');
+        setStatus(
+          t(
+            'status.clipboardBlocked',
+            'Clipboard access was blocked. Use the download backup option instead.'
+          )
+        );
       }
     } else {
-      setStatus('Clipboard sharing is not available. Use the download backup option instead.');
+      setStatus(
+        t(
+          'status.clipboardUnavailable',
+          'Clipboard sharing is not available. Use the download backup option instead.'
+        )
+      );
     }
   };
 
@@ -841,10 +881,15 @@ export default function App() {
       translate(
         getDictionary(nextLocale),
         'language.status',
-        'Language updated and saved locally.'
+        t('language.status', 'Language updated and saved locally.')
       )
     );
   };
+
+  const getStatusLabel = useCallback(
+    (value) => t(`status.labels.${value}`, value),
+    [t]
+  );
 
   const statusClasses = status
     ? 'border border-brand/40 bg-brand/10 text-brand'
@@ -859,6 +904,35 @@ export default function App() {
     return { categories, items };
   }, [activeProject]);
 
+  const navigationTabs = useMemo(
+    () => [
+      { id: 'dashboard', label: t('navigation.sidebar.dashboard', 'Dashboard') },
+      { id: 'project', label: t('navigation.sidebar.project', 'Project') },
+      { id: 'templates', label: t('navigation.sidebar.templates', 'Templates') },
+      { id: 'help', label: t('navigation.sidebar.help', 'Help') }
+    ],
+    [t]
+  );
+
+  const themeOptions = useMemo(
+    () => [
+      { id: 'light', label: t('theme.options.light', 'Light') },
+      { id: 'dark', label: t('theme.options.dark', 'Dark') },
+      { id: 'pink', label: t('theme.options.pink', 'Pink') }
+    ],
+    [t]
+  );
+
+  const featureBadges = useMemo(
+    () => [
+      t('ui.badges.autosave', 'Autosave active'),
+      t('ui.badges.dashboard', 'Project dashboard'),
+      t('ui.badges.templates', 'Template library'),
+      t('ui.badges.pdf', 'PDF export ready')
+    ],
+    [t]
+  );
+
   const helpSections = t('help.sections', []);
   const documentationSections = t('documentation.sections', []);
   const offlineSteps = t('offline.steps', []);
@@ -869,20 +943,22 @@ export default function App() {
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="flex w-full flex-col gap-6 lg:w-72">
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/80 p-6 shadow-lg">
-              <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Gear List Editor</p>
-              <h2 className="mt-3 text-lg font-semibold text-text-primary">Safe offline workspace</h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-text-muted">
+                {t('ui.appName', 'Gear List Editor')}
+              </p>
+              <h2 className="mt-3 text-lg font-semibold text-text-primary">
+                {t('ui.sidebar.title', 'Safe offline workspace')}
+              </h2>
               <p className="mt-2 text-sm text-text-secondary">
-                Tabs keep your workflow focused while autosave runs in the background.
+                {t(
+                  'ui.sidebar.description',
+                  'Tabs keep your workflow focused while autosave runs in the background.'
+                )}
               </p>
             </div>
 
             <nav className="flex flex-col gap-2">
-              {[
-                { id: 'dashboard', label: 'Dashboard' },
-                { id: 'project', label: 'Project' },
-                { id: 'templates', label: 'Templates' },
-                { id: 'help', label: 'Help' }
-              ].map((tab) => {
+              {navigationTabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
                   <button
@@ -925,13 +1001,11 @@ export default function App() {
             </div>
 
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">Theme</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
+                {t('theme.label', 'Theme')}
+              </h3>
               <div className="mt-3 grid gap-2">
-                {[
-                  { id: 'light', label: 'Light' },
-                  { id: 'dark', label: 'Dark' },
-                  { id: 'pink', label: 'Pink' }
-                ].map((themeOption) => {
+                {themeOptions.map((themeOption) => {
                   const isActive = theme === themeOption.id;
                   return (
                     <button
@@ -950,14 +1024,20 @@ export default function App() {
                   );
                 })}
               </div>
-              <p className="mt-2 text-xs text-text-muted">Theme stays with your saved workspace.</p>
+              <p className="mt-2 text-xs text-text-muted">
+                {t('theme.helper', 'Theme stays with your saved workspace.')}
+              </p>
             </div>
 
             <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/70 p-6">
-              <h2 className="text-lg font-semibold text-text-primary">Save, share, restore</h2>
+              <h2 className="text-lg font-semibold text-text-primary">
+                {t('backup.title', 'Save, share, restore')}
+              </h2>
               <p className="text-sm text-text-secondary">
-                Your data stays on-device. Save immediately, create offline backups, and restore if you ever
-                switch devices. Device backups refresh every 30 minutes, even while idle.
+                {t(
+                  'backup.description',
+                  'Your data stays on-device. Save immediately, create offline backups, and restore if you ever switch devices. Device backups refresh every 30 minutes, even while idle.'
+                )}
               </p>
               <div className="mt-4 flex flex-col gap-3">
                 <button
@@ -965,21 +1045,21 @@ export default function App() {
                   onClick={saveNow}
                   className="rounded-lg bg-surface-base px-4 py-2 text-sm font-semibold text-text-primary transition hover:bg-surface-elevated"
                 >
-                  Save now
+                  {t('backup.actions.saveNow', 'Save now')}
                 </button>
                 <button
                   type="button"
                   onClick={downloadBackup}
                   className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                 >
-                  Download backup
+                  {t('backup.actions.download', 'Download backup')}
                 </button>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                 >
-                  Import backup file
+                  {t('backup.actions.import', 'Import backup file')}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -993,20 +1073,20 @@ export default function App() {
                   onClick={restoreFromDeviceBackup}
                   className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                 >
-                  Restore from device backup
+                  {t('backup.actions.restoreDevice', 'Restore from device backup')}
                 </button>
                 <button
                   type="button"
                   onClick={shareData}
                   className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                 >
-                  Share via clipboard
+                  {t('backup.actions.shareClipboard', 'Share via clipboard')}
                 </button>
               </div>
             </div>
 
             <div className={`rounded-2xl p-4 text-sm ${statusClasses}`} aria-live="polite">
-              {status || 'Status updates appear here to confirm data safety.'}
+              {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
             </div>
           </aside>
 
@@ -1014,18 +1094,20 @@ export default function App() {
             <header className="flex flex-col gap-4">
               <div className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 p-6 shadow-lg">
                 <h1 className="text-3xl font-semibold text-text-primary">
-                  Project-ready gear lists with offline protection.
+                  {t('ui.hero.title', 'Project-ready gear lists with offline protection.')}
                 </h1>
                 <p className="max-w-3xl text-base text-text-secondary">
-                  Build equipment lists that match your production PDFs. Create projects, reuse templates, and
-                  export print-ready gear lists without leaving offline mode. Every edit is saved locally with
-                  redundant backups.
+                  {t(
+                    'ui.hero.description',
+                    'Build equipment lists that match your production PDFs. Create projects, reuse templates, and export print-ready gear lists without leaving offline mode. Every edit is saved locally with redundant backups.'
+                  )}
                 </p>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
-                  <span className="rounded-full border border-surface-sunken px-3 py-1">Autosave active</span>
-                  <span className="rounded-full border border-surface-sunken px-3 py-1">Project dashboard</span>
-                  <span className="rounded-full border border-surface-sunken px-3 py-1">Template library</span>
-                  <span className="rounded-full border border-surface-sunken px-3 py-1">PDF export ready</span>
+                  {featureBadges.map((badge) => (
+                    <span key={badge} className="rounded-full border border-surface-sunken px-3 py-1">
+                      {badge}
+                    </span>
+                  ))}
                 </div>
               </div>
             </header>
@@ -1033,12 +1115,17 @@ export default function App() {
             {activeProject && activeTab !== 'help' ? (
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/80 px-5 py-4 shadow-lg">
                 <div className="flex min-w-[200px] flex-col gap-1">
-                  <span className="text-xs uppercase tracking-[0.3em] text-text-muted">Active project</span>
+                  <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
+                    {t('project.active.label', 'Active project')}
+                  </span>
                   <span className="text-lg font-semibold text-text-primary">
-                    {activeProject.name || 'Untitled project'}
+                    {activeProject.name || t('project.untitled', 'Untitled project')}
                   </span>
                   <span className="text-xs text-text-secondary">
-                    Export the current list or save it as a reusable template.
+                    {t(
+                      'project.active.helper',
+                      'Export the current list or save it as a reusable template.'
+                    )}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-3 text-sm">
@@ -1047,21 +1134,21 @@ export default function App() {
                     onClick={exportProject}
                     className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                   >
-                    Export project
+                    {t('project.actions.export', 'Export project')}
                   </button>
                   <button
                     type="button"
                     onClick={exportPdf}
                     className="rounded-full border border-surface-sunken px-4 py-2 font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                   >
-                    Export PDF
+                    {t('project.actions.exportPdf', 'Export PDF')}
                   </button>
                   <button
                     type="button"
                     onClick={saveTemplateFromProject}
                     className="rounded-full bg-brand px-4 py-2 font-semibold text-brand-foreground transition hover:bg-brand-hover"
                   >
-                    Save as template
+                    {t('template.actions.saveFromProject', 'Save as template')}
                   </button>
                 </div>
               </div>
@@ -1072,21 +1159,28 @@ export default function App() {
                 <div className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary">Dashboard quick actions</h2>
+                      <h2 className="text-xl font-semibold text-text-primary">
+                        {t('dashboard.quickActions.title', 'Dashboard quick actions')}
+                      </h2>
                       <p className="text-sm text-text-secondary">
-                        Load trusted templates or bring a project backup back into your local library.
+                        {t(
+                          'dashboard.quickActions.description',
+                          'Load trusted templates or bring a project backup back into your local library.'
+                        )}
                       </p>
                     </div>
                     <div className="flex flex-wrap items-end gap-3">
                       <label className="flex min-w-[200px] flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
-                        Template library
+                        {t('template.library.label', 'Template library')}
                         <select
                           value={selectedTemplateId}
                           onChange={(event) => setSelectedTemplateId(event.target.value)}
                           className="rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
                         >
                           {templates.length === 0 ? (
-                            <option value="">No templates saved</option>
+                            <option value="">
+                              {t('template.library.emptyOption', 'No templates saved')}
+                            </option>
                           ) : (
                             templates.map((template) => (
                               <option key={template.id} value={template.id}>
@@ -1106,19 +1200,22 @@ export default function App() {
                             : 'cursor-not-allowed bg-surface-sunken text-text-muted'
                         }`}
                       >
-                        Load from template
+                        {t('template.actions.loadIntoProject', 'Load from template')}
                       </button>
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
                       >
-                        Import project
+                        {t('project.actions.importProject', 'Import project')}
                       </button>
                     </div>
                   </div>
                   <p className="text-xs text-text-muted">
-                    Templates add gear to the selected project without overwriting existing entries.
+                    {t(
+                      'template.library.helper',
+                      'Templates add gear to the selected project without overwriting existing entries.'
+                    )}
                   </p>
                 </div>
 
@@ -1127,37 +1224,41 @@ export default function App() {
                   className="flex flex-col gap-4 rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
                 >
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold text-text-primary">Project dashboard</h2>
+                    <h2 className="text-xl font-semibold text-text-primary">
+                      {t('project.dashboard.title', 'Project dashboard')}
+                    </h2>
                     <p className="text-sm text-text-secondary">
-                      Track multiple productions and always know which list is active. New projects are
-                      autosaved the moment they are created.
+                      {t(
+                        'project.dashboard.description',
+                        'Track multiple productions and always know which list is active. New projects are autosaved the moment they are created.'
+                      )}
                     </p>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                      Project name
+                      {t('project.fields.name', 'Project name')}
                       <input
                         value={projectDraft.name}
                         onChange={(event) =>
                           setProjectDraft((prev) => ({ ...prev, name: event.target.value }))
                         }
-                        placeholder="e.g. October studio shoot"
+                        placeholder={t('project.placeholders.name', 'e.g. October studio shoot')}
                         className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                      Client / production
+                      {t('project.fields.client', 'Client / production')}
                       <input
                         value={projectDraft.client}
                         onChange={(event) =>
                           setProjectDraft((prev) => ({ ...prev, client: event.target.value }))
                         }
-                        placeholder="Client, agency, or show"
+                        placeholder={t('project.placeholders.client', 'Client, agency, or show')}
                         className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                      Shoot date
+                      {t('project.fields.shootDate', 'Shoot date')}
                       <input
                         type="date"
                         value={projectDraft.shootDate}
@@ -1168,24 +1269,24 @@ export default function App() {
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                      Location
+                      {t('project.fields.location', 'Location')}
                       <input
                         value={projectDraft.location}
                         onChange={(event) =>
                           setProjectDraft((prev) => ({ ...prev, location: event.target.value }))
                         }
-                        placeholder="Studio, city, or venue"
+                        placeholder={t('project.placeholders.location', 'Studio, city, or venue')}
                         className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
-                      Lead contact
+                      {t('project.fields.contact', 'Lead contact')}
                       <input
                         value={projectDraft.contact}
                         onChange={(event) =>
                           setProjectDraft((prev) => ({ ...prev, contact: event.target.value }))
                         }
-                        placeholder="Producer or department contact"
+                        placeholder={t('project.placeholders.contact', 'Producer or department contact')}
                         className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                       />
                     </label>
@@ -1194,26 +1295,40 @@ export default function App() {
                     type="submit"
                     className="inline-flex w-fit items-center justify-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                   >
-                    Create project
+                    {t('project.actions.create', 'Create project')}
                   </button>
                 </form>
 
                 <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <h2 className="text-xl font-semibold text-text-primary">Active projects</h2>
+                      <h2 className="text-xl font-semibold text-text-primary">
+                        {t('project.list.title', 'Active projects')}
+                      </h2>
                       <p className="text-sm text-text-secondary">
-                        {projects.length} project{projects.length === 1 ? '' : 's'} stored locally.
+                        {tPlural(
+                          'project.count',
+                          projects.length,
+                          '{count} project stored locally.',
+                          { count: projects.length }
+                        )}
                       </p>
                     </div>
                     <div className="text-xs text-text-muted">
-                      Last saved: {lastSaved ? new Date(lastSaved).toLocaleString() : 'Not saved yet'}
+                      {t('project.lastSaved.label', 'Last saved: {time}', {
+                        time: lastSaved
+                          ? new Date(lastSaved).toLocaleString()
+                          : t('project.lastSaved.empty', 'Not saved yet')
+                      })}
                     </div>
                   </div>
                   <div className="mt-6 grid gap-4 md:grid-cols-2">
                     {projects.length === 0 ? (
                       <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
-                        No projects yet. Create your first project to begin building a gear list.
+                        {t(
+                          'project.list.empty',
+                          'No projects yet. Create your first project to begin building a gear list.'
+                        )}
                       </div>
                     ) : (
                       projects.map((project) => {
@@ -1235,25 +1350,26 @@ export default function App() {
                               <div>
                                 <h3 className="text-lg font-semibold text-text-primary">{project.name}</h3>
                                 <p className="text-xs text-text-secondary">
-                                  {project.client || 'Client not set'} ·{' '}
-                                  {project.shootDate || 'Date not set'}
+                                  {project.client || t('project.client.empty', 'Client not set')} ·{' '}
+                                  {project.shootDate || t('project.shootDate.empty', 'Date not set')}
                                 </p>
                               </div>
                               {isActive && (
                                 <span className="rounded-full border border-brand/50 bg-brand/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-brand">
-                                  Selected
+                                  {t('project.active.badge', 'Selected')}
                                 </span>
                               )}
                             </div>
                             <div className="grid gap-2 text-xs text-text-secondary md:grid-cols-2">
                               <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
-                                Categories{' '}
+                                {t('categories.label', 'Categories')}{' '}
                                 <span className="font-semibold text-text-primary">
                                   {project.categories.length}
                                 </span>
                               </div>
                               <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
-                                Items <span className="font-semibold text-text-primary">{itemTotal}</span>
+                                {t('items.label', 'Items')}{' '}
+                                <span className="font-semibold text-text-primary">{itemTotal}</span>
                               </div>
                             </div>
                             <div className="mt-auto flex flex-wrap gap-2">
@@ -1266,14 +1382,16 @@ export default function App() {
                                     : 'border border-surface-sunken text-text-primary hover:border-brand'
                                 }`}
                               >
-                                {isActive ? 'Active' : 'Open'}
+                                {isActive
+                                  ? t('project.actions.active', 'Active')
+                                  : t('project.actions.open', 'Open')}
                               </button>
                               <button
                                 type="button"
                                 onClick={() => deleteProject(project.id)}
                                 className="rounded-lg border border-surface-sunken px-3 py-1 text-xs font-semibold text-text-primary transition hover:border-status-error hover:text-status-error"
                               >
-                                Archive
+                                {t('project.actions.archive', 'Archive')}
                               </button>
                             </div>
                           </div>
@@ -1289,11 +1407,23 @@ export default function App() {
               <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-text-primary">Active project workspace</h2>
+                    <h2 className="text-xl font-semibold text-text-primary">
+                      {t('project.workspace.title', 'Active project workspace')}
+                    </h2>
                     <p className="text-sm text-text-secondary">
                       {activeProject
-                        ? `${totals.categories} categories · ${totals.items} items`
-                        : 'Select a project to start editing.'}
+                        ? t('project.workspace.summary', '{categories} · {items}', {
+                            categories: tPlural(
+                              'categories.count',
+                              totals.categories,
+                              '{count} categories',
+                              { count: totals.categories }
+                            ),
+                            items: tPlural('items.count', totals.items, '{count} items', {
+                              count: totals.items
+                            })
+                          })
+                        : t('project.workspace.empty', 'Select a project to start editing.')}
                     </p>
                   </div>
                   <button
@@ -1301,7 +1431,7 @@ export default function App() {
                     onClick={exportPdf}
                     className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                   >
-                    Export PDF
+                    {t('project.actions.exportPdf', 'Export PDF')}
                   </button>
                 </div>
 
@@ -1309,7 +1439,7 @@ export default function App() {
                   <div className="mt-6 flex flex-col gap-6">
                     <div className="grid gap-4 md:grid-cols-2">
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                        Project name
+                        {t('project.fields.name', 'Project name')}
                         <input
                           value={activeProject.name}
                           onChange={(event) => updateProjectField('name', event.target.value)}
@@ -1317,7 +1447,7 @@ export default function App() {
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                        Client / production
+                        {t('project.fields.client', 'Client / production')}
                         <input
                           value={activeProject.client}
                           onChange={(event) => updateProjectField('client', event.target.value)}
@@ -1325,7 +1455,7 @@ export default function App() {
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                        Shoot date
+                        {t('project.fields.shootDate', 'Shoot date')}
                         <input
                           type="date"
                           value={activeProject.shootDate}
@@ -1334,7 +1464,7 @@ export default function App() {
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                        Location
+                        {t('project.fields.location', 'Location')}
                         <input
                           value={activeProject.location}
                           onChange={(event) => updateProjectField('location', event.target.value)}
@@ -1342,7 +1472,7 @@ export default function App() {
                         />
                       </label>
                       <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
-                        Lead contact
+                        {t('project.fields.contact', 'Lead contact')}
                         <input
                           value={activeProject.contact}
                           onChange={(event) => updateProjectField('contact', event.target.value)}
@@ -1356,21 +1486,28 @@ export default function App() {
                       className="flex flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h3 className="text-lg font-semibold text-text-primary">Categories</h3>
-                        <span className="text-xs text-text-muted">Use templates for faster setups.</span>
+                        <h3 className="text-lg font-semibold text-text-primary">
+                          {t('categories.title', 'Categories')}
+                        </h3>
+                        <span className="text-xs text-text-muted">
+                          {t('categories.helper', 'Use templates for faster setups.')}
+                        </span>
                       </div>
                       <div className="flex flex-wrap gap-3">
                         <input
                           value={newCategoryName}
                           onChange={(event) => setNewCategoryName(event.target.value)}
-                          placeholder="Add a category (e.g. Camera, Lighting)"
+                          placeholder={t(
+                            'categories.placeholder',
+                            'Add a category (e.g. Camera, Lighting)'
+                          )}
                           className="flex-1 rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                         />
                         <button
                           type="submit"
                           className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                         >
-                          Add category
+                          {t('categories.actions.add', 'Add category')}
                         </button>
                       </div>
                     </form>
@@ -1378,7 +1515,10 @@ export default function App() {
                     <div className="flex flex-col gap-4">
                       {activeProject.categories.length === 0 ? (
                         <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted">
-                          No categories yet. Add one above or apply a template.
+                          {t(
+                            'categories.empty',
+                            'No categories yet. Add one above or apply a template.'
+                          )}
                         </div>
                       ) : (
                         activeProject.categories.map((category) => (
@@ -1400,7 +1540,10 @@ export default function App() {
                                   onChange={(event) =>
                                     updateCategoryField(category.id, 'notes', event.target.value)
                                   }
-                                  placeholder="Category notes or rental references"
+                                  placeholder={t(
+                                    'categories.notes.placeholder',
+                                    'Category notes or rental references'
+                                  )}
                                   rows={2}
                                   className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                                 />
@@ -1410,7 +1553,7 @@ export default function App() {
                                 onClick={() => removeCategory(category.id)}
                                 className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-secondary transition hover:border-status-error hover:text-status-error"
                               >
-                                Remove category
+                                {t('categories.actions.remove', 'Remove category')}
                               </button>
                             </div>
 
@@ -1425,8 +1568,10 @@ export default function App() {
                                   applySuggestionToDraft(category.id, suggestion)
                                 }
                                 suggestions={itemSuggestions}
-                                placeholder="Item name"
-                                label="Item name"
+                                placeholder={t('items.fields.name', 'Item name')}
+                                label={t('items.fields.name', 'Item name')}
+                                unitFallback={t('units.pcs', 'pcs')}
+                                detailsFallback={t('items.suggestion.detailsFallback', 'No details saved')}
                                 inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                               />
                               <input
@@ -1441,27 +1586,27 @@ export default function App() {
                               <input
                                 value={(itemDrafts[category.id] || emptyItemDraft).unit}
                                 onChange={(event) => updateDraftItem(category.id, 'unit', event.target.value)}
-                                placeholder="Unit"
+                                placeholder={t('items.fields.unit', 'Unit')}
                                 className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                               />
                               <input
                                 value={(itemDrafts[category.id] || emptyItemDraft).details}
                                 onChange={(event) => updateDraftItem(category.id, 'details', event.target.value)}
-                                placeholder="Details / notes"
+                                placeholder={t('items.fields.details', 'Details / notes')}
                                 className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                               />
                               <button
                                 type="submit"
                                 className="rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
                               >
-                                Add
+                                {t('items.actions.add', 'Add')}
                               </button>
                             </form>
 
                             <div className="flex flex-col gap-3">
                               {category.items.length === 0 ? (
                                 <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-4 text-center text-xs text-text-muted">
-                                  No items yet. Add the first item above.
+                                  {t('items.empty', 'No items yet. Add the first item above.')}
                                 </div>
                               ) : (
                                 category.items.map((item) => (
@@ -1478,8 +1623,13 @@ export default function App() {
                                         applySuggestionToItem(category.id, item.id, suggestion)
                                       }
                                       suggestions={itemSuggestions}
-                                      placeholder="Item name"
-                                      label="Item name"
+                                      placeholder={t('items.fields.name', 'Item name')}
+                                      label={t('items.fields.name', 'Item name')}
+                                      unitFallback={t('units.pcs', 'pcs')}
+                                      detailsFallback={t(
+                                        'items.suggestion.detailsFallback',
+                                        'No details saved'
+                                      )}
                                       inputClassName="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
                                     />
                                     <input
@@ -1527,17 +1677,25 @@ export default function App() {
                                       }
                                       className="w-full rounded-lg border border-surface-sunken bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand focus:outline-none"
                                     >
-                                      <option value="needed">Needed</option>
-                                      <option value="packed">Packed</option>
-                                      <option value="missing">Missing</option>
-                                      <option value="rented">Rented</option>
+                                      <option value="needed">
+                                        {t('status.labels.needed', 'Needed')}
+                                      </option>
+                                      <option value="packed">
+                                        {t('status.labels.packed', 'Packed')}
+                                      </option>
+                                      <option value="missing">
+                                        {t('status.labels.missing', 'Missing')}
+                                      </option>
+                                      <option value="rented">
+                                        {t('status.labels.rented', 'Rented')}
+                                      </option>
                                     </select>
                                     <button
                                       type="button"
                                       onClick={() => removeItem(category.id, item.id)}
                                       className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-secondary transition hover:border-status-error hover:text-status-error"
                                     >
-                                      Remove
+                                      {t('items.actions.remove', 'Remove')}
                                     </button>
                                   </div>
                                 ))
@@ -1549,14 +1707,22 @@ export default function App() {
                     </div>
 
                     <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-4">
-                      <h3 className="text-lg font-semibold text-text-primary">Project notes</h3>
+                      <h3 className="text-lg font-semibold text-text-primary">
+                        {t('project.notes.title', 'Project notes')}
+                      </h3>
                       <p className="text-sm text-text-secondary">
-                        Notes appear in exports and are included in backups for every project.
+                        {t(
+                          'project.notes.helper',
+                          'Notes appear in exports and are included in backups for every project.'
+                        )}
                       </p>
                       <textarea
                         value={activeProject.notes}
                         onChange={(event) => updateProjectNotes(event.target.value)}
-                        placeholder="Crew notes, pickup info, or return instructions"
+                        placeholder={t(
+                          'project.notes.placeholder',
+                          'Crew notes, pickup info, or return instructions'
+                        )}
                         rows={4}
                         className="mt-3 w-full rounded-xl border border-surface-sunken bg-surface-input px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                       />
@@ -1564,7 +1730,10 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="mt-6 rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted">
-                    Select or create a project to unlock the gear list editor.
+                    {t(
+                      'project.workspace.emptyState',
+                      'Select or create a project to unlock the gear list editor.'
+                    )}
                   </div>
                 )}
               </div>
@@ -1576,32 +1745,36 @@ export default function App() {
                 className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6"
               >
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-semibold text-text-primary">Template management</h2>
+                  <h2 className="text-xl font-semibold text-text-primary">
+                    {t('template.management.title', 'Template management')}
+                  </h2>
                   <p className="text-sm text-text-secondary">
-                    Save reusable setups for recurring shoots. Templates can be applied to any project
-                    without overwriting existing data.
+                    {t(
+                      'template.management.description',
+                      'Save reusable setups for recurring shoots. Templates can be applied to any project without overwriting existing data.'
+                    )}
                   </p>
                 </div>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                    Template name
+                    {t('template.fields.name', 'Template name')}
                     <input
                       value={templateDraft.name}
                       onChange={(event) =>
                         setTemplateDraft((prev) => ({ ...prev, name: event.target.value }))
                       }
-                      placeholder="e.g. Standard documentary kit"
+                      placeholder={t('template.placeholders.name', 'e.g. Standard documentary kit')}
                       className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                    Description
+                    {t('template.fields.description', 'Description')}
                     <input
                       value={templateDraft.description}
                       onChange={(event) =>
                         setTemplateDraft((prev) => ({ ...prev, description: event.target.value }))
                       }
-                      placeholder="Key details or usage"
+                      placeholder={t('template.placeholders.description', 'Key details or usage')}
                       className="w-full rounded-lg border border-surface-sunken bg-surface-input px-4 py-2 text-base text-text-primary placeholder:text-text-muted focus:border-brand focus:outline-none"
                     />
                   </label>
@@ -1610,13 +1783,16 @@ export default function App() {
                   type="submit"
                   className="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
                 >
-                  Save current project as template
+                  {t('template.actions.saveCurrent', 'Save current project as template')}
                 </button>
 
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   {templates.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
-                      No templates yet. Save the active project to build your library.
+                      {t(
+                        'template.list.empty',
+                        'No templates yet. Save the active project to build your library.'
+                      )}
                     </div>
                   ) : (
                     templates.map((template) => (
@@ -1625,7 +1801,7 @@ export default function App() {
                         className="flex h-full flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
                       >
                         <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
-                          Name
+                          {t('template.fields.shortName', 'Name')}
                           <input
                             value={template.name}
                             onChange={(event) =>
@@ -1635,7 +1811,7 @@ export default function App() {
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
-                          Description
+                          {t('template.fields.description', 'Description')}
                           <input
                             value={template.description}
                             onChange={(event) =>
@@ -1645,10 +1821,17 @@ export default function App() {
                           />
                         </label>
                         <div className="text-xs text-text-muted">
-                          {template.categories.length} categories · Last used{' '}
-                          {template.lastUsed
-                            ? new Date(template.lastUsed).toLocaleDateString()
-                            : 'Never'}
+                          {t('template.card.meta', '{categories} · Last used {date}', {
+                            categories: tPlural(
+                              'categories.count',
+                              template.categories.length,
+                              '{count} categories',
+                              { count: template.categories.length }
+                            ),
+                            date: template.lastUsed
+                              ? new Date(template.lastUsed).toLocaleDateString()
+                              : t('template.lastUsed.never', 'Never')
+                          })}
                         </div>
                         <div className="mt-auto flex flex-wrap gap-2">
                           <button
@@ -1656,14 +1839,14 @@ export default function App() {
                             onClick={() => applyTemplateToProject(template.id)}
                             className="rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-brand-foreground transition hover:bg-brand-hover"
                           >
-                            Apply to active project
+                            {t('template.actions.apply', 'Apply to active project')}
                           </button>
                           <button
                             type="button"
                             onClick={() => removeTemplate(template.id)}
                             className="rounded-lg border border-surface-sunken px-3 py-2 text-xs font-semibold text-text-primary transition hover:border-status-error hover:text-status-error"
                           >
-                            Remove
+                            {t('template.actions.remove', 'Remove')}
                           </button>
                         </div>
                       </div>

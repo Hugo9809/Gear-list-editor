@@ -59,6 +59,8 @@ const interpolate = (value, variables) => {
   });
 };
 
+const resolvePluralForm = (count) => (count === 1 ? 'one' : 'other');
+
 export const translate = (dictionary, key, fallback, variables) => {
   const resolved = resolveTranslation(dictionary, key);
   if (resolved === undefined || resolved === null) {
@@ -68,6 +70,24 @@ export const translate = (dictionary, key, fallback, variables) => {
     return interpolate(resolved, variables);
   }
   return resolved;
+};
+
+export const translatePlural = (dictionary, key, count, fallback, variables) => {
+  const resolved = resolveTranslation(dictionary, key);
+  const form = resolvePluralForm(count);
+  if (resolved && typeof resolved === 'object') {
+    const template = resolved[form] ?? resolved.other ?? resolved.one;
+    if (typeof template === 'string') {
+      return interpolate(template, { count, ...variables });
+    }
+  }
+  if (typeof resolved === 'string') {
+    return interpolate(resolved, { count, ...variables });
+  }
+  if (fallback) {
+    return interpolate(fallback, { count, ...variables });
+  }
+  return key;
 };
 
 const getInitialLocale = () => {
@@ -94,6 +114,11 @@ export const useI18n = () => {
     (key, fallback, variables) => translate(dictionary, key, fallback, variables),
     [dictionary]
   );
+  const tPlural = useCallback(
+    (key, count, fallback, variables) =>
+      translatePlural(dictionary, key, count, fallback, variables),
+    [dictionary]
+  );
 
   const locales = useMemo(
     () =>
@@ -108,6 +133,7 @@ export const useI18n = () => {
     locale,
     locales,
     setLocale,
-    t
+    t,
+    tPlural
   };
 };

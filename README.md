@@ -26,3 +26,9 @@ If you need a non-Node development strategy, you can serve the built static file
 The app keeps all data local, autosaves after every change to IndexedDB, and mirrors redundant backups to the
 Origin Private File System (OPFS). Backup export, import, and restore are built in so your data stays protected
 even without network access.
+
+## GitHub Pages base path
+
+When building for a repository subpath (such as GitHub Pages), set `VITE_BASE_URL` to `/<repo>/` before running
+`npm run build` in `app/`. The default base is `/Gear-list-editor/`, so builds work from that subpath without
+additional configuration.

@@ -226,26 +226,24 @@ export default function App() {
     [importBackupFile, resolveStorageMessage, setStatus, storageRef, t]
   );
 
-  const exportPdf = useCallback((project, index) => {
+  const exportPdf = useCallback(async (project, index) => {
     if (!project) {
       setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
       return;
     }
-    const dictionary = getDictionary(locale);
-    const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-    if (!printWindow) {
-      setStatus(t('status.popupBlocked', 'Popup blocked. Please allow popups for PDF export.'));
-      return;
+
+    // Use new offline PDF export service
+    setStatus(t('status.pdfExporting', 'Generating PDF...'));
+    try {
+      // Dynamic import to keep initial bundle size small, though it's already split by Vite
+      const { exportPdf } = await import('./data/pdf/pdfExportService.js');
+      await exportPdf(project, locale, t, theme);
+      setStatus(t('status.pdfExportComplete', 'PDF downloaded successfully.'));
+    } catch (err) {
+      console.error('PDF export failed:', err);
+      setStatus(t('status.pdfExportError', 'PDF generation failed. Please try again.'));
     }
-    printWindow.document.open();
-    printWindow.document.write(
-      buildPrintableHtml(project, dictionary, Math.max(index, 0))
-    );
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    setStatus(t('status.pdfReady', 'PDF export ready. Confirm printing to save the file.'));
-  }, [locale, setStatus, t]);
+  }, [locale, setStatus, t, theme]);
 
   const exportProject = useCallback((project) => {
     if (!project) {

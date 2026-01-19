@@ -9,9 +9,12 @@
     "build:root": "vite build --outDir .. --base=/Gear-list-editor/",
     "preview": "vite preview",
     "validate-storage": "node scripts/validateStorage.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "gen:pdf-fonts": "node src/data/pdf/fonts/generate-vfs.mjs"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
+    "pdfmake": "^0.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.12.0"

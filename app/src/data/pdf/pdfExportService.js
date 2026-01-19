@@ -1,11 +1,12 @@
 import { buildExportSnapshot } from './snapshotTypes.js';
 
 /**
- * Export project as PDF.
- * @param {import('../../types.js').Project} project
- * @param {string} locale
- * @param {(key: string, fallback?: string) => string} t - Translation function
- * @returns {Promise<void>}
+ * Exports the project as a PDF file.
+ * @param {import('../../types.js').Project} project - The project to export.
+ * @param {string} locale - The user's locale (e.g., 'en', 'de').
+ * @param {(key: string, fallback?: string) => string} t - Translation function.
+ * @param {'light'|'dark'|'pink'} theme - The current theme for styling.
+ * @returns {Promise<void>} Resolves when download is initiated.
  */
 export async function exportPdf(project, locale, t, theme) {
   try {

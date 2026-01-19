@@ -13,12 +13,12 @@
 - [x] **Phase 1: Standardization**
     - [x] Expand `types.js` with comprehensive JSDoc typedefs <!-- id: 5 -->
     - [x] Apply JSDoc to all Data Services <!-- id: 6 -->
-- [/] **Phase 2: Documentation**
-    - [/] Document complex hooks (`useProjects`, `useTemplates`) <!-- id: 7 -->
-    - [/] Document shared components <!-- id: 8 -->
-- [ ] **Phase 3: Architecture Refinement**
-    - [ ] Ensure clear separation of `features` vs `shared` <!-- id: 9 -->
-    - [ ] (Optional) Create architectural decision record (ADR) <!-- id: 10 -->
+- [x] **Phase 2: Documentation**
+    - [x] Document complex hooks (`useProjects`, `useTemplates`) <!-- id: 7 -->
+    - [x] Document shared components <!-- id: 8 -->
+- [/] **Phase 3: Architecture Refinement**
+    - [/] Ensure clear separation of `features` vs `shared` <!-- id: 9 -->
+    - [/] (Optional) Create architectural decision record (ADR) <!-- id: 10 -->
 
 ## Verification Phase
 - [ ] Verify Types via VS Code hover / checks <!-- id: 11 -->

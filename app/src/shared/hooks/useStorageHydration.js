@@ -13,6 +13,7 @@ export const useStorageHydration = ({
   history,
   setProjects,
   setTemplates,
+  setDeviceLibrary,
   setHistory,
   setStatus
 }) => {
@@ -79,12 +80,17 @@ export const useStorageHydration = ({
         }
         if (reason === 'autosave') {
           setStatus(
-            tCurrent('status.autosaveComplete', 'Autosave complete. Your project dashboard is safe.')
+            tCurrent(
+              'status.autosaveComplete',
+              'Autosave complete. Your project dashboard is safe.'
+            )
           );
         } else if (reason === 'explicit') {
           setStatus(tCurrent('status.saveComplete', 'Saved safely to device storage and backups.'));
         } else if (reason === 'rehydrate') {
-          setStatus(tCurrent('status.storageRepaired', 'Storage repaired and redundancies refreshed.'));
+          setStatus(
+            tCurrent('status.storageRepaired', 'Storage repaired and redundancies refreshed.')
+          );
         }
       },
       onWarning: (message) => {
@@ -108,6 +114,7 @@ export const useStorageHydration = ({
       }
       setProjects(result.state.projects);
       setTemplates(result.state.templates);
+      setDeviceLibrary(result.state.deviceLibrary);
       setHistory(result.state.history);
       // activeProjectId is no longer managed here
       setLastSaved(result.state.lastSaved);
@@ -157,20 +164,13 @@ export const useStorageHydration = ({
       theme,
       projects,
       templates,
+      deviceLibrary,
       history,
       activeProjectId: null, // Legacy support
       lastSaved,
       showAutoBackups
     });
-  }, [
-    projects,
-    templates,
-    history,
-    isHydrated,
-    theme,
-    showAutoBackups,
-    lastSaved
-  ]);
+  }, [projects, templates, deviceLibrary, history, isHydrated, theme, showAutoBackups, lastSaved]);
 
   useEffect(() => {
     if (!isHydrated || !showAutoBackups) {
@@ -195,11 +195,12 @@ export const useStorageHydration = ({
       storageRef.current.exportBackup({
         projects,
         templates,
+        deviceLibrary,
         history,
         activeProjectId: null,
         lastSaved
       }),
-    [history, lastSaved, projects, templates]
+    [deviceLibrary, history, lastSaved, projects, templates]
   );
 
   const exportProjectBackup = useCallback(
@@ -208,13 +209,14 @@ export const useStorageHydration = ({
         {
           projects,
           templates,
+          deviceLibrary,
           history,
           activeProjectId: null,
           lastSaved
         },
         projectId
       ),
-    [history, lastSaved, projects, templates]
+    [deviceLibrary, history, lastSaved, projects, templates]
   );
 
   const importBackupFile = useCallback(
@@ -228,12 +230,14 @@ export const useStorageHydration = ({
           const { state, warnings } = storageRef.current.importBackup(reader.result, {
             projects,
             templates,
+            deviceLibrary,
             history,
             activeProjectId: null,
             lastSaved
           });
           setProjects(state.projects);
           setTemplates(state.templates);
+          setDeviceLibrary(state.deviceLibrary);
           setHistory(state.history);
           // setActiveProjectId(state.activeProjectId); // Removed
           resolve({ state, warnings });
@@ -248,6 +252,7 @@ export const useStorageHydration = ({
       setHistory,
       setProjects,
       setTemplates,
+      setDeviceLibrary,
       templates
     ]
   );
@@ -256,6 +261,7 @@ export const useStorageHydration = ({
     const result = await storageRef.current.restoreFromBackup();
     setProjects(result.state.projects);
     setTemplates(result.state.templates);
+    setDeviceLibrary(result.state.deviceLibrary);
     setHistory(result.state.history);
     // setActiveProjectId(result.state.activeProjectId); // Removed
     setLastSaved(result.state.lastSaved);

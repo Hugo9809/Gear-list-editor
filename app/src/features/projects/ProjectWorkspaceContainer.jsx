@@ -57,7 +57,9 @@ const ProjectWorkspaceContainer = ({
       onAddCategory={(event) => projectActions.addCategory(project.id, event)}
       onMoveCategoryUp={(catId) => projectActions.moveCategoryUp(project.id, catId)}
       onMoveCategoryDown={(catId) => projectActions.moveCategoryDown(project.id, catId)}
-      onAddItemToCategory={(event, catId) => projectActions.addItemToCategory(project.id, event, catId)}
+      onAddItemToCategory={(event, catId) =>
+        projectActions.addItemToCategory(project.id, event, catId)
+      }
       onUpdateDraftItem={projectActions.updateDraftItem}
       onUpdateItemField={(catId, itemId, field, val) =>
         projectActions.updateItemField(project.id, catId, itemId, field, val)
@@ -65,7 +67,9 @@ const ProjectWorkspaceContainer = ({
       onUpdateCategoryField={(catId, field, val) =>
         projectActions.updateCategoryField(project.id, catId, field, val)
       }
-      onUpdateProjectField={(field, val) => projectActions.updateProjectField(project.id, field, val)}
+      onUpdateProjectField={(field, val) =>
+        projectActions.updateProjectField(project.id, field, val)
+      }
       onUpdateProjectNotes={(val) => projectActions.updateProjectNotes(project.id, val)}
       onRemoveCategory={(catId) => projectActions.removeCategory(project.id, catId)}
       onRemoveItem={(catId, itemId) => projectActions.removeItem(project.id, catId, itemId)}

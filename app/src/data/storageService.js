@@ -35,6 +35,10 @@ const OPFS_BACKUP_INTERVAL = 30 * 60 * 1000;
 
 const hasLegacyStorage = () => typeof localStorage !== 'undefined';
 
+/**
+ * Reads the legacy backup from localStorage (if available).
+ * @returns {AppState|null} The parsed backup or null if missing/invalid.
+ */
 const readLegacyBackup = () => {
   if (!hasLegacyStorage()) {
     return null;
@@ -46,6 +50,10 @@ const readLegacyBackup = () => {
   }
 };
 
+/**
+ * Persists the payload to legacy localStorage as a fallback.
+ * @param {AppState} payload - The state to persist.
+ */
 const writeLegacyBackups = (payload) => {
   if (!hasLegacyStorage()) {
     return;
@@ -58,6 +66,9 @@ const writeLegacyBackups = (payload) => {
   }
 };
 
+/**
+ * Clears legacy localStorage data.
+ */
 const clearLegacyStorage = () => {
   if (!hasLegacyStorage()) {
     return;
@@ -70,6 +81,12 @@ const clearLegacyStorage = () => {
   }
 };
 
+/**
+ * Prepares the state payload for storage.
+ * @param {AppState} state - Current application state.
+ * @param {string} [reason='autosave'] - Reason for saving.
+ * @returns {AppState} The active payload stamped with metadata.
+ */
 const preparePayload = (state, reason = 'autosave') => {
   const migrated = migratePayload(state);
   return {
@@ -79,6 +96,11 @@ const preparePayload = (state, reason = 'autosave') => {
   };
 };
 
+/**
+ * Extracts the timestamp from a payload for comparison.
+ * @param {AppState|null} payload - The state payload.
+ * @returns {number|null} Timestamp or null if invalid.
+ */
 const getPayloadTimestamp = (payload) => {
   if (!payload) {
     return null;
@@ -87,9 +109,19 @@ const getPayloadTimestamp = (payload) => {
   return Number.isFinite(timestamp) ? timestamp : null;
 };
 
+/**
+ * Collects warning messages from caught errors.
+ * @param {Error[]} errors - List of errors encountered.
+ * @returns {string[]} List of warning keys.
+ */
 const collectWarnings = (errors) =>
   errors.length === 0 ? [] : [STORAGE_MESSAGE_KEYS.warnings.storageLocationsUnavailable];
 
+/**
+ * Retrieves the best available backup from OPFS or legacy storage.
+ * Strategy: OPFS Latest -> OPFS Previous -> Legacy LocalStorage.
+ * @returns {Promise<{payload: AppState|null, source: string|null}>} Best backup found.
+ */
 const getBestBackup = async () => {
   // Fallback order: OPFS latest -> OPFS previous -> legacy localStorage backup.
   const opfsLatest = await readFromOpfsFile(OPFS_BACKUP_FILES.latest);
@@ -155,7 +187,11 @@ export const createStorageService = (options = {}) => {
   const queueSave = (task) => {
     saveQueue = saveQueue.then(task).catch((error) => {
       options.onWarning?.(STORAGE_MESSAGE_KEYS.warnings.autosaveStorageError);
-      return { payload: null, warnings: [STORAGE_MESSAGE_KEYS.warnings.autosaveStorageError], error };
+      return {
+        payload: null,
+        warnings: [STORAGE_MESSAGE_KEYS.warnings.autosaveStorageError],
+        error
+      };
     });
     return saveQueue;
   };

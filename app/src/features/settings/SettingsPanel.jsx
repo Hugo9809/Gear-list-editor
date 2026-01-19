@@ -123,7 +123,10 @@ const SettingsPanel = ({
           {t('settings.factoryReset.action', 'Run factory reset')}
         </button>
         <p className="mt-3 text-xs text-text-muted">
-          {t('settings.factoryReset.helper', 'Keep the downloaded backup in a safe place before continuing.')}
+          {t(
+            'settings.factoryReset.helper',
+            'Keep the downloaded backup in a safe place before continuing.'
+          )}
         </p>
       </div>
     </div>

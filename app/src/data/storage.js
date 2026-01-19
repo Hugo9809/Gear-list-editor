@@ -1,9 +1,4 @@
-export {
-  STORAGE_MESSAGE_KEYS,
-  createId,
-  normalizeItems,
-  validatePayload
-} from './normalize.js';
+export { STORAGE_MESSAGE_KEYS, createId, normalizeItems, validatePayload } from './normalize.js';
 export {
   STORAGE_VERSION,
   createEmptyState,
@@ -11,8 +6,4 @@ export {
   mergePayloads,
   validationSamples
 } from './migrate.js';
-export {
-  createStorageService,
-  exportProjectBackup,
-  exportState
-} from './storageService.js';
+export { createStorageService, exportProjectBackup, exportState } from './storageService.js';

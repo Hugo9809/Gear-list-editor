@@ -44,7 +44,9 @@ const resolveTranslation = (dictionary, key) => {
   if (!dictionary || !key) {
     return undefined;
   }
-  return key.split('.').reduce((acc, part) => (acc && typeof acc === 'object' ? acc[part] : undefined), dictionary);
+  return key
+    .split('.')
+    .reduce((acc, part) => (acc && typeof acc === 'object' ? acc[part] : undefined), dictionary);
 };
 
 const interpolate = (value, variables) => {

@@ -71,6 +71,37 @@ describe('storageService importBackup', () => {
       expect.arrayContaining(['Project A', 'Project B'])
     );
   });
+
+  it('merges device library items correctly', async () => {
+    vi.resetModules();
+    vi.doUnmock('./normalize.js');
+
+    const { createEmptyState } = await import('./migrate.js');
+    const service = await loadStorageService();
+    const currentState = {
+      ...createEmptyState(),
+      deviceLibrary: {
+        items: [{ id: 'item-1', name: 'Lens', quantity: 1, unit: 'pcs', details: '85mm' }]
+      }
+    };
+    const rawText = JSON.stringify({
+      version: 2,
+      projects: [],
+      templates: [],
+      deviceLibrary: {
+        items: [{ id: 'item-2', name: 'Camera', quantity: 1, unit: 'pcs', details: 'FX3' }]
+      },
+      history: { items: [], categories: [] }
+    });
+
+    const result = service.importBackup(rawText, currentState);
+
+    expect(result.warnings).toEqual([]);
+    expect(result.state.deviceLibrary.items).toHaveLength(2);
+    expect(result.state.deviceLibrary.items.map((i) => i.name)).toEqual(
+      expect.arrayContaining(['Lens', 'Camera'])
+    );
+  });
 });
 
 describe('storageService legacy backups', () => {

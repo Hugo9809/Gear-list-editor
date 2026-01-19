@@ -53,11 +53,17 @@ const TemplateManager = ({
     <div className="mt-6 grid gap-4 md:grid-cols-2">
       {templates.length === 0 ? (
         <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
-          {t('template.list.empty', 'No templates yet. Save the active project to build your library.')}
+          {t(
+            'template.list.empty',
+            'No templates yet. Save the active project to build your library.'
+          )}
         </div>
       ) : (
         templates.map((template, templateIndex) => (
-          <div key={template.id} className="ui-panel flex h-full flex-col gap-3 bg-surface-muted/60 p-4">
+          <div
+            key={template.id}
+            className="ui-panel flex h-full flex-col gap-3 bg-surface-muted/60 p-4"
+          >
             <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
               {t('template.fields.shortName', 'Name')}
               <input
@@ -74,15 +80,22 @@ const TemplateManager = ({
               {t('template.fields.description', 'Description')}
               <input
                 value={template.description}
-                onChange={(event) => onUpdateTemplateField(template.id, 'description', event.target.value)}
+                onChange={(event) =>
+                  onUpdateTemplateField(template.id, 'description', event.target.value)
+                }
                 className="ui-input px-3 py-2"
               />
             </label>
             <div className="text-xs text-text-muted">
               {t('template.card.meta', '{categories} · Last used {date}', {
-                categories: tPlural('categories.count', template.categories.length, '{count} categories', {
-                  count: template.categories.length
-                }),
+                categories: tPlural(
+                  'categories.count',
+                  template.categories.length,
+                  '{count} categories',
+                  {
+                    count: template.categories.length
+                  }
+                ),
                 date: template.lastUsed
                   ? new Date(template.lastUsed).toLocaleDateString()
                   : t('template.lastUsed.never', 'Never')

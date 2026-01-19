@@ -25,7 +25,10 @@ const ProjectDashboard = ({
   resolveStorageSource
 }) => (
   <>
-    <form onSubmit={onCreateProject} className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6">
+    <form
+      onSubmit={onCreateProject}
+      className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6"
+    >
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-semibold ui-heading">
           {t('project.dashboard.title', 'Project dashboard')}
@@ -79,18 +82,15 @@ const ProjectDashboard = ({
               type="button"
               onClick={onLoadTemplate}
               disabled={!selectedTemplateId}
-              className={`ui-button ${selectedTemplateId
-                ? 'ui-button-primary'
-                : 'cursor-not-allowed bg-surface-sunken text-text-muted'
-                }`}
+              className={`ui-button ${
+                selectedTemplateId
+                  ? 'ui-button-primary'
+                  : 'cursor-not-allowed bg-surface-sunken text-text-muted'
+              }`}
             >
               {t('template.actions.loadIntoProject', 'Load from template')}
             </button>
-            <button
-              type="button"
-              onClick={onImportProject}
-              className="ui-button ui-button-outline"
-            >
+            <button type="button" onClick={onImportProject} className="ui-button ui-button-outline">
               {t('project.actions.importProject', 'Import project')}
             </button>
           </div>
@@ -168,14 +168,19 @@ const ProjectDashboard = ({
         </div>
         <div className="text-xs text-text-muted">
           {t('project.lastSaved.label', 'Last saved: {time}', {
-            time: lastSaved ? new Date(lastSaved).toLocaleString() : t('project.lastSaved.empty', 'Not saved yet')
+            time: lastSaved
+              ? new Date(lastSaved).toLocaleString()
+              : t('project.lastSaved.empty', 'Not saved yet')
           })}
         </div>
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {projects.length === 0 ? (
           <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
-            {t('project.list.empty', 'No projects yet. Create your first project to begin building a gear list.')}
+            {t(
+              'project.list.empty',
+              'No projects yet. Create your first project to begin building a gear list.'
+            )}
           </div>
         ) : (
           projects.map((project, projectIndex) => {
@@ -184,7 +189,10 @@ const ProjectDashboard = ({
               0
             );
             return (
-              <div key={project.id} className="ui-panel flex h-full flex-col gap-4 bg-surface-muted/60 p-4 transition">
+              <div
+                key={project.id}
+                className="ui-panel flex h-full flex-col gap-4 bg-surface-muted/60 p-4 transition"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-lg font-semibold ui-heading">
@@ -203,9 +211,14 @@ const ProjectDashboard = ({
                 <div className="grid gap-2 text-xs text-text-secondary md:grid-cols-2">
                   <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
                     <span className="font-semibold text-text-primary">
-                      {tPlural('categories.count', project.categories.length, '{count} categories', {
-                        count: project.categories.length
-                      })}
+                      {tPlural(
+                        'categories.count',
+                        project.categories.length,
+                        '{count} categories',
+                        {
+                          count: project.categories.length
+                        }
+                      )}
                     </span>
                   </div>
                   <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
@@ -244,13 +257,21 @@ const ProjectDashboard = ({
               {t('dashboard.autoBackups.title', 'Auto backups')}
             </h2>
             <p className="text-sm text-text-secondary">
-              {t('dashboard.autoBackups.description', 'Review the on-device auto backups created by autosave.')}
+              {t(
+                'dashboard.autoBackups.description',
+                'Review the on-device auto backups created by autosave.'
+              )}
             </p>
           </div>
           <div className="text-xs text-text-muted">
-            {tPlural('dashboard.autoBackups.count', autoBackups.length, '{count} auto backup available.', {
-              count: autoBackups.length
-            })}
+            {tPlural(
+              'dashboard.autoBackups.count',
+              autoBackups.length,
+              '{count} auto backup available.',
+              {
+                count: autoBackups.length
+              }
+            )}
           </div>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -280,9 +301,14 @@ const ProjectDashboard = ({
                   </p>
                 </div>
                 <div className="text-xs text-text-muted">
-                  {tPlural('dashboard.autoBackups.projects', backup.projectCount, '{count} project in this backup.', {
-                    count: backup.projectCount
-                  })}
+                  {tPlural(
+                    'dashboard.autoBackups.projects',
+                    backup.projectCount,
+                    '{count} project in this backup.',
+                    {
+                      count: backup.projectCount
+                    }
+                  )}
                 </div>
               </div>
             ))

@@ -25,6 +25,7 @@ export const STORAGE_MESSAGE_KEYS = {
     projectsInvalid: 'errors.projects_invalid',
     templatesInvalid: 'errors.templates_invalid',
     historyInvalid: 'errors.history_invalid',
+    deviceLibraryInvalid: 'errors.device_library_invalid',
     versionInvalid: 'errors.version_invalid'
   },
   warnings: {
@@ -101,6 +102,26 @@ export const normalizeItems = (items) => {
       unit: normalizeText(item?.unit),
       details: normalizeText(item?.details),
       status: normalizeStatus(item?.status)
+    };
+  });
+};
+
+export const normalizeLibraryItems = (items) => {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+  return items.map((item) => {
+    const rawName = normalizeText(item?.name);
+    const quantityCandidate = item?.quantity ?? item?.qty ?? 1;
+    const parsedQuantity = Number(quantityCandidate);
+    return {
+      id: typeof item?.id === 'string' && item.id ? item.id : createId(),
+      name: rawName || STORAGE_MESSAGE_KEYS.defaults.item,
+      quantity: Number.isFinite(parsedQuantity) && parsedQuantity > 0 ? parsedQuantity : 1,
+      unit: normalizeText(item?.unit),
+      details: normalizeText(item?.details),
+      category: normalizeText(item?.category),
+      dateAdded: normalizeText(item?.dateAdded) || new Date().toISOString()
     };
   });
 };
@@ -213,6 +234,9 @@ export const validatePayload = (payload) => {
   }
   if (payload.history && typeof payload.history !== 'object') {
     errors.push(STORAGE_MESSAGE_KEYS.errors.historyInvalid);
+  }
+  if (payload.deviceLibrary && typeof payload.deviceLibrary !== 'object') {
+    errors.push(STORAGE_MESSAGE_KEYS.errors.deviceLibraryInvalid);
   }
   if (payload.version !== undefined && !Number.isFinite(Number(payload.version))) {
     errors.push(STORAGE_MESSAGE_KEYS.errors.versionInvalid);

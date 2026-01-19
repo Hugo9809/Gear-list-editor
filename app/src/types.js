@@ -66,6 +66,22 @@
  * @property {string[]} categories - Remembered category names
  */
 
+/**
+ * @typedef {Object} LibraryItem
+ * @property {string} id - Unique identifier (UUID)
+ * @property {string} name - Item name
+ * @property {number} quantity - Default quantity
+ * @property {string} unit - Default unit
+ * @property {string} details - Default details
+ * @property {string} category - Category name for grouping
+ * @property {string} dateAdded - ISO timestamp of when item was added
+ */
+
+/**
+ * @typedef {Object} DeviceLibrary
+ * @property {LibraryItem[]} items - Global inventory of items
+ */
+
 /* =============================================================================
  * APPLICATION STATE
  * ============================================================================= */
@@ -80,6 +96,7 @@
  * @property {Theme} theme - Current UI theme
  * @property {Project[]} projects - All user projects
  * @property {Template[]} templates - Saved templates
+ * @property {DeviceLibrary} deviceLibrary - Global device inventory
  * @property {History} history - Autocomplete suggestions history
  * @property {string|null} activeProjectId - Currently open project ID
  * @property {string|null} lastSaved - ISO timestamp of last save
@@ -154,7 +171,7 @@
 /**
  * @typedef {Object} ItemDraft
  * @property {string} name - Draft item name
- * @property {number} quantity - Draft quantity
+ * @property {number|string} quantity - Draft quantity (can be string input before parsing)
  * @property {string} unit - Draft unit
  * @property {string} details - Draft details
  */

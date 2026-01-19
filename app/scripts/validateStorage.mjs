@@ -37,7 +37,9 @@ run('legacy payload migrates safely', () => {
 });
 
 run('normalizeItems preserves quantities', () => {
-  const normalized = normalizeItems([{ name: 'Tripod', quantity: '3', unit: 'pcs', details: 'Heavy duty' }]);
+  const normalized = normalizeItems([
+    { name: 'Tripod', quantity: '3', unit: 'pcs', details: 'Heavy duty' }
+  ]);
   assert(normalized[0].quantity === 3, 'Expected quantity to normalize to number');
 });
 

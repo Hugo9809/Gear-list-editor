@@ -5,6 +5,7 @@ import Layout from './app/Layout.jsx';
 import HelpPanel from './features/help/HelpPanel.jsx';
 import ProjectDashboardContainer from './features/projects/ProjectDashboardContainer.jsx';
 import ProjectWorkspaceContainer from './features/projects/ProjectWorkspaceContainer.jsx';
+import DeviceLibraryPage from './features/device-library/DeviceLibraryPage.jsx';
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import TemplateManager from './features/templates/TemplateManager.jsx';
 import { useProjects } from './shared/hooks/useProjects.js';
@@ -15,6 +16,7 @@ const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWi
 
 export default function App() {
   const { locale, locales, setLocale, t, tPlural } = useI18n();
+  const [deviceLibrary, setDeviceLibrary] = useState({ items: [] });
   const [status, setStatus] = useState(() =>
     t('status.loading', 'Loading your saved gear list...')
   );
@@ -90,9 +92,11 @@ export default function App() {
     locale,
     projects,
     templates,
+    deviceLibrary,
     history,
     setProjects,
     setTemplates,
+    setDeviceLibrary,
     setHistory,
     setStatus
   });
@@ -130,7 +134,7 @@ export default function App() {
   const handleDeleteProject = useCallback(
     (projectId) => {
       deleteProject(projectId);
-      // If we were on that project page, we might ideally redirect, 
+      // If we were on that project page, we might ideally redirect,
       // but simpler to just let the Wrapper render Navigate to / if not found
     },
     [deleteProject]
@@ -168,42 +172,48 @@ export default function App() {
     [importBackupFile, resolveStorageMessage, setStatus, storageRef, t]
   );
 
-  const exportPdf = useCallback(async (project, index) => {
-    if (!project) {
-      setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
-      return;
-    }
+  const exportPdf = useCallback(
+    async (project, index) => {
+      if (!project) {
+        setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
+        return;
+      }
 
-    // Use new offline PDF export service
-    setStatus(t('status.pdfExporting', 'Generating PDF...'));
-    try {
-      // Dynamic import to keep initial bundle size small, though it's already split by Vite
-      const { exportPdf } = await import('./data/pdf/pdfExportService.js');
-      await exportPdf(project, locale, t, theme);
-      setStatus(t('status.pdfExportComplete', 'PDF downloaded successfully.'));
-    } catch (err) {
-      console.error('PDF export failed:', err);
-      setStatus(t('status.pdfExportError', 'PDF generation failed. Please try again.'));
-    }
-  }, [locale, setStatus, t, theme]);
+      // Use new offline PDF export service
+      setStatus(t('status.pdfExporting', 'Generating PDF...'));
+      try {
+        // Dynamic import to keep initial bundle size small, though it's already split by Vite
+        const { exportPdf } = await import('./data/pdf/pdfExportService.js');
+        await exportPdf(project, locale, t, theme);
+        setStatus(t('status.pdfExportComplete', 'PDF downloaded successfully.'));
+      } catch (err) {
+        console.error('PDF export failed:', err);
+        setStatus(t('status.pdfExportError', 'PDF generation failed. Please try again.'));
+      }
+    },
+    [locale, setStatus, t, theme]
+  );
 
-  const exportProject = useCallback((project) => {
-    if (!project) {
-      setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
-      return;
-    }
-    const { json, fileName } = exportProjectBackup(project.id);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    setStatus(t('status.projectExported', 'Project export downloaded. Store it somewhere safe.'));
-  }, [exportProjectBackup, setStatus, t]);
+  const exportProject = useCallback(
+    (project) => {
+      if (!project) {
+        setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
+        return;
+      }
+      const { json, fileName } = exportProjectBackup(project.id);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setStatus(t('status.projectExported', 'Project export downloaded. Store it somewhere safe.'));
+    },
+    [exportProjectBackup, setStatus, t]
+  );
 
   const downloadBackup = useCallback(() => {
     const { json, fileName } = exportBackup();
@@ -401,6 +411,17 @@ export default function App() {
                 onUpdateTemplateField={updateTemplateField}
                 onApplyTemplate={(id) => applyTemplateToProject(id, null)} // Templates tab has no active project
                 onRemoveTemplate={removeTemplate}
+              />
+            }
+          />
+          <Route
+            path="/device-library"
+            element={
+              <DeviceLibraryPage
+                t={t}
+                deviceLibrary={deviceLibrary}
+                setDeviceLibrary={setDeviceLibrary}
+                setStatus={setStatus}
               />
             }
           />

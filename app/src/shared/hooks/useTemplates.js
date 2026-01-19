@@ -17,6 +17,7 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
 
   useEffect(() => {
     if (templates.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedTemplateId('');
       return;
     }
@@ -29,35 +30,40 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
     setTemplateDraft((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const saveTemplateFromProject = useCallback((activeProject) => {
-    if (!activeProject) {
-      setStatus(t('status.projectNeededForTemplate', 'Create a project before saving a template.'));
-      return;
-    }
-    const name = templateDraft.name.trim();
-    if (!name) {
-      setStatus(t('status.templateNameRequired', 'Please name the template.'));
-      return;
-    }
-    const template = {
-      id: createId(),
-      name,
-      description: templateDraft.description.trim(),
-      notes: activeProject.notes,
-      categories: activeProject.categories.map((category) => ({
-        ...category,
+  const saveTemplateFromProject = useCallback(
+    (activeProject) => {
+      if (!activeProject) {
+        setStatus(
+          t('status.projectNeededForTemplate', 'Create a project before saving a template.')
+        );
+        return;
+      }
+      const name = templateDraft.name.trim();
+      if (!name) {
+        setStatus(t('status.templateNameRequired', 'Please name the template.'));
+        return;
+      }
+      const template = {
         id: createId(),
-        items: category.items.map((item) => ({
-          ...item,
-          id: createId()
-        }))
-      })),
-      lastUsed: new Date().toISOString()
-    };
-    setTemplates((prev) => [template, ...prev]);
-    setTemplateDraft(emptyTemplateDraft);
-    setStatus(t('status.templateSaved', 'Template saved from the current project.'));
-  }, [setStatus, t, templateDraft.description, templateDraft.name]);
+        name,
+        description: templateDraft.description.trim(),
+        notes: activeProject.notes,
+        categories: activeProject.categories.map((category) => ({
+          ...category,
+          id: createId(),
+          items: category.items.map((item) => ({
+            ...item,
+            id: createId()
+          }))
+        })),
+        lastUsed: new Date().toISOString()
+      };
+      setTemplates((prev) => [template, ...prev]);
+      setTemplateDraft(emptyTemplateDraft);
+      setStatus(t('status.templateSaved', 'Template saved from the current project.'));
+    },
+    [setStatus, t, templateDraft.description, templateDraft.name]
+  );
 
   const handleTemplateSubmit = useCallback(
     (event, activeProject) => {
@@ -101,20 +107,28 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
           item.id === templateId ? { ...item, lastUsed: new Date().toISOString() } : item
         )
       );
-      setStatus(t('status.templateApplied', 'Template applied. Autosave will secure the updated list.'));
+      setStatus(
+        t('status.templateApplied', 'Template applied. Autosave will secure the updated list.')
+      );
     },
     [rememberItem, setStatus, t, templates, updateProject]
   );
 
-  const handleLoadTemplate = useCallback((activeProject) => {
-    if (!selectedTemplateId) {
-      setStatus(
-        t('status.templateSelectionRequired', 'Select a template to load into the active project.')
-      );
-      return;
-    }
-    applyTemplateToProject(selectedTemplateId, activeProject);
-  }, [applyTemplateToProject, selectedTemplateId, setStatus, t]);
+  const handleLoadTemplate = useCallback(
+    (activeProject) => {
+      if (!selectedTemplateId) {
+        setStatus(
+          t(
+            'status.templateSelectionRequired',
+            'Select a template to load into the active project.'
+          )
+        );
+        return;
+      }
+      applyTemplateToProject(selectedTemplateId, activeProject);
+    },
+    [applyTemplateToProject, selectedTemplateId, setStatus, t]
+  );
 
   const updateTemplateField = useCallback(
     (templateId, field, value) => {

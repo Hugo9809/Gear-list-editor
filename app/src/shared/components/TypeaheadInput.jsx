@@ -46,9 +46,7 @@ const TypeaheadInput = ({
       />
       {isOpen && filteredSuggestions.length > 0 && (
         <div
-          className={`absolute z-20 mt-2 w-full overflow-hidden ui-dropdown ${
-            listClassName || ''
-          }`}
+          className={`absolute z-20 mt-2 w-full overflow-hidden ui-dropdown ${listClassName || ''}`}
         >
           {filteredSuggestions.map((suggestion) => (
             <button

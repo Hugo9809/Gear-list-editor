@@ -14,8 +14,9 @@ import {
   createId,
   deriveHistoryFromProjects,
   mergeHistoryEntries,
-  normalizeHistory,
+  normalizeHistoryData,
   normalizeItems,
+  normalizeLibItems,
   normalizeNotes,
   normalizeProject,
   normalizeTemplate
@@ -28,6 +29,9 @@ export const createEmptyState = () => ({
   theme: 'light',
   projects: [],
   templates: [],
+  deviceLibrary: {
+    items: []
+  },
   history: {
     items: [],
     categories: []
@@ -62,25 +66,30 @@ export const migratePayload = (payload) => {
     projects = [defaultProject, ...projects];
   }
 
-  const templates = Array.isArray(payload.templates) ? payload.templates.map(normalizeTemplate) : [];
-  const history = normalizeHistory(payload.history);
+  const templates = Array.isArray(payload.templates)
+    ? payload.templates.map(normalizeTemplate)
+    : [];
+  const deviceLibrary = {
+    items: normalizeLibItems(payload.deviceLibrary?.items)
+  };
+  const history = normalizeHistoryData(payload.history);
   const mergedHistory = {
     ...history,
     items: deriveHistoryFromProjects(projects, history.items)
   };
 
   const lastSaved = typeof payload.lastSaved === 'string' ? payload.lastSaved : null;
-  const showAutoBackups = typeof payload.showAutoBackups === 'boolean' ? payload.showAutoBackups : false;
+  const showAutoBackups =
+    typeof payload.showAutoBackups === 'boolean' ? payload.showAutoBackups : false;
   const activeProjectId =
-    typeof payload.activeProjectId === 'string'
-      ? payload.activeProjectId
-      : projects[0]?.id || null;
+    typeof payload.activeProjectId === 'string' ? payload.activeProjectId : projects[0]?.id || null;
 
   return {
     version: STORAGE_VERSION,
     theme,
     projects,
     templates,
+    deviceLibrary,
     history: mergedHistory,
     activeProjectId,
     lastSaved,
@@ -116,11 +125,24 @@ const mergeTemplates = (current, incoming) => {
   return merged;
 };
 
+const mergeLibraryItems = (current, incoming) => {
+  const map = new Map();
+  const upsert = (item) => {
+    map.set(item.id, item);
+  };
+  current.forEach(upsert);
+  incoming.forEach(upsert);
+  return Array.from(map.values());
+};
+
 export const mergePayloads = (current, incoming) => {
   const base = migratePayload(current);
   const next = migratePayload(incoming);
   const projects = mergeProjectArrays(base.projects, next.projects);
   const templates = mergeTemplates(base.templates, next.templates);
+  const deviceLibrary = {
+    items: mergeLibraryItems(base.deviceLibrary.items, next.deviceLibrary.items)
+  };
   const history = {
     items: mergeHistoryEntries(base.history.items, next.history.items),
     categories: Array.from(
@@ -133,6 +155,7 @@ export const mergePayloads = (current, incoming) => {
     theme: base.theme,
     projects,
     templates,
+    deviceLibrary,
     history,
     showAutoBackups: base.showAutoBackups,
     activeProjectId: base.activeProjectId || next.activeProjectId || projects[0]?.id || null
@@ -152,14 +175,18 @@ export const validationSamples = () => ({
           {
             id: 'cat-1',
             name: 'Camera',
-            items: [{ id: 'sample-item', name: 'Camera body', quantity: 1, unit: 'pcs', details: 'FX6' }]
+            items: [
+              { id: 'sample-item', name: 'Camera body', quantity: 1, unit: 'pcs', details: 'FX6' }
+            ]
           }
         ]
       }
     ],
     templates: [],
     history: {
-      items: [{ name: 'Camera body', unit: 'pcs', details: 'FX6', lastUsed: new Date().toISOString() }],
+      items: [
+        { name: 'Camera body', unit: 'pcs', details: 'FX6', lastUsed: new Date().toISOString() }
+      ],
       categories: ['Camera']
     },
     activeProjectId: 'sample-project',

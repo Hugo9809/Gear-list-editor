@@ -42,13 +42,13 @@ const ProjectWorkspace = ({
         <p className="text-sm text-text-secondary">
           {activeProject
             ? t('project.workspace.summary', '{categories} · {items}', {
-              categories: tPlural('categories.count', totals.categories, '{count} categories', {
-                count: totals.categories
-              }),
-              items: tPlural('items.count', totals.items, '{count} items', {
-                count: totals.items
+                categories: tPlural('categories.count', totals.categories, '{count} categories', {
+                  count: totals.categories
+                }),
+                items: tPlural('items.count', totals.items, '{count} items', {
+                  count: totals.items
+                })
               })
-            })
             : t('project.workspace.empty', 'Select a project to start editing.')}
         </p>
       </div>
@@ -74,8 +74,6 @@ const ProjectWorkspace = ({
 
     {activeProject ? (
       <div className="mt-6 flex flex-col gap-6">
-
-
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
             {t('project.fields.name', 'Project name')}
@@ -124,9 +122,14 @@ const ProjectWorkspace = ({
           </label>
         </div>
 
-        <form onSubmit={onAddCategory} className="ui-panel flex flex-col gap-3 bg-surface-muted/60 p-4">
+        <form
+          onSubmit={onAddCategory}
+          className="ui-panel flex flex-col gap-3 bg-surface-muted/60 p-4"
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold ui-heading">{t('categories.title', 'Categories')}</h3>
+            <h3 className="text-lg font-semibold ui-heading">
+              {t('categories.title', 'Categories')}
+            </h3>
             <span className="text-xs text-text-muted">
               {t('categories.helper', 'Use templates for faster setups.')}
             </span>
@@ -163,13 +166,20 @@ const ProjectWorkspace = ({
                         { index: categoryIndex + 1 },
                         'defaults.untitled_category'
                       )}
-                      onChange={(event) => onUpdateCategoryField(category.id, 'name', event.target.value)}
+                      onChange={(event) =>
+                        onUpdateCategoryField(category.id, 'name', event.target.value)
+                      }
                       className="ui-input px-3 py-2 text-lg font-semibold"
                     />
                     <textarea
                       value={category.notes}
-                      onChange={(event) => onUpdateCategoryField(category.id, 'notes', event.target.value)}
-                      placeholder={t('categories.notes.placeholder', 'Category notes or rental references')}
+                      onChange={(event) =>
+                        onUpdateCategoryField(category.id, 'notes', event.target.value)
+                      }
+                      placeholder={t(
+                        'categories.notes.placeholder',
+                        'Category notes or rental references'
+                      )}
                       rows={2}
                       className="ui-textarea px-3 py-2"
                     />
@@ -212,7 +222,9 @@ const ProjectWorkspace = ({
                       type="number"
                       min="1"
                       value={getItemDraft(category.id).quantity}
-                      onChange={(event) => onUpdateDraftItem(category.id, 'quantity', event.target.value)}
+                      onChange={(event) =>
+                        onUpdateDraftItem(category.id, 'quantity', event.target.value)
+                      }
                       className="ui-input w-20"
                     />
                     <span className="text-sm font-semibold text-text-muted">×</span>
@@ -220,7 +232,9 @@ const ProjectWorkspace = ({
                       <TypeaheadInput
                         value={getItemDraft(category.id).name}
                         onChange={(value) => onUpdateDraftItem(category.id, 'name', value)}
-                        onSelectSuggestion={(suggestion) => onApplySuggestionToDraft(category.id, suggestion)}
+                        onSelectSuggestion={(suggestion) =>
+                          onApplySuggestionToDraft(category.id, suggestion)
+                        }
                         suggestions={itemSuggestions}
                         placeholder={t('items.fields.name', 'Item name')}
                         label={t('items.fields.name', 'Item name')}
@@ -232,7 +246,9 @@ const ProjectWorkspace = ({
                   </div>
                   <input
                     value={getItemDraft(category.id).details}
-                    onChange={(event) => onUpdateDraftItem(category.id, 'details', event.target.value)}
+                    onChange={(event) =>
+                      onUpdateDraftItem(category.id, 'details', event.target.value)
+                    }
                     placeholder={t('items.fields.details', 'Details / notes')}
                     className="ui-input px-3 py-2"
                   />
@@ -258,7 +274,12 @@ const ProjectWorkspace = ({
                             min="1"
                             value={item.quantity}
                             onChange={(event) =>
-                              onUpdateItemField(category.id, item.id, 'quantity', event.target.value)
+                              onUpdateItemField(
+                                category.id,
+                                item.id,
+                                'quantity',
+                                event.target.value
+                              )
                             }
                             className="ui-input w-20"
                           />
@@ -270,7 +291,9 @@ const ProjectWorkspace = ({
                                 { index: itemIndex + 1 },
                                 'defaults.untitled_item'
                               )}
-                              onChange={(value) => onUpdateItemField(category.id, item.id, 'name', value)}
+                              onChange={(value) =>
+                                onUpdateItemField(category.id, item.id, 'name', value)
+                              }
                               onSelectSuggestion={(suggestion) =>
                                 onApplySuggestionToItem(category.id, item.id, suggestion)
                               }
@@ -307,7 +330,9 @@ const ProjectWorkspace = ({
         </div>
 
         <div className="ui-tile bg-surface-elevated/60 p-4">
-          <h3 className="text-lg font-semibold ui-heading">{t('project.notes.title', 'Project notes')}</h3>
+          <h3 className="text-lg font-semibold ui-heading">
+            {t('project.notes.title', 'Project notes')}
+          </h3>
           <p className="text-sm text-text-secondary">
             {t(
               'project.notes.helper',
@@ -317,7 +342,10 @@ const ProjectWorkspace = ({
           <textarea
             value={activeProject.notes}
             onChange={(event) => onUpdateProjectNotes(event.target.value)}
-            placeholder={t('project.notes.placeholder', 'Crew notes, pickup info, or return instructions')}
+            placeholder={t(
+              'project.notes.placeholder',
+              'Crew notes, pickup info, or return instructions'
+            )}
             rows={4}
             className="ui-textarea mt-3 rounded-xl"
           />
@@ -325,7 +353,10 @@ const ProjectWorkspace = ({
       </div>
     ) : (
       <div className="mt-6 rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted">
-        {t('project.workspace.emptyState', 'Select or create a project to unlock the gear list editor.')}
+        {t(
+          'project.workspace.emptyState',
+          'Select or create a project to unlock the gear list editor.'
+        )}
       </div>
     )}
   </div>

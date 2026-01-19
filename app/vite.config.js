@@ -43,7 +43,13 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['assets/**/*', 'index.html', '*.{ico,png,svg}'],
-        globIgnores: ['app/**/*', 'docs/**/*', 'resources/**/*', '.agent/**/*', '**/node_modules/**/*'],
+        globIgnores: [
+          'app/**/*',
+          'docs/**/*',
+          'resources/**/*',
+          '.agent/**/*',
+          '**/node_modules/**/*'
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -80,6 +86,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './test/setup.js',
-  },
+    setupFiles: './test/setup.js'
+  }
 });
+// touch

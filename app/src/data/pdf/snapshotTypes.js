@@ -16,16 +16,16 @@
  * @returns {PdfExportSnapshot}
  */
 export function buildExportSnapshot(project, locale) {
-    const categories = project.categories || [];
-    const totals = {
-        categories: categories.length,
-        items: categories.reduce((sum, cat) => sum + (cat.items?.length || 0), 0)
-    };
-    return {
-        schemaVersion: '1.0',
-        documentId: project.id || crypto.randomUUID(),
-        createdAtISO: new Date().toISOString(),
-        locale,
-        data: { project, totals }
-    };
+  const categories = project.categories || [];
+  const totals = {
+    categories: categories.length,
+    items: categories.reduce((sum, cat) => sum + (cat.items?.length || 0), 0)
+  };
+  return {
+    schemaVersion: '1.0',
+    documentId: project.id || crypto.randomUUID(),
+    createdAtISO: new Date().toISOString(),
+    locale,
+    data: { project, totals }
+  };
 }

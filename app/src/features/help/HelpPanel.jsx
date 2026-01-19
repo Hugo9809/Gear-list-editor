@@ -5,14 +5,20 @@
 const HelpPanel = ({ t, helpSections, documentationSections, offlineSteps }) => (
   <section className="ui-tile bg-surface-elevated/70 p-6">
     <div className="flex flex-col gap-2">
-      <h2 className="text-lg font-semibold ui-heading">{t('help.title', 'Help & documentation')}</h2>
+      <h2 className="text-lg font-semibold ui-heading">
+        {t('help.title', 'Help & documentation')}
+      </h2>
       <p className="text-sm text-text-secondary">
         {t('help.subtitle', 'Offline-first guidance for safe gear lists.')}
       </p>
     </div>
     <div className="mt-4 flex flex-col gap-3">
       {helpSections.map((section, index) => (
-        <details key={section.title} open={index === 0} className="ui-panel bg-surface-muted/60 px-4 py-3">
+        <details
+          key={section.title}
+          open={index === 0}
+          className="ui-panel bg-surface-muted/60 px-4 py-3"
+        >
           <summary className="cursor-pointer text-sm font-semibold ui-heading">
             {section.title}
           </summary>
@@ -26,7 +32,9 @@ const HelpPanel = ({ t, helpSections, documentationSections, offlineSteps }) => 
       ))}
     </div>
     <div className="mt-5 border-t border-surface-sunken pt-4">
-      <h3 className="text-base font-semibold ui-heading">{t('offline.title', 'Offline workflow')}</h3>
+      <h3 className="text-base font-semibold ui-heading">
+        {t('offline.title', 'Offline workflow')}
+      </h3>
       <p className="mt-1 text-sm text-text-secondary">
         {t('offline.description', 'Every feature works without a connection.')}
       </p>
@@ -40,7 +48,9 @@ const HelpPanel = ({ t, helpSections, documentationSections, offlineSteps }) => 
       </p>
     </div>
     <div className="mt-5 border-t border-surface-sunken pt-4">
-      <h3 className="text-base font-semibold ui-heading">{t('documentation.title', 'Documentation')}</h3>
+      <h3 className="text-base font-semibold ui-heading">
+        {t('documentation.title', 'Documentation')}
+      </h3>
       <p className="mt-1 text-sm text-text-secondary">
         {t(
           'documentation.subtitle',

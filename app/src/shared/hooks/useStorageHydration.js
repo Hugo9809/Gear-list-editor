@@ -193,28 +193,32 @@ export const useStorageHydration = ({
   const exportBackup = useCallback(
     () =>
       storageRef.current.exportBackup({
+        theme,
         projects,
         templates,
         history,
         activeProjectId: null,
-        lastSaved
+        lastSaved,
+        showAutoBackups
       }),
-    [history, lastSaved, projects, templates]
+    [history, lastSaved, projects, showAutoBackups, templates, theme]
   );
 
   const exportProjectBackup = useCallback(
     (projectId) =>
       storageRef.current.exportProjectBackup(
         {
+          theme,
           projects,
           templates,
           history,
           activeProjectId: null,
-          lastSaved
+          lastSaved,
+          showAutoBackups
         },
         projectId
       ),
-    [history, lastSaved, projects, templates]
+    [history, lastSaved, projects, showAutoBackups, templates, theme]
   );
 
   const importBackupFile = useCallback(
@@ -226,15 +230,23 @@ export const useStorageHydration = ({
         const reader = new FileReader();
         reader.onload = () => {
           const { state, warnings } = storageRef.current.importBackup(reader.result, {
+            theme,
             projects,
             templates,
             history,
             activeProjectId: null,
-            lastSaved
+            lastSaved,
+            showAutoBackups
           });
           setProjects(state.projects);
           setTemplates(state.templates);
           setHistory(state.history);
+          if (state.theme) {
+            setTheme(state.theme);
+          }
+          if (typeof state.showAutoBackups === 'boolean') {
+            setShowAutoBackups(state.showAutoBackups);
+          }
           // setActiveProjectId(state.activeProjectId); // Removed
           resolve({ state, warnings });
         };
@@ -248,7 +260,11 @@ export const useStorageHydration = ({
       setHistory,
       setProjects,
       setTemplates,
-      templates
+      setTheme,
+      setShowAutoBackups,
+      showAutoBackups,
+      templates,
+      theme
     ]
   );
 
@@ -257,6 +273,12 @@ export const useStorageHydration = ({
     setProjects(result.state.projects);
     setTemplates(result.state.templates);
     setHistory(result.state.history);
+    if (result.state.theme) {
+      setTheme(result.state.theme);
+    }
+    if (typeof result.state.showAutoBackups === 'boolean') {
+      setShowAutoBackups(result.state.showAutoBackups);
+    }
     // setActiveProjectId(result.state.activeProjectId); // Removed
     setLastSaved(result.state.lastSaved);
     if (result.warnings.length > 0) {
@@ -280,6 +302,8 @@ export const useStorageHydration = ({
     setProjects,
     setStatus,
     setTemplates,
+    setTheme,
+    setShowAutoBackups,
     t
   ]);
 

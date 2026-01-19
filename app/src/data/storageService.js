@@ -309,8 +309,17 @@ export const createStorageService = (options = {}) => {
       };
     }
     const merged = mergePayloads(currentState, parsed);
+    const incomingTheme =
+      typeof parsed.theme === 'string' && parsed.theme.trim() ? parsed.theme.trim() : null;
+    const incomingShowAutoBackups =
+      typeof parsed.showAutoBackups === 'boolean' ? parsed.showAutoBackups : null;
+    const state = {
+      ...merged,
+      theme: incomingTheme ?? merged.theme,
+      showAutoBackups: incomingShowAutoBackups ?? merged.showAutoBackups
+    };
     return {
-      state: merged,
+      state,
       warnings: []
     };
   };

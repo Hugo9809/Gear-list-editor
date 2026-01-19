@@ -22,9 +22,8 @@ describe('buildDocDefinition', () => {
         expect(doc.pageSize).toBe('A4');
 
         // Check title in content
-        const titleObj = doc.content.find(c => c.style === 'title');
+        const titleObj = doc.content.find(c => c.text === 'My Shoot' && c.fontSize === 26);
         expect(titleObj).toBeDefined();
-        expect(titleObj.text).toBe('My Shoot');
     });
 
     it('generates tables for categories', () => {
@@ -55,12 +54,19 @@ describe('buildDocDefinition', () => {
         // Look for table
         const tableObj = doc.content.find(c => c.table);
         expect(tableObj).toBeDefined();
-        expect(tableObj.table.body.length).toBe(2); // Header + 1 row
+        expect(tableObj.table.body.length).toBe(1); // Just items, no headeritems, no header
 
         // Check row data
-        const dataRow = tableObj.table.body[1];
-        expect(dataRow[0].text).toBe('2'); // Qty
-        expect(dataRow[2].text).toBe('Body'); // Name
+        const dataRow = tableObj.table.body[0];
+        expect(dataRow[0].text).toBe('2x'); // Qty (with 'x')
+        // Name is structured differently now: { text: [ { text: 'Body', bold: true }, item.details... ] }
+        // We need to check the inner structure or just text containment if appropriate. 
+        // Based on implementation: 
+        // { text: [ { text: formatValue(item.name), bold: true }, ... ] }
+
+        // Let's inspect the structure of the name cell (index 2)
+        const nameCell = dataRow[2];
+        expect(nameCell.text[0].text).toBe('Body');
     });
 
     it('handles empty items robustly', () => {

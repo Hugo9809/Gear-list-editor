@@ -126,13 +126,14 @@ export function buildDocDefinition(snapshot, t, theme) {
                 margin: [0, 0, 0, 2]
             },
             // Subtitle (Client or custom)
-            project.client ? {
+            // Subtitle (Client or custom)
+            ...(project.client ? [{
                 text: project.client,
                 fontSize: 14,
                 bold: true,
                 color: LOGO_SUBTITLE_COLOR,
                 margin: [0, 0, 0, 20]
-            } : null,
+            }] : []),
 
             // Metadata Grid (Production Company, AC, etc.)
             {
@@ -164,11 +165,12 @@ export function buildDocDefinition(snapshot, t, theme) {
             ...categoryContent,
 
             // Notes
-            project.notes ? [
+            // Notes
+            ...(project.notes ? [
                 { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: LINE_COLOR }], margin: [0, 16, 0, 8] },
                 { text: t('project.print.notes.title', 'Notes'), style: 'categoryHeader', color: THEME_COLOR, margin: [0, 0, 0, 8] },
                 { text: project.notes, color: '#333' }
-            ] : []
+            ] : [])
         ],
 
         styles: {

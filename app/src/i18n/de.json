@@ -201,7 +201,9 @@
     "placeholder": "Kategorie hinzufügen (z. B. Kamera, Licht)",
     "actions": {
       "add": "Kategorie hinzufügen",
-      "remove": "Kategorie entfernen"
+      "remove": "Kategorie entfernen",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten"
     },
     "empty": "Noch keine Kategorien. Füge oben eine hinzu oder wende eine Vorlage an.",
     "notes": {
@@ -295,6 +297,7 @@
     "itemRemoved": "Item entfernt. Backups bleiben verfügbar.",
     "changesQueued": "Änderungen für Autosave vorgemerkt.",
     "categoryUpdated": "Kategorie aktualisiert.",
+    "categoryMoved": "Kategorie verschoben.",
     "projectDetailsUpdated": "Projektdetails aktualisiert.",
     "projectNotesSaved": "Projekt-Notizen für Autosave gespeichert.",
     "suggestionApplied": "Vorschlag übernommen und bereit für Autosave.",

@@ -27,6 +27,8 @@ const ProjectWorkspace = ({
   onUpdateProjectField,
   onUpdateProjectNotes,
   onRemoveCategory,
+  onMoveCategoryUp,
+  onMoveCategoryDown,
   onRemoveItem,
   onApplySuggestionToDraft,
   onApplySuggestionToItem
@@ -172,13 +174,33 @@ const ProjectWorkspace = ({
                       className="ui-textarea px-3 py-2"
                     />
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => onRemoveCategory(category.id)}
-                    className="ui-button ui-button-danger px-3 py-2 text-xs uppercase tracking-wide"
-                  >
-                    {t('categories.actions.remove', 'Remove category')}
-                  </button>
+                  <div className="flex flex-wrap items-start gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onMoveCategoryUp(category.id)}
+                      disabled={categoryIndex === 0}
+                      className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
+                      aria-label={t('categories.actions.moveUp', 'Move up')}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onMoveCategoryDown(category.id)}
+                      disabled={categoryIndex === activeProject.categories.length - 1}
+                      className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
+                      aria-label={t('categories.actions.moveDown', 'Move down')}
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onRemoveCategory(category.id)}
+                      className="ui-button ui-button-danger px-3 py-2 text-xs uppercase tracking-wide"
+                    >
+                      {t('categories.actions.remove', 'Remove category')}
+                    </button>
+                  </div>
                 </div>
 
                 <form

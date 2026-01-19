@@ -57,6 +57,8 @@ const ProjectWorkspaceWrapper = ({
       onSaveTemplate={() => onSaveTemplate(project)}
 
       onAddCategory={(e) => hookActions.addCategory(project.id, e)}
+      onMoveCategoryUp={(catId) => hookActions.moveCategoryUp(project.id, catId)}
+      onMoveCategoryDown={(catId) => hookActions.moveCategoryDown(project.id, catId)}
       onAddItemToCategory={(e, catId) => hookActions.addItemToCategory(project.id, e, catId)}
       onUpdateDraftItem={hookActions.updateDraftItem} // this one doesn't need projectId
       onUpdateItemField={(catId, itemId, field, val) => hookActions.updateItemField(project.id, catId, itemId, field, val)}
@@ -97,6 +99,8 @@ export default function App() {
     newCategoryName,
     setNewCategoryName,
     addCategory,
+    moveCategoryUp,
+    moveCategoryDown,
     itemSuggestions,
     getItemDraft,
     updateDraftItem,
@@ -421,6 +425,8 @@ export default function App() {
 
                 hookActions={{
                   addCategory,
+                  moveCategoryUp,
+                  moveCategoryDown,
                   updateProjectDraftField,
                   addItemToCategory,
                   updateDraftItem,

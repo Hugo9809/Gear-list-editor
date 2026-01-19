@@ -224,6 +224,34 @@ export const useProjects = ({ t, setStatus }) => {
     [itemDrafts, rememberItem, setStatus, t, updateCategory]
   );
 
+  const moveCategoryUp = useCallback(
+    (projectId, categoryId) => {
+      updateProject(projectId, (project) => {
+        const categories = [...project.categories];
+        const index = categories.findIndex((c) => c.id === categoryId);
+        if (index <= 0) return project; // Already first or not found
+        [categories[index - 1], categories[index]] = [categories[index], categories[index - 1]];
+        return { ...project, categories };
+      });
+      setStatus(t('status.categoryMoved', 'Category moved.'));
+    },
+    [setStatus, t, updateProject]
+  );
+
+  const moveCategoryDown = useCallback(
+    (projectId, categoryId) => {
+      updateProject(projectId, (project) => {
+        const categories = [...project.categories];
+        const index = categories.findIndex((c) => c.id === categoryId);
+        if (index < 0 || index >= categories.length - 1) return project; // Already last or not found
+        [categories[index], categories[index + 1]] = [categories[index + 1], categories[index]];
+        return { ...project, categories };
+      });
+      setStatus(t('status.categoryMoved', 'Category moved.'));
+    },
+    [setStatus, t, updateProject]
+  );
+
   const removeCategory = useCallback(
     (projectId, categoryId) => {
       updateProject(projectId, (project) => ({
@@ -348,6 +376,8 @@ export const useProjects = ({ t, setStatus }) => {
     newCategoryName,
     setNewCategoryName,
     addCategory,
+    moveCategoryUp,
+    moveCategoryDown,
     itemDrafts,
     getItemDraft,
     updateDraftItem,

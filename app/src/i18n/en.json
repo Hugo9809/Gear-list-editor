@@ -191,7 +191,9 @@
     "placeholder": "Add a category (e.g. Camera, Lighting)",
     "actions": {
       "add": "Add category",
-      "remove": "Remove category"
+      "remove": "Remove category",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
     },
     "empty": "No categories yet. Add one above or apply a template.",
     "notes": {
@@ -285,6 +287,7 @@
     "itemRemoved": "Item removed. Backups remain available.",
     "changesQueued": "Changes queued for autosave.",
     "categoryUpdated": "Category updated.",
+    "categoryMoved": "Category moved.",
     "projectDetailsUpdated": "Project details updated.",
     "projectNotesSaved": "Project notes saved for autosave.",
     "suggestionApplied": "Suggestion applied and ready for autosave.",

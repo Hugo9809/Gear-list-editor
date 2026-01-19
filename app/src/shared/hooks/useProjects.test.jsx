@@ -101,4 +101,134 @@ describe('useProjects', () => {
 
         expect(result.current.projects).toHaveLength(0);
     });
+
+    it('should move a category up', () => {
+        const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+        let projectId;
+        act(() => {
+            result.current.updateProjectDraftField('name', 'Test Project');
+        });
+
+        act(() => {
+            projectId = result.current.addProject({ preventDefault: vi.fn() });
+        });
+
+        // Add two categories
+        act(() => {
+            result.current.setNewCategoryName('Camera');
+        });
+        act(() => {
+            result.current.addCategory(projectId, { preventDefault: vi.fn() });
+        });
+        act(() => {
+            result.current.setNewCategoryName('Lighting');
+        });
+        act(() => {
+            result.current.addCategory(projectId, { preventDefault: vi.fn() });
+        });
+
+        const lightingId = result.current.projects[0].categories[1].id;
+
+        act(() => {
+            result.current.moveCategoryUp(projectId, lightingId);
+        });
+
+        expect(result.current.projects[0].categories[0].name).toBe('Lighting');
+        expect(result.current.projects[0].categories[1].name).toBe('Camera');
+    });
+
+    it('should not move the first category up', () => {
+        const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+        let projectId;
+        act(() => {
+            result.current.updateProjectDraftField('name', 'Test Project');
+        });
+
+        act(() => {
+            projectId = result.current.addProject({ preventDefault: vi.fn() });
+        });
+
+        act(() => {
+            result.current.setNewCategoryName('Camera');
+        });
+        act(() => {
+            result.current.addCategory(projectId, { preventDefault: vi.fn() });
+        });
+
+        const cameraId = result.current.projects[0].categories[0].id;
+
+        act(() => {
+            result.current.moveCategoryUp(projectId, cameraId);
+        });
+
+        // Should remain in same position
+        expect(result.current.projects[0].categories[0].name).toBe('Camera');
+    });
+
+    it('should move a category down', () => {
+        const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+        let projectId;
+        act(() => {
+            result.current.updateProjectDraftField('name', 'Test Project');
+        });
+
+        act(() => {
+            projectId = result.current.addProject({ preventDefault: vi.fn() });
+        });
+
+        // Add two categories
+        act(() => {
+            result.current.setNewCategoryName('Camera');
+        });
+        act(() => {
+            result.current.addCategory(projectId, { preventDefault: vi.fn() });
+        });
+        act(() => {
+            result.current.setNewCategoryName('Lighting');
+        });
+        act(() => {
+            result.current.addCategory(projectId, { preventDefault: vi.fn() });
+        });
+
+        const cameraId = result.current.projects[0].categories[0].id;
+
+        act(() => {
+            result.current.moveCategoryDown(projectId, cameraId);
+        });
+
+        expect(result.current.projects[0].categories[0].name).toBe('Lighting');
+        expect(result.current.projects[0].categories[1].name).toBe('Camera');
+    });
+
+    it('should not move the last category down', () => {
+        const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+        let projectId;
+        act(() => {
+            result.current.updateProjectDraftField('name', 'Test Project');
+        });
+
+        act(() => {
+            projectId = result.current.addProject({ preventDefault: vi.fn() });
+        });
+
+        act(() => {
+            result.current.setNewCategoryName('Camera');
+        });
+        act(() => {
+            result.current.addCategory(projectId, { preventDefault: vi.fn() });
+        });
+
+        const cameraId = result.current.projects[0].categories[0].id;
+
+        act(() => {
+            result.current.moveCategoryDown(projectId, cameraId);
+        });
+
+        // Should remain in same position (only one category)
+        expect(result.current.projects[0].categories[0].name).toBe('Camera');
+    });
 });

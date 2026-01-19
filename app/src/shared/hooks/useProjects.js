@@ -48,11 +48,21 @@ export const useProjects = ({ t, setStatus }) => {
     [history.items]
   );
 
+  /**
+   * Retrieves or initializes a draft for a specific category.
+   * @param {string} categoryId - The ID of the category.
+   * @returns {ItemDraft} The current draft state.
+   */
   const getItemDraft = useCallback(
     (categoryId) => itemDrafts[categoryId] || emptyItemDraft,
     [itemDrafts]
   );
 
+  /**
+   * Adds an item to the history for future autocomplete suggestions.
+   * Ignores empty or default names.
+   * @param {Item} item - The item to remember.
+   */
   const rememberItem = useCallback((item) => {
     const name = item.name.trim();
     if (!name || DEFAULT_NAME_KEYS.has(name)) {
@@ -80,6 +90,10 @@ export const useProjects = ({ t, setStatus }) => {
     });
   }, []);
 
+  /**
+   * Adds a category name to history.
+   * @param {string} name - The category name.
+   */
   const rememberCategory = useCallback((name) => {
     const trimmed = name.trim();
     if (!trimmed || DEFAULT_NAME_KEYS.has(trimmed)) {
@@ -95,12 +109,23 @@ export const useProjects = ({ t, setStatus }) => {
     });
   }, []);
 
+  /**
+   * Helper to update a project by ID.
+   * @param {string} projectId - Target project ID.
+   * @param {(project: Project) => Project} updater - Update function.
+   */
   const updateProject = useCallback((projectId, updater) => {
     setProjects((prev) =>
       prev.map((project) => (project.id === projectId ? updater(project) : project))
     );
   }, []);
 
+  /**
+   * Helper to update a category within a project.
+   * @param {string} projectId - Target project ID.
+   * @param {string} categoryId - Target category ID.
+   * @param {(category: Category) => Category} updater - Update function.
+   */
   const updateCategory = useCallback(
     (projectId, categoryId, updater) => {
       updateProject(projectId, (project) => ({
@@ -113,6 +138,13 @@ export const useProjects = ({ t, setStatus }) => {
     [updateProject]
   );
 
+  /**
+   * Helper to update an item within a category.
+   * @param {string} projectId - Target project ID.
+   * @param {string} categoryId - Target category ID.
+   * @param {string} itemId - Target item ID.
+   * @param {(item: Item) => Item} updater - Update function.
+   */
   const updateItem = useCallback(
     (projectId, categoryId, itemId, updater) => {
       updateCategory(projectId, categoryId, (category) => ({

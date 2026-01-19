@@ -30,6 +30,10 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
     setTemplateDraft((prev) => ({ ...prev, [field]: value }));
   }, []);
 
+  /**
+   * Saves the current project state as a new template.
+   * @param {import('../../types.js').Project} activeProject - The project to templatize.
+   */
   const saveTemplateFromProject = useCallback(
     (activeProject) => {
       if (!activeProject) {
@@ -73,6 +77,11 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
     [saveTemplateFromProject]
   );
 
+  /**
+   * Applies the selected template to the active project, appending categories and items.
+   * @param {string} templateId - ID of the template to apply.
+   * @param {import('../../types.js').Project} activeProject - The target project.
+   */
   const applyTemplateToProject = useCallback(
     (templateId, activeProject) => {
       if (!activeProject) {

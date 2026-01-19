@@ -1,21 +1,20 @@
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+
 import { ubuntuVfs } from '../fonts/ubuntu-vfs.js';
 
-// Merge default Roboto VFS with Ubuntu VFS (if available)
-pdfMake.vfs = {
-    ...(pdfFonts?.pdfMake?.vfs || {}),
-    ...ubuntuVfs
-};
+import { buildDocDefinition } from '../buildDocDefinition.js';
+
+// Debugging fonts (keep logs for now)
+console.log('PDF Worker Initializing...');
+console.log('Ubuntu VFS keys:', Object.keys(ubuntuVfs));
+
+// Use ONLY Ubuntu VFS
+pdfMake.vfs = ubuntuVfs;
+
+console.log('PDF vfs assigned keys:', Object.keys(pdfMake.vfs));
 
 // Register font families
 pdfMake.fonts = {
-    Roboto: {
-        normal: 'Roboto-Regular.ttf',
-        bold: 'Roboto-Medium.ttf',
-        italics: 'Roboto-Italic.ttf',
-        bolditalics: 'Roboto-MediumItalic.ttf'
-    },
     Ubuntu: {
         normal: 'Ubuntu-Regular.ttf',
         bold: 'Ubuntu-Bold.ttf',
@@ -25,14 +24,22 @@ pdfMake.fonts = {
 };
 
 self.onmessage = (event) => {
-    const { docDefinition } = event.data;
+    const { snapshot, translations, theme } = event.data;
 
-    if (!docDefinition) {
-        self.postMessage({ success: false, error: 'No document definition provided' });
+    if (!snapshot) {
+        self.postMessage({ success: false, error: 'No snapshot data provided' });
         return;
     }
 
     try {
+        // Create a simple translation helper using the passed object
+        const t = (key, fallback) => {
+            return translations[key] || fallback || key;
+        };
+
+        // Build the doc definition inside the worker
+        const docDefinition = buildDocDefinition(snapshot, t, theme);
+
         // Explicitly set default style font to Ubuntu if it's not set
         if (!docDefinition.defaultStyle) {
             docDefinition.defaultStyle = {};

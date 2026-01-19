@@ -1,5 +1,5 @@
 import { buildExportSnapshot } from './snapshotTypes.js';
-import { buildDocDefinition } from './buildDocDefinition.js';
+
 
 /**
  * Export project as PDF.
@@ -13,11 +13,19 @@ export async function exportPdf(project, locale, t, theme) {
         // 1. Build deterministic snapshot
         const snapshot = buildExportSnapshot(project, locale);
 
-        // 2. Build pdfmake document definition
-        const docDefinition = buildDocDefinition(snapshot, t, theme);
+        // 2. Prepare translations needed for PDF
+        const translations = {
+            'project.category.defaultName': t('project.category.defaultName', 'Category'),
+            'project.untitled': t('project.untitled', 'Untitled Project'),
+            'project.print.labels.date': t('project.print.labels.date', 'Date'),
+            'project.print.labels.location': t('project.print.labels.location', 'Location'),
+            'project.print.labels.contact': t('project.print.labels.contact', 'Contact'),
+            'project.print.notes.title': t('project.print.notes.title', 'Notes')
+        };
 
         // 3. Generate PDF Blob in Web Worker
-        const blob = await generatePdfInWorker(docDefinition);
+        // Pass primitive data only to avoid DataCloneError (functions in docDefinition)
+        const blob = await generatePdfInWorker(snapshot, translations, theme);
 
         // 4. Download file
         const filename = `${project.name || 'gear-list'}.pdf`;
@@ -31,10 +39,12 @@ export async function exportPdf(project, locale, t, theme) {
 
 /**
  * Generate PDF blob in Web Worker to avoid freezing UI.
- * @param {Object} docDefinition
+ * @param {Object} snapshot
+ * @param {Object} translations
+ * @param {string} theme
  * @returns {Promise<Blob>}
  */
-function generatePdfInWorker(docDefinition) {
+function generatePdfInWorker(snapshot, translations, theme) {
     return new Promise((resolve, reject) => {
         // Vite handles this syntax to bundle the worker
         const worker = new Worker(
@@ -56,7 +66,7 @@ function generatePdfInWorker(docDefinition) {
             reject(error);
         };
 
-        worker.postMessage({ docDefinition });
+        worker.postMessage({ snapshot, translations, theme });
     });
 }
 

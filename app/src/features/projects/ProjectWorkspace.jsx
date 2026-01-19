@@ -54,42 +54,25 @@ const ProjectWorkspace = ({
         <button type="button" onClick={onBackToDashboard} className="ui-button ui-button-outline">
           {t('project.actions.backToDashboard', 'Back to dashboard')}
         </button>
-        <button type="button" onClick={onExportPdf} className="ui-button ui-button-primary">
-          {t('project.actions.exportPdf', 'Export PDF')}
-        </button>
+        {activeProject && (
+          <>
+            <button type="button" onClick={onExportProject} className="ui-button ui-button-outline">
+              {t('project.actions.export', 'Export project')}
+            </button>
+            <button type="button" onClick={onSaveTemplate} className="ui-button ui-button-outline">
+              {t('template.actions.saveFromProject', 'Save as template')}
+            </button>
+            <button type="button" onClick={onExportPdf} className="ui-button ui-button-primary">
+              {t('project.actions.exportPdf', 'Export PDF')}
+            </button>
+          </>
+        )}
       </div>
     </div>
 
     {activeProject ? (
       <div className="mt-6 flex flex-col gap-6">
-        <div className="ui-tile flex flex-wrap items-center justify-between gap-4 bg-surface-elevated/80 px-5 py-4">
-          <div className="flex min-w-[200px] flex-col gap-1">
-            <span className="text-xs uppercase tracking-[0.3em] text-text-muted">
-              {t('project.active.label', 'Active project')}
-            </span>
-            <span className="text-lg font-semibold ui-heading">
-              {resolveDisplayName(
-                activeProject.name,
-                { index: Math.max(activeProjectIndex, 0) + 1 },
-                'project.untitled'
-              )}
-            </span>
-            <span className="text-xs text-text-secondary">
-              {t('project.active.helper', 'Export the current list or save it as a reusable template.')}
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-3 text-sm">
-            <button type="button" onClick={onExportProject} className="ui-button ui-button-outline">
-              {t('project.actions.export', 'Export project')}
-            </button>
-            <button type="button" onClick={onExportPdf} className="ui-button ui-button-outline">
-              {t('project.actions.exportPdf', 'Export PDF')}
-            </button>
-            <button type="button" onClick={onSaveTemplate} className="ui-button ui-button-primary">
-              {t('template.actions.saveFromProject', 'Save as template')}
-            </button>
-          </div>
-        </div>
+
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm text-text-secondary">

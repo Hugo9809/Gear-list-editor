@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const loadStorageService = async () => {
   const { createStorageService } = await import('./storageService.js');
@@ -70,5 +70,49 @@ describe('storageService importBackup', () => {
     expect(result.state.projects.map((project) => project.name)).toEqual(
       expect.arrayContaining(['Project A', 'Project B'])
     );
+  });
+});
+
+describe('storageService legacy backups', () => {
+  const originalLocalStorage = globalThis.localStorage;
+
+  afterEach(() => {
+    if (originalLocalStorage === undefined) {
+      delete globalThis.localStorage;
+    } else {
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: originalLocalStorage,
+        writable: true,
+        configurable: true
+      });
+    }
+  });
+
+  it('returns empty auto backups when localStorage is missing', async () => {
+    delete globalThis.localStorage;
+
+    const service = await loadStorageService();
+    const backups = await service.listAutoBackups();
+
+    expect(backups).toEqual([]);
+  });
+
+  it('loads state safely when legacy storage read throws', async () => {
+    Object.defineProperty(globalThis, 'localStorage', {
+      value: {
+        getItem: () => {
+          throw new Error('localStorage disabled');
+        },
+        setItem: () => {},
+        removeItem: () => {}
+      },
+      configurable: true
+    });
+
+    const service = await loadStorageService();
+    const result = await service.loadState();
+
+    expect(result.state.projects).toEqual([]);
+    expect(result.warnings).toEqual([]);
   });
 });

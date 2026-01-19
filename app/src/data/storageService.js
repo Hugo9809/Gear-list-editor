@@ -33,9 +33,23 @@ const AUTOSAVE_DELAY = 700;
 const MAX_AUTOSAVE_DELAY = 5000;
 const OPFS_BACKUP_INTERVAL = 30 * 60 * 1000;
 
-const readLegacyBackup = () => safeParse(localStorage.getItem(LEGACY_BACKUP_KEY));
+const hasLegacyStorage = () => typeof localStorage !== 'undefined';
+
+const readLegacyBackup = () => {
+  if (!hasLegacyStorage()) {
+    return null;
+  }
+  try {
+    return safeParse(localStorage.getItem(LEGACY_BACKUP_KEY));
+  } catch {
+    return null;
+  }
+};
 
 const writeLegacyBackups = (payload) => {
+  if (!hasLegacyStorage()) {
+    return;
+  }
   try {
     localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(payload));
     localStorage.setItem(LEGACY_BACKUP_KEY, JSON.stringify(payload));
@@ -45,6 +59,9 @@ const writeLegacyBackups = (payload) => {
 };
 
 const clearLegacyStorage = () => {
+  if (!hasLegacyStorage()) {
+    return;
+  }
   try {
     localStorage.removeItem(LEGACY_STORAGE_KEY);
     localStorage.removeItem(LEGACY_BACKUP_KEY);

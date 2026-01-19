@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/Gear-list-editor/sw.js', { scope: '/Gear-list-editor/' })})}

@@ -116,6 +116,16 @@ if (result.success) {
 
 The import system uses `mergePayloads` to intelligently combine imported data with existing state, avoiding duplicates.
 
+## 🧯 Backup & Restore Workflow
+
+Use the settings panel to keep data safe even when working offline:
+
+1. **Download full backup** before major edits, device handoffs, or cleanup operations.
+2. **Import full backup** to merge a `.json` backup into the current state without overwriting everything.
+3. **Restore from device backup** to recover the latest on-device snapshot saved to OPFS.
+
+These workflows prioritize keeping more data rather than risking accidental loss.
+
 ---
 
 *See also: [Architecture](./ARCHITECTURE.md) for the overall system design.*

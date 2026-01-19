@@ -17,6 +17,13 @@ A **Local-First** web application for creating and managing professional film eq
 -   **Themes**: Multiple themes available (Bright, Dark, Pink Light, Pink Dark).
 -   **i18n**: Supports English and German (`en`, `de`).
 
+## 🔐 Data Safety & Recovery
+
+-   **Local-first storage**: All project data remains on your device (IndexedDB + OPFS).
+-   **Auto-save**: Edits are saved automatically while you work.
+-   **Manual backups**: Export a JSON backup before major changes or device swaps.
+-   **Restoration options**: Restore from an exported backup or the latest device backup if needed.
+
 ## 🚀 Quick Start
 
 ```bash
@@ -83,7 +90,13 @@ The static output in `app/dist/` can be deployed to any static file host.
 <details>
 <summary><strong>How do I back up my data?</strong></summary>
 
-Go to **Settings** → **Export Backup**. This downloads a `.json` file containing all your projects, templates, and settings. You can import it later using **Import Backup**.
+Go to **Settings** → **Download full backup**. This downloads a `.json` file containing all your projects, templates, and settings. You can import it later using **Import full backup**.
+</details>
+
+<details>
+<summary><strong>How do I restore data if something goes wrong?</strong></summary>
+
+Open **Settings** and choose **Import full backup** to restore a previously exported `.json` file. If you did not export manually, use **Restore from device backup** to recover the latest on-device snapshot.
 </details>
 
 <details>

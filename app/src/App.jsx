@@ -1,79 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
+import { useCallback, useRef, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { getDictionary, translate, useI18n } from './i18n/index.js';
 import Layout from './app/Layout.jsx';
 import HelpPanel from './features/help/HelpPanel.jsx';
-import ProjectDashboard from './features/projects/ProjectDashboard.jsx';
-import ProjectWorkspace from './features/projects/ProjectWorkspace.jsx';
+import ProjectDashboardContainer from './features/projects/ProjectDashboardContainer.jsx';
+import ProjectWorkspaceContainer from './features/projects/ProjectWorkspaceContainer.jsx';
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import TemplateManager from './features/templates/TemplateManager.jsx';
 import { useProjects } from './shared/hooks/useProjects.js';
 import { useStorageHydration } from './shared/hooks/useStorageHydration.js';
 import { useTemplates } from './shared/hooks/useTemplates.js';
-import { buildPrintableHtml } from './shared/utils/print.js';
 
 const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWith('defaults.');
-
-// Wrapper to extract projectId from URL and find the project object
-const ProjectWorkspaceWrapper = ({
-  projects,
-  onBackToDashboard,
-  onExportPdf,
-  onExportProject,
-  onSaveTemplate,
-  hookActions,
-  isHydrated,
-  ...props
-}) => {
-  const { projectId } = useParams();
-
-  if (!isHydrated) {
-    return null; // Or a loading spinner
-  }
-
-  const project = projects.find(p => p.id === projectId);
-
-  if (!project) {
-    return <Navigate to="/" replace />;
-  }
-
-  const projectIndex = projects.findIndex(p => p.id === projectId);
-
-  // Calculate totals locally since useProjects no longer does it
-  const totals = useMemo(() => {
-    const categories = project.categories.length;
-    const items = project.categories.reduce((sum, category) => sum + category.items.length, 0);
-    return { categories, items };
-  }, [project]);
-
-  return (
-    <ProjectWorkspace
-      activeProject={project}
-      activeProjectIndex={projectIndex}
-      totals={totals}
-      onBackToDashboard={onBackToDashboard}
-      onExportPdf={() => onExportPdf(project, projectIndex)}
-      onExportProject={() => onExportProject(project)}
-      onSaveTemplate={() => onSaveTemplate(project)}
-
-      onAddCategory={(e) => hookActions.addCategory(project.id, e)}
-      onMoveCategoryUp={(catId) => hookActions.moveCategoryUp(project.id, catId)}
-      onMoveCategoryDown={(catId) => hookActions.moveCategoryDown(project.id, catId)}
-      onAddItemToCategory={(e, catId) => hookActions.addItemToCategory(project.id, e, catId)}
-      onUpdateDraftItem={hookActions.updateDraftItem} // this one doesn't need projectId
-      onUpdateItemField={(catId, itemId, field, val) => hookActions.updateItemField(project.id, catId, itemId, field, val)}
-      onUpdateCategoryField={(catId, field, val) => hookActions.updateCategoryField(project.id, catId, field, val)}
-      onUpdateProjectField={(field, val) => hookActions.updateProjectField(project.id, field, val)}
-      onUpdateProjectNotes={(val) => hookActions.updateProjectNotes(project.id, val)}
-      onRemoveCategory={(catId) => hookActions.removeCategory(project.id, catId)}
-      onRemoveItem={(catId, itemId) => hookActions.removeItem(project.id, catId, itemId)}
-      onApplySuggestionToDraft={hookActions.applySuggestionToDraft} // no projectId
-      onApplySuggestionToItem={(catId, itemId, sugg) => hookActions.applySuggestionToItem(project.id, catId, itemId, sugg)}
-
-      {...props}
-    />
-  );
-};
 
 export default function App() {
   const { locale, locales, setLocale, t, tPlural } = useI18n();
@@ -356,9 +294,41 @@ export default function App() {
   const documentationSections = t('documentation.sections', []);
   const offlineSteps = t('offline.steps', []);
 
-  // Bind actions to accept projectId implicitly in the Workspace
-  // Actually we need to pass handlers that take (e) or (params) and calls hook actions with (project.id, ...)
-  // This binding happens in the Wrapper mostly.
+  const dashboardData = {
+    templates,
+    selectedTemplateId,
+    projectDraft,
+    projects,
+    lastSaved,
+    showAutoBackups,
+    autoBackups
+  };
+
+  const dashboardActions = {
+    onTemplateSelect: handleTemplateSelect,
+    onLoadTemplate: handleLoadTemplate,
+    onImportProject: () => fileInputRef.current?.click(),
+    onProjectDraftChange: updateProjectDraftField,
+    onCreateProject: handleCreateProject,
+    onOpenProject: handleOpenProject,
+    onDeleteProject: handleDeleteProject
+  };
+
+  const projectActions = {
+    addCategory,
+    moveCategoryUp,
+    moveCategoryDown,
+    addItemToCategory,
+    updateDraftItem,
+    updateItemField,
+    updateCategoryField,
+    updateProjectField,
+    updateProjectNotes,
+    removeCategory,
+    removeItem,
+    applySuggestionToDraft,
+    applySuggestionToItem
+  };
 
   return (
     <>
@@ -386,24 +356,12 @@ export default function App() {
           <Route
             path="/"
             element={
-              <ProjectDashboard
+              <ProjectDashboardContainer
                 t={t}
                 tPlural={tPlural}
-                templates={templates}
-                selectedTemplateId={selectedTemplateId}
-                onTemplateSelect={handleTemplateSelect}
-                onLoadTemplate={handleLoadTemplate} // Note: This might need adjustment for no active project
-                onImportProject={() => fileInputRef.current?.click()}
-                projectDraft={projectDraft}
-                onProjectDraftChange={updateProjectDraftField}
-                onCreateProject={handleCreateProject}
-                projects={projects}
-                onOpenProject={handleOpenProject}
-                onDeleteProject={handleDeleteProject}
+                dashboardData={dashboardData}
+                dashboardActions={dashboardActions}
                 resolveDisplayName={resolveDisplayName}
-                lastSaved={lastSaved}
-                showAutoBackups={showAutoBackups}
-                autoBackups={autoBackups}
                 resolveStorageSource={resolveStorageSource}
               />
             }
@@ -411,7 +369,7 @@ export default function App() {
           <Route
             path="/project/:projectId"
             element={
-              <ProjectWorkspaceWrapper
+              <ProjectWorkspaceContainer
                 t={t}
                 tPlural={tPlural}
                 projects={projects}
@@ -422,27 +380,10 @@ export default function App() {
                 onSaveTemplate={saveTemplateFromProject}
                 newCategoryName={newCategoryName}
                 onNewCategoryNameChange={setNewCategoryName}
-
-                hookActions={{
-                  addCategory,
-                  moveCategoryUp,
-                  moveCategoryDown,
-                  updateProjectDraftField,
-                  addItemToCategory,
-                  updateDraftItem,
-                  updateItemField,
-                  updateCategoryField,
-                  updateProjectField,
-                  updateProjectNotes,
-                  removeCategory,
-                  removeItem,
-                  applySuggestionToDraft,
-                  applySuggestionToItem
-                }}
-
                 itemSuggestions={itemSuggestions}
                 getItemDraft={getItemDraft}
                 isHydrated={isHydrated}
+                projectActions={projectActions}
               />
             }
           />

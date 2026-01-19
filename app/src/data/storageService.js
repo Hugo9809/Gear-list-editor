@@ -309,6 +309,13 @@ export const createStorageService = (options = {}) => {
       };
     }
     const merged = mergePayloads(currentState, parsed);
+    const validation = validatePayload(merged);
+    if (!validation.valid) {
+      return {
+        state: migratePayload(currentState),
+        warnings: [STORAGE_MESSAGE_KEYS.warnings.importValidationFailed]
+      };
+    }
     return {
       state: merged,
       warnings: []

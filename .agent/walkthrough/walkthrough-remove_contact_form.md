@@ -6,4 +6,4 @@
 - [ ] No regression in build.
 
 ### Manual Verification
-- [ ] Contact form is removed from `/de/contact/`.
+- [x] Contact form is removed from `/de/contact/`.

@@ -1,5 +1,5 @@
 # Task: Remove Contact Form
 
 ## Status
-- [ ] Remove contact form from `ContactPageClient.tsx` <!-- id: 0 -->
-- [ ] Verify contact page in browser <!-- id: 1 -->
+- [x] Remove contact form from `ContactPageClient.tsx` <!-- id: 0 -->
+- [x] Verify contact page in browser <!-- id: 1 -->

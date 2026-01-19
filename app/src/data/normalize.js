@@ -32,6 +32,7 @@ export const STORAGE_MESSAGE_KEYS = {
     autosaveStorageError: 'warnings.autosave_storage_error',
     indexedDbUnavailable: 'warnings.indexeddb_unavailable',
     importInvalid: 'warnings.import_invalid',
+    importValidationFailed: 'warnings.import_validation_failed',
     noDeviceBackup: 'warnings.no_device_backup'
   },
   sources: {

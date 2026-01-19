@@ -258,6 +258,7 @@
     "autosave_storage_error": "Autosave encountered a storage error. Your data is still safe in memory.",
     "indexeddb_unavailable": "IndexedDB was unavailable. Checking device backups instead.",
     "import_invalid": "Import failed. Please choose a valid backup file.",
+    "import_validation_failed": "Import succeeded but the backup structure was not recognized. Please choose a valid Gear List backup file.",
     "no_device_backup": "No device backup was found yet."
   },
   "sources": {

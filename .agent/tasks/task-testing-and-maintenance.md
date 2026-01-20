@@ -12,11 +12,14 @@
 
 ## Execution Phase
 - [x] Configure/Update Linting & Formatting (ESLint/Prettier) <!-- id: 6 -->
-- [/] Refactor high-complexity modules <!-- id: 7 -->
-- [/] Add/Improve Unit Tests <!-- id: 8 -->
-- [ ] Add Integration Tests <!-- id: 9 -->
+- [x] Refactor high-complexity modules (Cleaned up `buildDocDefinition.js`) <!-- id: 7 -->
+- [x] Add/Improve Unit Tests <!-- id: 8 -->
+    - [x] Fixed `storageService.test.js`
+    - [x] Added `useDeviceLibrary.test.jsx`
+- [x] Add Integration Tests <!-- id: 9 -->
+    - [x] Added `App.test.jsx` for main application flow.
 
 ## Verification Phase
-- [ ] Verify all tests pass <!-- id: 10 -->
-- [ ] Verify linting clean <!-- id: 11 -->
-- [ ] Create Walkthrough <!-- id: 12 -->
+- [x] Verify all tests pass <!-- id: 10 -->
+- [x] Verify linting clean <!-- id: 11 -->
+- [x] Create Walkthrough <!-- id: 12 -->

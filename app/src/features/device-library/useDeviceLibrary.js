@@ -1,6 +1,6 @@
 // @ts-check
 import { useCallback } from 'react';
-import { createId, STORAGE_MESSAGE_KEYS } from '../../data/normalize.js';
+import { createId } from '../../data/normalize.js';
 
 /**
  * @typedef {import('../../types.js').DeviceLibrary} DeviceLibrary

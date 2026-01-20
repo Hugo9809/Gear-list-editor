@@ -16,7 +16,6 @@ const ProjectDashboard = ({
   onProjectDraftChange,
   onCreateProject,
   projects,
-  onOpenProject,
   onDeleteProject,
   resolveDisplayName,
   lastSaved,
@@ -82,11 +81,10 @@ const ProjectDashboard = ({
               type="button"
               onClick={onLoadTemplate}
               disabled={!selectedTemplateId}
-              className={`ui-button ${
-                selectedTemplateId
+              className={`ui-button ${selectedTemplateId
                   ? 'ui-button-primary'
                   : 'cursor-not-allowed bg-surface-sunken text-text-muted'
-              }`}
+                }`}
             >
               {t('template.actions.loadIntoProject', 'Load from template')}
             </button>

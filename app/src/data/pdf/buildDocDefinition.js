@@ -15,7 +15,6 @@ export function buildDocDefinition(snapshot, t, theme) {
   const isPinkMode = theme === 'pink';
   const THEME_COLOR = isPinkMode ? '#E10078' : '#001589'; // Pink vs Brightmode Blue
   const LOGO_SUBTITLE_COLOR = isPinkMode ? '#F06292' : '#5C6BC0'; // Lighter variation
-  const TEXT_COLOR = '#000000'; // Black text as per reference
   const LINE_COLOR = '#000000'; // Black lines
 
   // Helper to format values
@@ -24,28 +23,28 @@ export function buildDocDefinition(snapshot, t, theme) {
     if (!dateStr) return '—';
     try {
       return format(new Date(dateStr), 'P'); // Localized date format
-    } catch (e) {
+    } catch (_e) { // eslint-disable-line no-unused-vars
       return dateStr;
     }
   };
 
   // Helper: Check if category is a Camera category
-  const isCameraCategory = (name) => {
-    const n = (name || '').toLowerCase();
-    return n.includes('camera') || n.includes('kamera');
-  };
+  // const isCameraCategory = (name) => {
+  //   const n = (name || '').toLowerCase();
+  //   return n.includes('camera') || n.includes('kamera');
+  // };
 
   // Build category tables
   const categoryContent = categories.flatMap((category, idx) => {
     const items = category.items || [];
     if (items.length === 0) return [];
 
-    const isCam = isCameraCategory(category.name);
+    // const isCam = isCameraCategory(category.name);
 
     // Special render for Camera A in Camera category?
     // For now, we'll render a special "Spec Box" if it's the Camera category and has items.
     // We act as if the first item is the main camera body.
-    let specialCameraBlock = null;
+    // let specialCameraBlock = null;
     let tableItems = items;
 
     // If strict design matching is needed, one could extract the first item here
@@ -92,22 +91,16 @@ export function buildDocDefinition(snapshot, t, theme) {
           ]
         },
         layout: {
-          hLineWidth: function (i, node) {
+          hLineWidth: function (_i, _node) {
             return 0; // No horizontal lines between list items for "open list" look?
-            // Reference said "horizontal separators... thin black".
-            // Let's use light lines.
-            // Actually subagent said "no vertical borders... clean, open list look".
-            // "Each section is preceded by a thin black horizontal line".
-            // Use default 'noBorders' for the items themselves?
-            // Let's try 'noBorders' for the clean look.
           },
-          vLineWidth: function (i, node) {
+          vLineWidth: function (_i, _node) {
             return 0;
           },
-          paddingLeft: function (i) {
-            return i === 0 ? 0 : 4;
+          paddingLeft: function (_i) {
+            return _i === 0 ? 0 : 4;
           },
-          paddingRight: function (i) {
+          paddingRight: function (_i) {
             return 0;
           }
         }
@@ -145,14 +138,14 @@ export function buildDocDefinition(snapshot, t, theme) {
       // Subtitle (Client or custom)
       ...(project.client
         ? [
-            {
-              text: project.client,
-              fontSize: 14,
-              bold: true,
-              color: LOGO_SUBTITLE_COLOR,
-              margin: [0, 0, 0, 20]
-            }
-          ]
+          {
+            text: project.client,
+            fontSize: 14,
+            bold: true,
+            color: LOGO_SUBTITLE_COLOR,
+            margin: [0, 0, 0, 20]
+          }
+        ]
         : []),
 
       // Metadata Grid (Production Company, AC, etc.)
@@ -188,28 +181,28 @@ export function buildDocDefinition(snapshot, t, theme) {
       // Notes
       ...(project.notes
         ? [
-            {
-              canvas: [
-                {
-                  type: 'line',
-                  x1: 0,
-                  y1: 0,
-                  x2: 515,
-                  y2: 0,
-                  lineWidth: 0.5,
-                  lineColor: LINE_COLOR
-                }
-              ],
-              margin: [0, 16, 0, 8]
-            },
-            {
-              text: t('project.print.notes.title', 'Notes'),
-              style: 'categoryHeader',
-              color: THEME_COLOR,
-              margin: [0, 0, 0, 8]
-            },
-            { text: project.notes, color: '#333' }
-          ]
+          {
+            canvas: [
+              {
+                type: 'line',
+                x1: 0,
+                y1: 0,
+                x2: 515,
+                y2: 0,
+                lineWidth: 0.5,
+                lineColor: LINE_COLOR
+              }
+            ],
+            margin: [0, 16, 0, 8]
+          },
+          {
+            text: t('project.print.notes.title', 'Notes'),
+            style: 'categoryHeader',
+            color: THEME_COLOR,
+            margin: [0, 0, 0, 8]
+          },
+          { text: project.notes, color: '#333' }
+        ]
         : [])
     ],
 

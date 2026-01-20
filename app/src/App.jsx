@@ -173,7 +173,7 @@ export default function App() {
   );
 
   const exportPdf = useCallback(
-    async (project, index) => {
+    async (project) => {
       if (!project) {
         setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
         return;

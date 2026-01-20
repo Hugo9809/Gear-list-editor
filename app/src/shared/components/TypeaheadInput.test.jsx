@@ -1,11 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import TypeaheadInput from './TypeaheadInput';
 
 describe('TypeaheadInput', () => {
   it('renders input with placeholder', () => {
     render(
-      <TypeaheadInput value="" onChange={() => {}} suggestions={[]} placeholder="Search..." />
+      <TypeaheadInput value="" onChange={() => { }} suggestions={[]} placeholder="Search..." />
     );
     expect(screen.getByPlaceholderText('Search...')).toBeInTheDocument();
   });
@@ -15,7 +15,7 @@ describe('TypeaheadInput', () => {
       { name: 'Apple', lastUsed: '2023' },
       { name: 'Banana', lastUsed: '2022' }
     ];
-    render(<TypeaheadInput value="app" onChange={() => {}} suggestions={suggestions} />);
+    render(<TypeaheadInput value="app" onChange={() => { }} suggestions={suggestions} />);
 
     // Focus to show suggestions
     fireEvent.focus(screen.getByRole('textbox'));

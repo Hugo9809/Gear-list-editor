@@ -9,24 +9,30 @@ export default function DeviceEditor({ t, item, onSave, onCancel }) {
         details: ''
     });
 
+    // Use key to reset state when item changes, or update state if item changes
     useEffect(() => {
-        if (item) {
-            setDraft({
-                name: item.name || '',
-                quantity: item.quantity || 1,
-                unit: item.unit || '',
-                category: item.category || '',
-                details: item.details || ''
-            });
-        } else {
-            setDraft({
-                name: '',
-                quantity: 1,
-                unit: '',
-                category: '',
-                details: ''
-            });
-        }
+        // Logic to sync internal state if item prop changes externally
+        const target = item || {
+            name: '',
+            quantity: 1,
+            unit: '',
+            category: '',
+            details: ''
+        };
+
+        setDraft(prev => { // eslint-disable-line react-hooks/set-state-in-effect
+            // Only update if actually changed to avoid loop
+            if (JSON.stringify(prev) !== JSON.stringify(target)) {
+                return {
+                    name: target.name || '',
+                    quantity: target.quantity || 1,
+                    unit: target.unit || '',
+                    category: target.category || '',
+                    details: target.details || ''
+                };
+            }
+            return prev;
+        });
     }, [item]);
 
     const handleChange = (e) => {

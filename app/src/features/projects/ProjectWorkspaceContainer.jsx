@@ -20,23 +20,24 @@ const ProjectWorkspaceContainer = ({
 }) => {
   const { projectId } = useParams();
 
-  if (!isHydrated) {
-    return null;
-  }
-
+  // Always call hooks at top level
   const project = projects.find((candidate) => candidate.id === projectId);
-
-  if (!project) {
-    return <Navigate to="/" replace />;
-  }
-
-  const projectIndex = projects.findIndex((candidate) => candidate.id === projectId);
+  const projectIndex = project ? projects.findIndex((candidate) => candidate.id === projectId) : -1;
 
   const totals = useMemo(() => {
+    if (!project) return { categories: 0, items: 0 };
     const categories = project.categories.length;
     const items = project.categories.reduce((sum, category) => sum + category.items.length, 0);
     return { categories, items };
   }, [project]);
+
+  if (!isHydrated) {
+    return null;
+  }
+
+  if (!project) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <ProjectWorkspace

@@ -14,9 +14,9 @@ import {
   createId,
   deriveHistoryFromProjects,
   mergeHistoryEntries,
-  normalizeHistoryData,
+  normalizeHistory,
   normalizeItems,
-  normalizeLibItems,
+  normalizeLibraryItems,
   normalizeNotes,
   normalizeProject,
   normalizeTemplate
@@ -70,9 +70,9 @@ export const migratePayload = (payload) => {
     ? payload.templates.map(normalizeTemplate)
     : [];
   const deviceLibrary = {
-    items: normalizeLibItems(payload.deviceLibrary?.items)
+    items: normalizeLibraryItems(payload.deviceLibrary?.items)
   };
-  const history = normalizeHistoryData(payload.history);
+  const history = normalizeHistory(payload.history);
   const mergedHistory = {
     ...history,
     items: deriveHistoryFromProjects(projects, history.items)

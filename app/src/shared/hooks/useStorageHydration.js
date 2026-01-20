@@ -10,6 +10,7 @@ export const useStorageHydration = ({
   locale,
   projects,
   templates,
+  deviceLibrary,
   history,
   setProjects,
   setTemplates,
@@ -63,8 +64,13 @@ export const useStorageHydration = ({
     document.title = t('meta.title', 'Gear list editor');
   }, [locale, t]);
 
-  if (!storageRef.current) {
-    storageRef.current = createStorageService({
+  const handlersRef = useRef({
+    onSaved: () => { },
+    onWarning: () => { }
+  });
+
+  useEffect(() => {
+    handlersRef.current = {
       onSaved: (payload, { reason, warnings }) => {
         const tCurrent = tRef.current;
         setLastSaved(payload.lastSaved);
@@ -102,13 +108,26 @@ export const useStorageHydration = ({
             : message
         );
       }
-    });
-  }
+    };
+  }, [setStatus]);
+
+  // Initialize service once using useState lazy initializer
+  // eslint-disable-next-line react-hooks/refs
+  const [storageService] = useState(() =>
+    createStorageService({
+      onSaved: (...args) => handlersRef.current.onSaved(...args),
+      onWarning: (...args) => handlersRef.current.onWarning(...args)
+    })
+  );
+
+  useEffect(() => {
+    storageRef.current = storageService;
+  }, [storageService]);
 
   useEffect(() => {
     let mounted = true;
     const load = async () => {
-      const result = await storageRef.current.loadState();
+      const result = await storageService.loadState();
       if (!mounted) {
         return;
       }
@@ -140,7 +159,7 @@ export const useStorageHydration = ({
     load();
     return () => {
       mounted = false;
-      storageRef.current?.dispose();
+      storageService.dispose();
     };
   }, [
     resolveStorageMessage,
@@ -149,6 +168,8 @@ export const useStorageHydration = ({
     setProjects,
     setStatus,
     setTemplates,
+    setDeviceLibrary,
+    storageService,
     t
   ]);
 
@@ -160,7 +181,7 @@ export const useStorageHydration = ({
     if (!isHydrated) {
       return;
     }
-    storageRef.current.scheduleAutosave({
+    storageService.scheduleAutosave({
       theme,
       projects,
       templates,
@@ -170,7 +191,7 @@ export const useStorageHydration = ({
       lastSaved,
       showAutoBackups
     });
-  }, [projects, templates, deviceLibrary, history, isHydrated, theme, showAutoBackups, lastSaved]);
+  }, [projects, templates, deviceLibrary, history, isHydrated, theme, showAutoBackups, lastSaved, storageService]);
 
   useEffect(() => {
     if (!isHydrated || !showAutoBackups) {
@@ -179,7 +200,7 @@ export const useStorageHydration = ({
     }
     let mounted = true;
     const loadAutoBackups = async () => {
-      const backups = await storageRef.current.listAutoBackups();
+      const backups = await storageService.listAutoBackups();
       if (mounted) {
         setAutoBackups(backups);
       }
@@ -188,11 +209,11 @@ export const useStorageHydration = ({
     return () => {
       mounted = false;
     };
-  }, [isHydrated, lastSaved, showAutoBackups]);
+  }, [isHydrated, lastSaved, showAutoBackups, storageService]);
 
   const exportBackup = useCallback(
     () =>
-      storageRef.current.exportBackup({
+      storageService.exportBackup({
         projects,
         templates,
         deviceLibrary,
@@ -200,12 +221,12 @@ export const useStorageHydration = ({
         activeProjectId: null,
         lastSaved
       }),
-    [deviceLibrary, history, lastSaved, projects, templates]
+    [deviceLibrary, history, lastSaved, projects, templates, storageService]
   );
 
   const exportProjectBackup = useCallback(
     (projectId) =>
-      storageRef.current.exportProjectBackup(
+      storageService.exportProjectBackup(
         {
           projects,
           templates,
@@ -216,7 +237,7 @@ export const useStorageHydration = ({
         },
         projectId
       ),
-    [deviceLibrary, history, lastSaved, projects, templates]
+    [deviceLibrary, history, lastSaved, projects, templates, storageService]
   );
 
   const importBackupFile = useCallback(
@@ -227,7 +248,7 @@ export const useStorageHydration = ({
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = () => {
-          const { state, warnings } = storageRef.current.importBackup(reader.result, {
+          const { state, warnings } = storageService.importBackup(reader.result, {
             projects,
             templates,
             deviceLibrary,
@@ -253,12 +274,14 @@ export const useStorageHydration = ({
       setProjects,
       setTemplates,
       setDeviceLibrary,
-      templates
+      templates,
+      deviceLibrary,
+      storageService
     ]
   );
 
   const restoreFromDeviceBackup = useCallback(async () => {
-    const result = await storageRef.current.restoreFromBackup();
+    const result = await storageService.restoreFromBackup();
     setProjects(result.state.projects);
     setTemplates(result.state.templates);
     setDeviceLibrary(result.state.deviceLibrary);
@@ -269,7 +292,7 @@ export const useStorageHydration = ({
       setStatus(resolveStorageMessage(result.warnings[0]));
       return;
     }
-    const saveResult = await storageRef.current.saveNow(result.state);
+    const saveResult = await storageService.saveNow(result.state);
     if (saveResult?.warnings?.length) {
       setStatus(resolveStorageMessage(saveResult.warnings[0]));
       return;
@@ -286,7 +309,9 @@ export const useStorageHydration = ({
     setProjects,
     setStatus,
     setTemplates,
-    t
+    setDeviceLibrary,
+    t,
+    storageService
   ]);
 
   return {

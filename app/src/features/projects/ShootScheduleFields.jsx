@@ -2,8 +2,8 @@ import { normalizeShootSchedule } from '../../shared/utils/shootSchedule.js';
 
 const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
   const normalized = normalizeShootSchedule(schedule);
-  const addLabel = t('project.shootSchedule.actions.add', 'Add date');
-  const removeLabel = t('project.shootSchedule.actions.remove', 'Remove date');
+  const addLabel = t('project.shootSchedule.actions.add', 'Add period');
+  const removeLabel = t('project.shootSchedule.actions.remove', 'Remove period');
   const startLabel = t('project.shootSchedule.fields.start', 'Start');
   const endLabel = t('project.shootSchedule.fields.end', 'End');
   const emptyRange = { start: '', end: '' };
@@ -52,15 +52,15 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
   return (
     <div className={wrapperClassName}>
       {sections.map((section) => (
-        <div key={section.key} className="flex flex-col gap-2 text-sm text-text-secondary">
+        <div key={section.key} className="flex min-w-0 flex-col gap-2 text-sm text-text-secondary">
           <span>{section.label}</span>
           <div className="flex flex-col gap-2">
             {normalized[section.key].map((value, index) => (
               <div
                 key={`${section.key}-${index}`}
-                className="grid items-center gap-2 md:grid-cols-[1fr_1fr_auto]"
+                className="grid grid-cols-1 items-center gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
               >
-                <label className="flex flex-col gap-1 text-xs text-text-muted">
+                <label className="flex min-w-0 flex-col gap-1 text-xs text-text-muted">
                   <span>{startLabel}</span>
                   <input
                     type="date"
@@ -70,7 +70,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
                     aria-label={`${section.label} ${startLabel} ${index + 1}`}
                   />
                 </label>
-                <label className="flex flex-col gap-1 text-xs text-text-muted">
+                <label className="flex min-w-0 flex-col gap-1 text-xs text-text-muted">
                   <span>{endLabel}</span>
                   <input
                     type="date"
@@ -84,7 +84,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
                   type="button"
                   onClick={() => handleRemove(section.key, index)}
                   disabled={normalized[section.key].length === 1}
-                  className="ui-button ui-button-outline px-3 py-2 text-xs disabled:opacity-40"
+                  className="ui-button ui-button-outline justify-self-start px-3 py-2 text-xs disabled:opacity-40"
                   aria-label={`${removeLabel}: ${section.label}`}
                   title={`${removeLabel}: ${section.label}`}
                 >

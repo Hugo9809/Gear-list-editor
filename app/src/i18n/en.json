@@ -135,8 +135,8 @@
         "end": "End"
       },
       "actions": {
-        "add": "Add date",
-        "remove": "Remove date"
+        "add": "Add period",
+        "remove": "Remove period"
       }
     },
     "workspace": {

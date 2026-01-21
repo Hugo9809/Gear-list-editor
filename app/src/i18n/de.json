@@ -145,8 +145,8 @@
         "end": "Ende"
       },
       "actions": {
-        "add": "Datum hinzufügen",
-        "remove": "Datum entfernen"
+        "add": "Zeitraum hinzufügen",
+        "remove": "Zeitraum entfernen"
       }
     },
     "workspace": {

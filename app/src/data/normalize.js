@@ -11,6 +11,8 @@
 /** @typedef {import('../types.js').History} History */
 /** @typedef {import('../types.js').HistoryEntry} HistoryEntry */
 
+import { getPrimaryShootDate, normalizeShootSchedule } from '../shared/utils/shootSchedule.js';
+
 export const STORAGE_MESSAGE_KEYS = {
   defaults: {
     item: 'defaults.untitled_item',
@@ -99,7 +101,6 @@ export const normalizeItems = (items) => {
       id: typeof item?.id === 'string' && item.id ? item.id : createId(),
       name: rawName || STORAGE_MESSAGE_KEYS.defaults.item,
       quantity: Number.isFinite(parsedQuantity) && parsedQuantity > 0 ? parsedQuantity : 1,
-      unit: normalizeText(item?.unit),
       details: normalizeText(item?.details),
       status: normalizeStatus(item?.status)
     };
@@ -118,7 +119,6 @@ export const normalizeLibraryItems = (items) => {
       id: typeof item?.id === 'string' && item.id ? item.id : createId(),
       name: rawName || STORAGE_MESSAGE_KEYS.defaults.item,
       quantity: Number.isFinite(parsedQuantity) && parsedQuantity > 0 ? parsedQuantity : 1,
-      unit: normalizeText(item?.unit),
       details: normalizeText(item?.details),
       category: normalizeText(item?.category),
       dateAdded: normalizeText(item?.dateAdded) || new Date().toISOString()
@@ -147,7 +147,7 @@ export const normalizeProject = (project) => {
     id: typeof project?.id === 'string' && project.id ? project.id : createId(),
     name: rawName || STORAGE_MESSAGE_KEYS.defaults.project,
     client: normalizeText(project?.client),
-    shootDate: normalizeText(project?.shootDate),
+    shootSchedule: normalizeShootSchedule(project?.shootSchedule ?? project?.shootDate),
     location: normalizeText(project?.location),
     contact: normalizeText(project?.contact),
     notes: normalizeNotes(project?.notes),
@@ -174,7 +174,6 @@ export const normalizeHistory = (history) => {
     items: items
       .map((entry) => ({
         name: normalizeText(entry?.name),
-        unit: normalizeText(entry?.unit),
         details: normalizeText(entry?.details),
         lastUsed: normalizeText(entry?.lastUsed)
       }))
@@ -210,9 +209,8 @@ export const deriveHistoryFromProjects = (projects, baseHistory) => {
       category.items.forEach((item) => {
         items.push({
           name: item.name,
-          unit: item.unit,
           details: item.details,
-          lastUsed: project.shootDate || ''
+          lastUsed: getPrimaryShootDate(project.shootSchedule) || ''
         });
       });
     });

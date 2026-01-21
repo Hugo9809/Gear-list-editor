@@ -33,7 +33,6 @@ describe('useDeviceLibrary', () => {
         const newItemDraft = {
             name: 'New Lens',
             quantity: 2,
-            unit: 'pcs',
             category: 'Lenses',
             details: 'f/2.8'
         };
@@ -52,7 +51,6 @@ describe('useDeviceLibrary', () => {
         expect(newState.items[0]).toMatchObject({
             name: 'New Lens',
             quantity: 2,
-            unit: 'pcs',
             category: 'Lenses',
             details: 'f/2.8'
         });

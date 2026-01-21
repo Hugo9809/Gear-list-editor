@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { getShootScheduleDates } from '../../shared/utils/shootSchedule.js';
+import ShootScheduleFields from './ShootScheduleFields.jsx';
 
 /**
  * Render the project dashboard, quick actions, and backup overview.
@@ -22,12 +24,33 @@ const ProjectDashboard = ({
   showAutoBackups,
   autoBackups,
   resolveStorageSource
-}) => (
-  <>
-    <form
-      onSubmit={onCreateProject}
-      className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6"
-    >
+}) => {
+  const formatScheduleSummary = (schedule) => {
+    const { prepPeriods, shootingPeriods, returnDays } = getShootScheduleDates(schedule);
+    const formatList = (values) => values.join(', ');
+    const parts = [];
+    if (prepPeriods.length) {
+      parts.push(`${t('project.shootSchedule.labels.prep', 'Prep')}: ${formatList(prepPeriods)}`);
+    }
+    if (shootingPeriods.length) {
+      parts.push(
+        `${t('project.shootSchedule.labels.shooting', 'Shoot')}: ${formatList(shootingPeriods)}`
+      );
+    }
+    if (returnDays.length) {
+      parts.push(`${t('project.shootSchedule.labels.return', 'Return')}: ${formatList(returnDays)}`);
+    }
+    return parts.length
+      ? parts.join(' · ')
+      : t('project.shootSchedule.empty', 'Dates not set');
+  };
+
+  return (
+    <>
+      <form
+        onSubmit={onCreateProject}
+        className="ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6"
+      >
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-semibold ui-heading">
           {t('project.dashboard.title', 'Project dashboard')}
@@ -119,15 +142,12 @@ const ProjectDashboard = ({
             className="ui-input ui-input-lg"
           />
         </label>
-        <label className="flex flex-col gap-2 text-sm text-text-secondary">
-          {t('project.fields.shootDate', 'Shoot date')}
-          <input
-            type="date"
-            value={projectDraft.shootDate}
-            onChange={(event) => onProjectDraftChange('shootDate', event.target.value)}
-            className="ui-input ui-input-lg"
-          />
-        </label>
+        <ShootScheduleFields
+          t={t}
+          schedule={projectDraft.shootSchedule}
+          onChange={(value) => onProjectDraftChange('shootSchedule', value)}
+          className="md:col-span-2"
+        />
         <label className="flex flex-col gap-2 text-sm text-text-secondary">
           {t('project.fields.location', 'Location')}
           <input
@@ -202,7 +222,7 @@ const ProjectDashboard = ({
                     </h3>
                     <p className="text-xs text-text-secondary">
                       {project.client || t('project.client.empty', 'Client not set')} ·{' '}
-                      {project.shootDate || t('project.shootDate.empty', 'Date not set')}
+                      {formatScheduleSummary(project.shootSchedule ?? project.shootDate)}
                     </p>
                   </div>
                 </div>
@@ -314,7 +334,8 @@ const ProjectDashboard = ({
         </div>
       </div>
     ) : null}
-  </>
-);
+    </>
+  );
+};
 
 export default ProjectDashboard;

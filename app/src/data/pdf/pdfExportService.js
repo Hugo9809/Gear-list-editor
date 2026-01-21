@@ -17,7 +17,9 @@ export async function exportPdf(project, locale, t, theme) {
     const translations = {
       'project.category.defaultName': t('project.category.defaultName', 'Category'),
       'project.untitled': t('project.untitled', 'Untitled Project'),
-      'project.print.labels.date': t('project.print.labels.date', 'Date'),
+      'project.print.labels.prep': t('project.print.labels.prep', 'Prep'),
+      'project.print.labels.shooting': t('project.print.labels.shooting', 'Shoot'),
+      'project.print.labels.return': t('project.print.labels.return', 'Return'),
       'project.print.labels.location': t('project.print.labels.location', 'Location'),
       'project.print.labels.contact': t('project.print.labels.contact', 'Contact'),
       'project.print.notes.title': t('project.print.notes.title', 'Notes')

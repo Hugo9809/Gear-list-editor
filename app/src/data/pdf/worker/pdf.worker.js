@@ -23,7 +23,7 @@ pdfMake.fonts = {
   }
 };
 
-self.onmessage = (event) => {
+self.onmessage = async (event) => {
   const { snapshot, translations, theme } = event.data;
 
   if (!snapshot) {
@@ -49,10 +49,8 @@ self.onmessage = (event) => {
     }
 
     const generator = pdfMake.createPdf(docDefinition);
-
-    generator.getBlob((blob) => {
-      self.postMessage({ success: true, blob });
-    });
+    const blob = await generator.getBlob();
+    self.postMessage({ success: true, blob });
   } catch (error) {
     console.error('PDF Worker Error:', error);
     self.postMessage({ success: false, error: error.message });

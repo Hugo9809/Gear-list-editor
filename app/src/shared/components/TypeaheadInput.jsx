@@ -13,7 +13,6 @@ const TypeaheadInput = ({
   inputClassName,
   listClassName,
   label,
-  unitFallback = '',
   detailsFallback = ''
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,9 +58,11 @@ const TypeaheadInput = ({
               className="flex w-full flex-col gap-1 px-3 py-2 text-left transition hover:bg-surface-sunken"
             >
               <span className="font-medium text-text-primary">{suggestion.name}</span>
-              <span className="text-xs text-text-secondary">
-                {suggestion.unit || unitFallback} · {suggestion.details || detailsFallback}
-              </span>
+              {(suggestion.details || detailsFallback) && (
+                <span className="text-xs text-text-secondary">
+                  {suggestion.details || detailsFallback}
+                </span>
+              )}
             </button>
           ))}
         </div>

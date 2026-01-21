@@ -13,21 +13,21 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { createId, STORAGE_MESSAGE_KEYS } from '../../data/storage.js';
+import { createEmptyShootSchedule, normalizeShootSchedule } from '../utils/shootSchedule.js';
 
 const emptyItemDraft = {
   name: '',
   quantity: 1,
-  unit: '',
   details: ''
 };
 
-const emptyProjectDraft = {
+const createEmptyProjectDraft = () => ({
   name: '',
   client: '',
-  shootDate: '',
+  shootSchedule: createEmptyShootSchedule(),
   location: '',
   contact: ''
-};
+});
 
 const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
 
@@ -39,7 +39,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
   const [projects, setProjects] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
   // activeProjectId and activeProject logic removed in favor of URL state
-  const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
+  const [projectDraft, setProjectDraft] = useState(createEmptyProjectDraft);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [itemDrafts, setItemDrafts] = useState({});
 
@@ -103,7 +103,6 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         const existing = index >= 0 ? nextItems[index] : null;
         const updated = {
           name,
-          unit: normalizeText(item?.unit) || existing?.unit || '',
           details: normalizeText(item?.details) || existing?.details || '',
           lastUsed: new Date().toISOString()
         };
@@ -122,7 +121,6 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         return;
       }
 
-      const unit = normalizeText(item?.unit);
       const details = normalizeText(item?.details);
       const quantity = Math.max(1, Number(item?.quantity) || 1);
       const category = normalizeCategory(categoryName || item?.category);
@@ -135,22 +133,20 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         );
         if (existingIndex >= 0) {
           const existing = items[existingIndex] || {};
-          const existingUnit = normalizeText(existing.unit);
           const existingDetails = normalizeText(existing.details);
           const existingCategory = normalizeText(existing.category);
           const hasValidQuantity =
             Number.isFinite(Number(existing.quantity)) && Number(existing.quantity) > 0;
+          const { unit: _ignoredUnit, ...rest } = existing;
           const merged = {
-            ...existing,
+            ...rest,
             name,
-            unit: existingUnit || unit,
             details: existingDetails || details,
             category: existingCategory || category,
             quantity: hasValidQuantity ? Number(existing.quantity) : quantity
           };
           if (
             existing.name === merged.name &&
-            existing.unit === merged.unit &&
             existing.details === merged.details &&
             existing.category === merged.category &&
             Number(existing.quantity) === merged.quantity
@@ -172,7 +168,6 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
               id: createId(),
               name,
               quantity,
-              unit,
               details,
               category,
               dateAdded: new Date().toISOString()
@@ -275,14 +270,14 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         id: createId(),
         name,
         client: projectDraft.client.trim(),
-        shootDate: projectDraft.shootDate.trim(),
+        shootSchedule: normalizeShootSchedule(projectDraft.shootSchedule),
         location: projectDraft.location.trim(),
         contact: projectDraft.contact.trim(),
         notes: '',
         categories: []
       };
       setProjects((prev) => [newProject, ...prev]);
-      setProjectDraft(emptyProjectDraft);
+      setProjectDraft(createEmptyProjectDraft());
       setStatus(t('status.projectCreated', 'New project created and protected by autosave.'));
       return newProject.id;
     },
@@ -343,7 +338,6 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         id: createId(),
         name,
         quantity: Math.max(1, Number(draft.quantity) || 1),
-        unit: draft.unit.trim(),
         details: draft.details.trim(),
         status: 'needed'
       };
@@ -479,7 +473,6 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
       [categoryId]: {
         ...(prev[categoryId] || emptyItemDraft),
         name: suggestion.name,
-        unit: suggestion.unit || '',
         details: suggestion.details || ''
       }
     }));
@@ -490,7 +483,6 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
       const categoryName = getCategoryName(projectId, categoryId);
       const updated = {
         name: suggestion.name,
-        unit: suggestion.unit || '',
         details: suggestion.details || ''
       };
       updateItem(projectId, categoryId, itemId, (item) => ({

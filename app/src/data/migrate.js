@@ -171,21 +171,26 @@ export const validationSamples = () => ({
         id: 'sample-project',
         name: 'Demo shoot',
         client: 'Studio A',
+        shootSchedule: {
+          prepPeriods: ['2025-01-10'],
+          shootingPeriods: ['2025-01-12'],
+          returnDays: ['2025-01-13']
+        },
         categories: [
-          {
-            id: 'cat-1',
-            name: 'Camera',
-            items: [
-              { id: 'sample-item', name: 'Camera body', quantity: 1, unit: 'pcs', details: 'FX6' }
-            ]
-          }
-        ]
-      }
+            {
+              id: 'cat-1',
+              name: 'Camera',
+              items: [
+              { id: 'sample-item', name: 'Camera body', quantity: 1, details: 'FX6' }
+              ]
+            }
+          ]
+        }
     ],
     templates: [],
     history: {
       items: [
-        { name: 'Camera body', unit: 'pcs', details: 'FX6', lastUsed: new Date().toISOString() }
+        { name: 'Camera body', details: 'FX6', lastUsed: new Date().toISOString() }
       ],
       categories: ['Camera']
     },

@@ -81,7 +81,7 @@ describe('storageService importBackup', () => {
     const currentState = {
       ...createEmptyState(),
       deviceLibrary: {
-        items: [{ id: 'item-1', name: 'Lens', quantity: 1, unit: 'pcs', details: '85mm' }]
+        items: [{ id: 'item-1', name: 'Lens', quantity: 1, details: '85mm' }]
       }
     };
     const rawText = JSON.stringify({
@@ -89,7 +89,7 @@ describe('storageService importBackup', () => {
       projects: [],
       templates: [],
       deviceLibrary: {
-        items: [{ id: 'item-2', name: 'Camera', quantity: 1, unit: 'pcs', details: 'FX3' }]
+        items: [{ id: 'item-2', name: 'Camera', quantity: 1, details: 'FX3' }]
       },
       history: { items: [], categories: [] }
     });

@@ -1,4 +1,5 @@
 import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
+import ShootScheduleFields from './ShootScheduleFields.jsx';
 
 /**
  * Render the active project workspace with categories, items, and notes.
@@ -95,15 +96,12 @@ const ProjectWorkspace = ({
               className="ui-input ui-input-lg"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm text-text-secondary">
-            {t('project.fields.shootDate', 'Shoot date')}
-            <input
-              type="date"
-              value={activeProject.shootDate}
-              onChange={(event) => onUpdateProjectField('shootDate', event.target.value)}
-              className="ui-input ui-input-lg"
-            />
-          </label>
+          <ShootScheduleFields
+            t={t}
+            schedule={activeProject.shootSchedule ?? activeProject.shootDate}
+            onChange={(value) => onUpdateProjectField('shootSchedule', value)}
+            className="md:col-span-2"
+          />
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
             {t('project.fields.location', 'Location')}
             <input
@@ -229,19 +227,18 @@ const ProjectWorkspace = ({
                     />
                     <span className="text-sm font-semibold text-text-muted">×</span>
                     <div className="min-w-0 flex-1">
-                      <TypeaheadInput
-                        value={getItemDraft(category.id).name}
-                        onChange={(value) => onUpdateDraftItem(category.id, 'name', value)}
-                        onSelectSuggestion={(suggestion) =>
-                          onApplySuggestionToDraft(category.id, suggestion)
-                        }
-                        suggestions={itemSuggestions}
-                        placeholder={t('items.fields.name', 'Item name')}
-                        label={t('items.fields.name', 'Item name')}
-                        unitFallback={t('items.suggestion.unitFallback')}
-                        detailsFallback={t('items.suggestion.detailsFallback')}
-                        inputClassName="ui-input px-3 py-2"
-                      />
+                        <TypeaheadInput
+                          value={getItemDraft(category.id).name}
+                          onChange={(value) => onUpdateDraftItem(category.id, 'name', value)}
+                          onSelectSuggestion={(suggestion) =>
+                            onApplySuggestionToDraft(category.id, suggestion)
+                          }
+                          suggestions={itemSuggestions}
+                          placeholder={t('items.fields.name', 'Item name')}
+                          label={t('items.fields.name', 'Item name')}
+                          detailsFallback={t('items.suggestion.detailsFallback')}
+                          inputClassName="ui-input px-3 py-2"
+                        />
                     </div>
                   </div>
                   <input
@@ -300,7 +297,6 @@ const ProjectWorkspace = ({
                               suggestions={itemSuggestions}
                               placeholder={t('items.fields.name', 'Item name')}
                               label={t('items.fields.name', 'Item name')}
-                              unitFallback={t('items.suggestion.unitFallback')}
                               detailsFallback={t('items.suggestion.detailsFallback')}
                               inputClassName="ui-input px-3 py-2"
                             />

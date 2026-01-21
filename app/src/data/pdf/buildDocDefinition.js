@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { getShootScheduleDates } from '../../shared/utils/shootSchedule.js';
 
 /**
  * Build pdfmake document definition from export snapshot.
@@ -10,6 +11,7 @@ import { format } from 'date-fns';
 export function buildDocDefinition(snapshot, t, theme) {
   const { project } = snapshot.data;
   const categories = project.categories || [];
+  const shootSchedule = getShootScheduleDates(project.shootSchedule ?? project.shootDate);
 
   // Theme Configuration
   const isPinkMode = theme === 'pink';
@@ -27,6 +29,8 @@ export function buildDocDefinition(snapshot, t, theme) {
       return dateStr;
     }
   };
+  const formatDateList = (values) =>
+    values.length ? values.map((value) => formatDate(value)).join(', ') : '—';
 
   // Helper: Check if category is a Camera category
   // const isCameraCategory = (name) => {
@@ -155,7 +159,9 @@ export function buildDocDefinition(snapshot, t, theme) {
           {
             width: 'auto',
             stack: [
-              { text: t('project.print.labels.date', 'Date'), bold: true },
+              { text: t('project.print.labels.prep', 'Prep'), bold: true },
+              { text: t('project.print.labels.shooting', 'Shoot'), bold: true },
+              { text: t('project.print.labels.return', 'Return'), bold: true },
               { text: t('project.print.labels.location', 'Location'), bold: true },
               { text: t('project.print.labels.contact', 'Contact'), bold: true }
             ]
@@ -163,7 +169,9 @@ export function buildDocDefinition(snapshot, t, theme) {
           {
             width: '*',
             stack: [
-              { text: formatDate(project.shootDate) },
+              { text: formatDateList(shootSchedule.prepPeriods) },
+              { text: formatDateList(shootSchedule.shootingPeriods) },
+              { text: formatDateList(shootSchedule.returnDays) },
               { text: formatValue(project.location) || '—' },
               { text: formatValue(project.contact) || '—' }
             ],

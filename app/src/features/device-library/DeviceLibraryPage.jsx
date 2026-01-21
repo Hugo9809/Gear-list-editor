@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ArrowDownTrayIcon,
     ArrowPathIcon,
@@ -27,6 +27,8 @@ export default function DeviceLibraryPage({
 
     const [editingItem, setEditingItem] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategory, setActiveCategory] = useState('all');
     const fileInputRef = useRef(null);
 
     const libraryStats = useMemo(() => {
@@ -53,6 +55,49 @@ export default function DeviceLibraryPage({
             lastAdded: latestTimestamp ? new Date(latestTimestamp).toLocaleDateString() : null
         };
     }, [libraryItems]);
+
+    const categoryOptions = useMemo(() => {
+        const categories = new Set();
+        libraryItems.forEach((item) => {
+            if (item.category) {
+                categories.add(item.category);
+            }
+        });
+        return Array.from(categories).sort((a, b) => a.localeCompare(b));
+    }, [libraryItems]);
+
+    useEffect(() => {
+        if (activeCategory === 'all') {
+            return;
+        }
+        const matchedCategory = categoryOptions.find(
+            (category) => category.toLowerCase() === activeCategory.toLowerCase()
+        );
+        if (!matchedCategory) {
+            setActiveCategory('all');
+        } else if (matchedCategory !== activeCategory) {
+            setActiveCategory(matchedCategory);
+        }
+    }, [activeCategory, categoryOptions]);
+
+    const filteredItems = useMemo(() => {
+        const normalizedQuery = searchQuery.trim().toLowerCase();
+        const normalizedCategory = activeCategory.toLowerCase();
+        return libraryItems.filter((item) => {
+            const itemCategory = (item.category || '').toLowerCase();
+            if (normalizedCategory !== 'all' && itemCategory !== normalizedCategory) {
+                return false;
+            }
+            if (!normalizedQuery) {
+                return true;
+            }
+            const haystack = [item.name, item.category, item.details]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+            return haystack.includes(normalizedQuery);
+        });
+    }, [activeCategory, libraryItems, searchQuery]);
 
     const handleSave = (draft) => {
         if (editingItem) {
@@ -197,7 +242,7 @@ export default function DeviceLibraryPage({
                 </div>
                 <div className="ui-panel bg-surface-muted/60 p-4">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-                        {t('library.stats.quantities', 'Total units')}
+                        {t('library.stats.quantities', 'Total quantity')}
                     </p>
                     <p className="text-2xl font-semibold ui-heading">{libraryStats.totalQuantity}</p>
                     <p className="text-xs text-text-secondary">
@@ -206,10 +251,50 @@ export default function DeviceLibraryPage({
                 </div>
             </div>
 
-            <div className="mt-6 ui-panel bg-surface-base/80 p-4">
+            <div className="mt-6 ui-panel bg-surface-muted/60 p-4">
+                <div className="grid gap-4 md:grid-cols-[2fr_1fr_auto] md:items-end">
+                    <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
+                        {t('library.search.label', 'Search library')}
+                        <input
+                            value={searchQuery}
+                            onChange={(event) => setSearchQuery(event.target.value)}
+                            placeholder={t('library.search.placeholder', 'Search gear, details, categories')}
+                            className="ui-input"
+                        />
+                    </label>
+                    <label className="flex flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
+                        {t('library.filter.label', 'Filter by category')}
+                        <select
+                            value={activeCategory}
+                            onChange={(event) => setActiveCategory(event.target.value)}
+                            className="ui-select"
+                        >
+                            <option value="all">{t('library.filter.all', 'All categories')}</option>
+                            {categoryOptions.map((category) => (
+                                <option key={category} value={category}>
+                                    {category}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <div className="text-xs text-text-muted">
+                        {t('library.results', 'Showing {count} of {total}', {
+                            count: filteredItems.length,
+                            total: libraryItems.length
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-4 ui-panel bg-surface-base/80 p-4">
                 <DeviceList
                     t={t}
-                    items={libraryItems}
+                    items={filteredItems}
+                    emptyMessage={
+                        libraryItems.length === 0
+                            ? t('library.empty', 'Your device library is empty. Add items to track them globally.')
+                            : t('library.emptyFiltered', 'No items match these filters. Try adjusting the search.')
+                    }
                     onEdit={setEditingItem}
                     onDelete={handleDelete}
                 />

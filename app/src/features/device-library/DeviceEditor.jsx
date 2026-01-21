@@ -4,7 +4,6 @@ export default function DeviceEditor({ t, item, onSave, onCancel }) {
     const [draft, setDraft] = useState({
         name: '',
         quantity: 1,
-        unit: '',
         category: '',
         details: ''
     });
@@ -15,7 +14,6 @@ export default function DeviceEditor({ t, item, onSave, onCancel }) {
         const target = item || {
             name: '',
             quantity: 1,
-            unit: '',
             category: '',
             details: ''
         };
@@ -26,7 +24,6 @@ export default function DeviceEditor({ t, item, onSave, onCancel }) {
                 return {
                     name: target.name || '',
                     quantity: target.quantity || 1,
-                    unit: target.unit || '',
                     category: target.category || '',
                     details: target.details || ''
                 };
@@ -73,32 +70,18 @@ export default function DeviceEditor({ t, item, onSave, onCancel }) {
                         />
                     </label>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                            {t('item.quantity', 'Quantity')}
-                            <input
-                                type="number"
-                                name="quantity"
-                                id="quantity"
-                                min="1"
-                                value={draft.quantity}
-                                onChange={handleChange}
-                                className="ui-input"
-                            />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm text-text-secondary">
-                            {t('item.unit', 'Unit')}
-                            <input
-                                type="text"
-                                name="unit"
-                                id="unit"
-                                value={draft.unit}
-                                onChange={handleChange}
-                                placeholder={t('library.unitPlaceholder', 'pcs, kg, days')}
-                                className="ui-input"
-                            />
-                        </label>
-                    </div>
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
+                        {t('item.quantity', 'Quantity')}
+                        <input
+                            type="number"
+                            name="quantity"
+                            id="quantity"
+                            min="1"
+                            value={draft.quantity}
+                            onChange={handleChange}
+                            className="ui-input"
+                        />
+                    </label>
 
                     <label className="flex flex-col gap-2 text-sm text-text-secondary">
                         {t('library.category', 'Category')}

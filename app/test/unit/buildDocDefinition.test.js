@@ -33,7 +33,7 @@ describe('buildDocDefinition', () => {
           categories: [
             {
               name: 'Camera',
-              items: [{ quantity: 2, unit: 'pcs', name: 'Body', details: 'Serial 123' }]
+              items: [{ quantity: 2, name: 'Body', details: 'Serial 123' }]
             }
           ]
         }

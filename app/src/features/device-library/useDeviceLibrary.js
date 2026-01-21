@@ -28,7 +28,6 @@ export const useDeviceLibrary = ({ deviceLibrary, setDeviceLibrary, t, setStatus
     return {
       name,
       quantity,
-      unit: typeof draft?.unit === 'string' ? draft.unit.trim() : existing?.unit || '',
       details: typeof draft?.details === 'string' ? draft.details.trim() : existing?.details || '',
       category: typeof draft?.category === 'string' ? draft.category.trim() : existing?.category || ''
     };

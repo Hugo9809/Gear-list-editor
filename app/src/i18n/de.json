@@ -96,7 +96,9 @@
     "fields": {
       "name": "Projektname",
       "client": "Kunde / Produktion",
-      "shootDate": "Drehtag",
+      "prepPeriod": "Vorbereitung",
+      "shootingPeriod": "Drehzeitraum",
+      "returnDay": "Rückgabetag",
       "location": "Ort",
       "contact": "Hauptkontakt"
     },
@@ -131,8 +133,17 @@
     "client": {
       "empty": "Kunde nicht gesetzt"
     },
-    "shootDate": {
-      "empty": "Datum nicht gesetzt"
+    "shootSchedule": {
+      "empty": "Keine Termine gesetzt",
+      "labels": {
+        "prep": "Prep",
+        "shooting": "Dreh",
+        "return": "Rückgabe"
+      },
+      "actions": {
+        "add": "Datum hinzufügen",
+        "remove": "Datum entfernen"
+      }
     },
     "workspace": {
       "title": "Arbeitsbereich für das aktive Projekt",
@@ -149,7 +160,9 @@
     "print": {
       "labels": {
         "client": "Kunde",
-        "date": "Datum",
+        "prep": "Prep",
+        "shooting": "Dreh",
+        "return": "Rückgabe",
         "location": "Ort",
         "contact": "Kontakt"
       },
@@ -218,7 +231,6 @@
     "label": "Items",
     "fields": {
       "name": "Item-Name",
-      "unit": "Einheit",
       "details": "Details / Notizen"
     },
     "actions": {
@@ -227,7 +239,6 @@
     },
     "empty": "Noch keine Items. Füge oben das erste Item hinzu.",
     "suggestion": {
-      "unitFallback": "Stk.",
       "detailsFallback": "Keine Details gespeichert"
     },
     "count": {
@@ -237,16 +248,12 @@
     "print": {
       "headers": {
         "quantity": "Menge",
-        "unit": "Einheit",
         "item": "Item",
         "details": "Details",
         "status": "Status"
       },
       "empty": "Keine Items aufgeführt."
     }
-  },
-  "units": {
-    "pcs": "Stk."
   },
   "defaults": {
     "untitled_item": "Unbenanntes Item {index}",

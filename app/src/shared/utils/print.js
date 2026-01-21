@@ -1,4 +1,5 @@
 import { getDictionary, translate } from '../../i18n/index.js';
+import { getShootScheduleDates } from './shootSchedule.js';
 
 /**
  * Escape content for safe injection into printable HTML markup.
@@ -26,6 +27,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
     typeof value === 'string' && value.startsWith('defaults.')
       ? t(value, undefined, variables)
       : value || '';
+  const shootSchedule = getShootScheduleDates(project.shootSchedule ?? project.shootDate);
+  const formatScheduleList = (values) =>
+    values.length ? values.join(', ') : t('ui.emptyValue', '—');
   const categoriesHtml = project.categories
     .map((category, categoryIndex) => {
       const rows = category.items
@@ -33,7 +37,6 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
           (item, itemIndex) => `
             <tr>
               <td>${escapeHtml(item.quantity)}</td>
-              <td>${escapeHtml(item.unit || t('units.pcs'))}</td>
               <td>${escapeHtml(
                 resolveLabel(item.name, { index: itemIndex + 1 }) ||
                   t('defaults.untitled_item', undefined, { index: itemIndex + 1 })
@@ -53,13 +56,12 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
             <thead>
               <tr>
                 <th>${escapeHtml(t('items.print.headers.quantity'))}</th>
-                <th>${escapeHtml(t('items.print.headers.unit'))}</th>
                 <th>${escapeHtml(t('items.print.headers.item'))}</th>
                 <th>${escapeHtml(t('items.print.headers.details'))}</th>
               </tr>
             </thead>
             <tbody>
-              ${rows || `<tr><td colspan="4">${escapeHtml(t('items.print.empty'))}</td></tr>`}
+              ${rows || `<tr><td colspan="3">${escapeHtml(t('items.print.empty'))}</td></tr>`}
             </tbody>
           </table>
         </section>
@@ -136,7 +138,9 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
           )}</h1>
           <div class="meta">
             <div><strong>${escapeHtml(t('project.print.labels.client'))}:</strong> ${escapeHtml(project.client || t('ui.emptyValue', '—'))}</div>
-            <div><strong>${escapeHtml(t('project.print.labels.date'))}:</strong> ${escapeHtml(project.shootDate || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.prep'))}:</strong> ${escapeHtml(formatScheduleList(shootSchedule.prepPeriods))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.shooting'))}:</strong> ${escapeHtml(formatScheduleList(shootSchedule.shootingPeriods))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.return'))}:</strong> ${escapeHtml(formatScheduleList(shootSchedule.returnDays))}</div>
             <div><strong>${escapeHtml(t('project.print.labels.location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
             <div><strong>${escapeHtml(t('project.print.labels.contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
           </div>

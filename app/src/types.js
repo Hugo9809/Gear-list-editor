@@ -17,7 +17,6 @@
  * @property {string} id - Unique identifier (UUID)
  * @property {string} name - Item name
  * @property {number} quantity - Quantity (positive integer, minimum 1)
- * @property {string} unit - Unit of measurement (e.g., "pcs", "m", "kg")
  * @property {string} details - Additional notes/details for the item
  * @property {ItemStatus} status - Current status of the item
  */
@@ -31,11 +30,18 @@
  */
 
 /**
+ * @typedef {Object} ShootSchedule
+ * @property {string[]} prepPeriods - Prep period dates
+ * @property {string[]} shootingPeriods - Shooting period dates
+ * @property {string[]} returnDays - Return day dates
+ */
+
+/**
  * @typedef {Object} Project
  * @property {string} id - Unique identifier (UUID)
  * @property {string} name - Project name
  * @property {string} client - Client name
- * @property {string} shootDate - Date of the shoot (ISO string or formatted date)
+ * @property {ShootSchedule} shootSchedule - Prep, shooting, and return dates
  * @property {string} location - Shoot location
  * @property {string} contact - Contact person/info
  * @property {string} notes - Project-level notes
@@ -55,7 +61,6 @@
 /**
  * @typedef {Object} HistoryEntry
  * @property {string} name - Item name for autocomplete
- * @property {string} unit - Default unit
  * @property {string} details - Default details
  * @property {string} lastUsed - ISO timestamp of last usage
  */
@@ -71,7 +76,6 @@
  * @property {string} id - Unique identifier (UUID)
  * @property {string} name - Item name
  * @property {number} quantity - Default quantity
- * @property {string} unit - Default unit
  * @property {string} details - Default details
  * @property {string} category - Category name for grouping
  * @property {string} dateAdded - ISO timestamp of when item was added
@@ -172,7 +176,6 @@
  * @typedef {Object} ItemDraft
  * @property {string} name - Draft item name
  * @property {number|string} quantity - Draft quantity (can be string input before parsing)
- * @property {string} unit - Draft unit
  * @property {string} details - Draft details
  */
 
@@ -180,7 +183,7 @@
  * @typedef {Object} ProjectDraft
  * @property {string} name - Draft project name
  * @property {string} client - Draft client
- * @property {string} shootDate - Draft shoot date
+ * @property {ShootSchedule} shootSchedule - Draft shoot schedule
  * @property {string} location - Draft location
  * @property {string} contact - Draft contact
  */
@@ -200,7 +203,7 @@
  * @property {History} history - Autocomplete history
  * @property {(history: History) => void} setHistory - Direct setter for history
  * @property {ProjectDraft} projectDraft - Current new-project draft
- * @property {(field: string, value: string) => void} updateProjectDraftField - Update draft field
+ * @property {(field: string, value: string | ShootSchedule) => void} updateProjectDraftField - Update draft field
  * @property {(event: Event) => string|null} addProject - Create new project, returns ID or null
  * @property {(projectId: string) => void} deleteProject - Delete a project
  * @property {string} newCategoryName - Current new-category name
@@ -214,7 +217,7 @@
  * @property {(projectId: string, categoryId: string, itemId: string) => void} removeItem - Remove item
  * @property {(projectId: string, categoryId: string, itemId: string, field: string, value: any) => void} updateItemField - Update item
  * @property {(projectId: string, categoryId: string, field: string, value: string) => void} updateCategoryField - Update category
- * @property {(projectId: string, field: string, value: string) => void} updateProjectField - Update project
+ * @property {(projectId: string, field: string, value: string | ShootSchedule) => void} updateProjectField - Update project
  * @property {(projectId: string, value: string) => void} updateProjectNotes - Update project notes
  * @property {(categoryId: string, suggestion: HistoryEntry) => void} applySuggestionToDraft - Apply suggestion to draft
  * @property {(projectId: string, categoryId: string, itemId: string, suggestion: HistoryEntry) => void} applySuggestionToItem - Apply suggestion to item

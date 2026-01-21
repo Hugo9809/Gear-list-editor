@@ -86,7 +86,9 @@
     "fields": {
       "name": "Project name",
       "client": "Client / production",
-      "shootDate": "Shoot date",
+      "prepPeriod": "Prep period",
+      "shootingPeriod": "Shooting period",
+      "returnDay": "Return day",
       "location": "Location",
       "contact": "Lead contact"
     },
@@ -121,8 +123,17 @@
     "client": {
       "empty": "Client not set"
     },
-    "shootDate": {
-      "empty": "Date not set"
+    "shootSchedule": {
+      "empty": "Dates not set",
+      "labels": {
+        "prep": "Prep",
+        "shooting": "Shoot",
+        "return": "Return"
+      },
+      "actions": {
+        "add": "Add date",
+        "remove": "Remove date"
+      }
     },
     "workspace": {
       "title": "Active project workspace",
@@ -139,7 +150,9 @@
     "print": {
       "labels": {
         "client": "Client",
-        "date": "Date",
+        "prep": "Prep",
+        "shooting": "Shoot",
+        "return": "Return",
         "location": "Location",
         "contact": "Contact"
       },
@@ -208,7 +221,6 @@
     "label": "Items",
     "fields": {
       "name": "Item name",
-      "unit": "Unit",
       "details": "Details / notes"
     },
     "actions": {
@@ -217,7 +229,6 @@
     },
     "empty": "No items yet. Add the first item above.",
     "suggestion": {
-      "unitFallback": "pcs",
       "detailsFallback": "No details saved"
     },
     "count": {
@@ -227,16 +238,12 @@
     "print": {
       "headers": {
         "quantity": "Qty",
-        "unit": "Unit",
         "item": "Item",
         "details": "Details",
         "status": "Status"
       },
       "empty": "No items listed."
     }
-  },
-  "units": {
-    "pcs": "pcs"
   },
   "defaults": {
     "untitled_item": "Untitled item {index}",

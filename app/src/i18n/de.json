@@ -140,6 +140,10 @@
         "shooting": "Dreh",
         "return": "Rückgabe"
       },
+      "fields": {
+        "start": "Start",
+        "end": "Ende"
+      },
       "actions": {
         "add": "Datum hinzufügen",
         "remove": "Datum entfernen"

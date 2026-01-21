@@ -27,18 +27,25 @@ const ProjectDashboard = ({
 }) => {
   const formatScheduleSummary = (schedule) => {
     const { prepPeriods, shootingPeriods, returnDays } = getShootScheduleDates(schedule);
-    const formatList = (values) => values.join(', ');
+    const formatRange = (range) => {
+      if (range.start && range.end) {
+        return `${range.start} - ${range.end}`;
+      }
+      return range.start || range.end || '';
+    };
+    const formatList = (values) => values.map(formatRange).filter(Boolean).join(', ');
     const parts = [];
-    if (prepPeriods.length) {
-      parts.push(`${t('project.shootSchedule.labels.prep', 'Prep')}: ${formatList(prepPeriods)}`);
+    const prepList = formatList(prepPeriods);
+    const shootingList = formatList(shootingPeriods);
+    const returnList = formatList(returnDays);
+    if (prepList) {
+      parts.push(`${t('project.shootSchedule.labels.prep', 'Prep')}: ${prepList}`);
     }
-    if (shootingPeriods.length) {
-      parts.push(
-        `${t('project.shootSchedule.labels.shooting', 'Shoot')}: ${formatList(shootingPeriods)}`
-      );
+    if (shootingList) {
+      parts.push(`${t('project.shootSchedule.labels.shooting', 'Shoot')}: ${shootingList}`);
     }
-    if (returnDays.length) {
-      parts.push(`${t('project.shootSchedule.labels.return', 'Return')}: ${formatList(returnDays)}`);
+    if (returnList) {
+      parts.push(`${t('project.shootSchedule.labels.return', 'Return')}: ${returnList}`);
     }
     return parts.length
       ? parts.join(' · ')

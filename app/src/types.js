@@ -30,10 +30,16 @@
  */
 
 /**
+ * @typedef {Object} ShootScheduleEntry
+ * @property {string} start - Start date
+ * @property {string} end - End date
+ */
+
+/**
  * @typedef {Object} ShootSchedule
- * @property {string[]} prepPeriods - Prep period dates
- * @property {string[]} shootingPeriods - Shooting period dates
- * @property {string[]} returnDays - Return day dates
+ * @property {ShootScheduleEntry[]} prepPeriods - Prep period ranges
+ * @property {ShootScheduleEntry[]} shootingPeriods - Shooting period ranges
+ * @property {ShootScheduleEntry[]} returnDays - Return day ranges
  */
 
 /**

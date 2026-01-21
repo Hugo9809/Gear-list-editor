@@ -1,36 +1,61 @@
 const normalizeEntry = (value) => (typeof value === 'string' ? value.trim() : '');
 
-const normalizeList = (value, keepEmpty) => {
+const createEmptyRange = () => ({ start: '', end: '' });
+
+const normalizeRange = (value) => {
   if (typeof value === 'string') {
-    const normalized = normalizeEntry(value);
-    if (!normalized) {
-      return keepEmpty ? [''] : [];
+    return { start: normalizeEntry(value), end: '' };
+  }
+  if (Array.isArray(value)) {
+    return {
+      start: normalizeEntry(value[0]),
+      end: normalizeEntry(value[1])
+    };
+  }
+  if (value && typeof value === 'object') {
+    return {
+      start: normalizeEntry(value.start ?? value.from ?? value.begin),
+      end: normalizeEntry(value.end ?? value.to ?? value.until)
+    };
+  }
+  return createEmptyRange();
+};
+
+const rangeHasValue = (range) => Boolean(range?.start || range?.end);
+
+const normalizeList = (value, keepEmpty) => {
+  if (Array.isArray(value)) {
+    const normalized = value.map(normalizeRange);
+    if (!keepEmpty) {
+      return normalized.filter(rangeHasValue);
     }
-    return [normalized];
+    return normalized.length ? normalized : [createEmptyRange()];
   }
-  if (!Array.isArray(value)) {
-    return keepEmpty ? [''] : [];
+
+  if (value === null || value === undefined) {
+    return keepEmpty ? [createEmptyRange()] : [];
   }
-  const normalized = value.map(normalizeEntry);
-  if (!keepEmpty) {
-    return normalized.filter(Boolean);
+
+  const normalizedRange = normalizeRange(value);
+  if (!keepEmpty && !rangeHasValue(normalizedRange)) {
+    return [];
   }
-  return normalized.length ? normalized : [''];
+  return [normalizedRange];
 };
 
 export const createEmptyShootSchedule = () => ({
-  prepPeriods: [''],
-  shootingPeriods: [''],
-  returnDays: ['']
+  prepPeriods: [createEmptyRange()],
+  shootingPeriods: [createEmptyRange()],
+  returnDays: [createEmptyRange()]
 });
 
 export const normalizeShootSchedule = (schedule, { keepEmpty = true } = {}) => {
   if (typeof schedule === 'string') {
     const trimmed = normalizeEntry(schedule);
     return {
-      prepPeriods: keepEmpty ? [''] : [],
-      shootingPeriods: keepEmpty ? [trimmed] : trimmed ? [trimmed] : [],
-      returnDays: keepEmpty ? [''] : []
+      prepPeriods: keepEmpty ? [createEmptyRange()] : [],
+      shootingPeriods: normalizeList(trimmed, keepEmpty),
+      returnDays: keepEmpty ? [createEmptyRange()] : []
     };
   }
 
@@ -57,10 +82,11 @@ export const getShootScheduleDates = (schedule) =>
 
 export const getPrimaryShootDate = (schedule) => {
   const normalized = getShootScheduleDates(schedule);
+  const resolveRangeDate = (range) => range?.start || range?.end || '';
   return (
-    normalized.shootingPeriods[0] ||
-    normalized.prepPeriods[0] ||
-    normalized.returnDays[0] ||
+    resolveRangeDate(normalized.shootingPeriods[0]) ||
+    resolveRangeDate(normalized.prepPeriods[0]) ||
+    resolveRangeDate(normalized.returnDays[0]) ||
     ''
   );
 };

@@ -4,6 +4,9 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
   const normalized = normalizeShootSchedule(schedule);
   const addLabel = t('project.shootSchedule.actions.add', 'Add date');
   const removeLabel = t('project.shootSchedule.actions.remove', 'Remove date');
+  const startLabel = t('project.shootSchedule.fields.start', 'Start');
+  const endLabel = t('project.shootSchedule.fields.end', 'End');
+  const emptyRange = { start: '', end: '' };
 
   const sections = [
     {
@@ -21,7 +24,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
   ];
 
   const updateSchedule = (key, nextValues) => {
-    const safeValues = nextValues.length ? nextValues : [''];
+    const safeValues = nextValues.length ? nextValues : [{ ...emptyRange }];
     onChange({
       ...normalized,
       [key]: safeValues
@@ -29,7 +32,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
   };
 
   const handleAdd = (key) => {
-    updateSchedule(key, [...normalized[key], '']);
+    updateSchedule(key, [...normalized[key], { ...emptyRange }]);
   };
 
   const handleRemove = (key, index) => {
@@ -37,9 +40,9 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
     updateSchedule(key, nextValues);
   };
 
-  const handleChange = (key, index, value) => {
+  const handleChange = (key, index, field, value) => {
     const nextValues = normalized[key].map((entry, valueIndex) =>
-      valueIndex === index ? value : entry
+      valueIndex === index ? { ...entry, [field]: value } : entry
     );
     updateSchedule(key, nextValues);
   };
@@ -53,14 +56,30 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
           <span>{section.label}</span>
           <div className="flex flex-col gap-2">
             {normalized[section.key].map((value, index) => (
-              <div key={`${section.key}-${index}`} className="flex items-center gap-2">
-                <input
-                  type="date"
-                  value={value}
-                  onChange={(event) => handleChange(section.key, index, event.target.value)}
-                  className="ui-input ui-input-lg flex-1"
-                  aria-label={`${section.label} ${index + 1}`}
-                />
+              <div
+                key={`${section.key}-${index}`}
+                className="grid items-center gap-2 md:grid-cols-[1fr_1fr_auto]"
+              >
+                <label className="flex flex-col gap-1 text-xs text-text-muted">
+                  <span>{startLabel}</span>
+                  <input
+                    type="date"
+                    value={value.start}
+                    onChange={(event) => handleChange(section.key, index, 'start', event.target.value)}
+                    className="ui-input ui-input-lg"
+                    aria-label={`${section.label} ${startLabel} ${index + 1}`}
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-xs text-text-muted">
+                  <span>{endLabel}</span>
+                  <input
+                    type="date"
+                    value={value.end}
+                    onChange={(event) => handleChange(section.key, index, 'end', event.target.value)}
+                    className="ui-input ui-input-lg"
+                    aria-label={`${section.label} ${endLabel} ${index + 1}`}
+                  />
+                </label>
                 <button
                   type="button"
                   onClick={() => handleRemove(section.key, index)}

@@ -172,9 +172,9 @@ export const validationSamples = () => ({
         name: 'Demo shoot',
         client: 'Studio A',
         shootSchedule: {
-          prepPeriods: ['2025-01-10'],
-          shootingPeriods: ['2025-01-12'],
-          returnDays: ['2025-01-13']
+          prepPeriods: [{ start: '2025-01-10', end: '2025-01-11' }],
+          shootingPeriods: [{ start: '2025-01-12', end: '2025-01-14' }],
+          returnDays: [{ start: '2025-01-15', end: '2025-01-15' }]
         },
         categories: [
             {

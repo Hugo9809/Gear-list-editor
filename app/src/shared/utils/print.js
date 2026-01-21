@@ -28,8 +28,16 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
       ? t(value, undefined, variables)
       : value || '';
   const shootSchedule = getShootScheduleDates(project.shootSchedule ?? project.shootDate);
-  const formatScheduleList = (values) =>
-    values.length ? values.join(', ') : t('ui.emptyValue', '—');
+  const formatRange = (range) => {
+    if (range.start && range.end) {
+      return `${range.start} - ${range.end}`;
+    }
+    return range.start || range.end || '';
+  };
+  const formatScheduleList = (values) => {
+    const formatted = values.map(formatRange).filter(Boolean);
+    return formatted.length ? formatted.join(', ') : t('ui.emptyValue', '—');
+  };
   const categoriesHtml = project.categories
     .map((category, categoryIndex) => {
       const rows = category.items

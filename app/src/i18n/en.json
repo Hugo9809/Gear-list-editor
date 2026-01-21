@@ -130,6 +130,10 @@
         "shooting": "Shoot",
         "return": "Return"
       },
+      "fields": {
+        "start": "Start",
+        "end": "End"
+      },
       "actions": {
         "add": "Add date",
         "remove": "Remove date"

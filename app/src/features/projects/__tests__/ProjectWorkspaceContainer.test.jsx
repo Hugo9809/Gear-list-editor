@@ -8,9 +8,9 @@ const createProject = (overrides = {}) => ({
   name: 'Test Project',
   client: 'Client',
   shootSchedule: {
-    prepPeriods: ['2024-12-30'],
-    shootingPeriods: ['2025-01-01'],
-    returnDays: ['2025-01-02']
+    prepPeriods: [{ start: '2024-12-30', end: '2024-12-31' }],
+    shootingPeriods: [{ start: '2025-01-01', end: '2025-01-03' }],
+    returnDays: [{ start: '2025-01-04', end: '2025-01-05' }]
   },
   location: 'Studio',
   contact: 'Producer',

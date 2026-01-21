@@ -29,8 +29,18 @@ export function buildDocDefinition(snapshot, t, theme) {
       return dateStr;
     }
   };
-  const formatDateList = (values) =>
-    values.length ? values.map((value) => formatDate(value)).join(', ') : '—';
+  const formatRange = (range) => {
+    const startValue = range?.start ? formatDate(range.start) : '';
+    const endValue = range?.end ? formatDate(range.end) : '';
+    if (startValue && endValue) {
+      return `${startValue} - ${endValue}`;
+    }
+    return startValue || endValue || '';
+  };
+  const formatDateList = (values) => {
+    const formatted = values.map(formatRange).filter(Boolean);
+    return formatted.length ? formatted.join(', ') : '—';
+  };
 
   // Helper: Check if category is a Camera category
   // const isCameraCategory = (name) => {

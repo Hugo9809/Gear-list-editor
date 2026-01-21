@@ -47,7 +47,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
     updateSchedule(key, nextValues);
   };
 
-  const wrapperClassName = `grid gap-4 md:grid-cols-3 ${className}`.trim();
+  const wrapperClassName = `grid gap-4 lg:grid-cols-2 xl:grid-cols-3 ${className}`.trim();
 
   return (
     <div className={wrapperClassName}>
@@ -58,7 +58,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
             {normalized[section.key].map((value, index) => (
               <div
                 key={`${section.key}-${index}`}
-                className="grid grid-cols-1 items-center gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
+                className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
               >
                 <label className="flex min-w-0 flex-col gap-1 text-xs text-text-muted">
                   <span>{startLabel}</span>

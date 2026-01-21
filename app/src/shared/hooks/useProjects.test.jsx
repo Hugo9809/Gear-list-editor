@@ -231,4 +231,21 @@ describe('useProjects', () => {
     // Should remain in same position (only one category)
     expect(result.current.projects[0].categories[0].name).toBe('Camera');
   });
+
+  it('should include device library items in suggestions', () => {
+    const mockDeviceLibrary = {
+      items: [
+        { id: '1', name: 'Arri Alexa 35', category: 'Camera' },
+        { id: '2', name: 'Summicon Lenses', category: 'Lenses' }
+      ]
+    };
+
+    const { result } = renderHook(() =>
+      useProjects({ t: mockT, setStatus: mockSetStatus, deviceLibrary: mockDeviceLibrary })
+    );
+
+    expect(result.current.itemSuggestions).toHaveLength(2);
+    expect(result.current.itemSuggestions[0].name).toBe('Arri Alexa 35');
+    expect(result.current.itemSuggestions[1].name).toBe('Summicon Lenses');
+  });
 });

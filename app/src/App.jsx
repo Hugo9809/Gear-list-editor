@@ -55,7 +55,7 @@ export default function App() {
     applySuggestionToItem,
     updateProject,
     rememberItem
-  } = useProjects({ t, setStatus });
+  } = useProjects({ t, setStatus, deviceLibrary });
 
   const {
     templates,

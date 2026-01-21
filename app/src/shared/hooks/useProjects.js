@@ -35,7 +35,7 @@ const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
  * Manage project state, item/category edits, and history suggestions.
  * Assumes persistence is handled by a higher-level storage hook.
  */
-export const useProjects = ({ t, setStatus }) => {
+export const useProjects = ({ t, setStatus, deviceLibrary }) => {
   const [projects, setProjects] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
   // activeProjectId and activeProject logic removed in favor of URL state
@@ -43,10 +43,27 @@ export const useProjects = ({ t, setStatus }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [itemDrafts, setItemDrafts] = useState({});
 
-  const itemSuggestions = useMemo(
-    () => (history.items || []).filter((entry) => !DEFAULT_NAME_KEYS.has(entry.name)),
-    [history.items]
-  );
+  const itemSuggestions = useMemo(() => {
+    const libraryItems = deviceLibrary?.items || [];
+    const historyItems = history.items || [];
+
+    // Combine items, prioritizing library items if names match (or just merging uniques)
+    const combined = [...libraryItems, ...historyItems];
+
+    // Deduplicate by name
+    const seenNames = new Set();
+    const uniqueSuggestions = [];
+
+    for (const item of combined) {
+      const normalizedName = item.name?.trim();
+      if (normalizedName && !DEFAULT_NAME_KEYS.has(normalizedName) && !seenNames.has(normalizedName.toLowerCase())) {
+        seenNames.add(normalizedName.toLowerCase());
+        uniqueSuggestions.push(item);
+      }
+    }
+
+    return uniqueSuggestions;
+  }, [history.items, deviceLibrary]);
 
   /**
    * Retrieves or initializes a draft for a specific category.

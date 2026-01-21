@@ -6,6 +6,9 @@ const base = process.env.VITE_BASE_URL || '/Gear-list-editor/';
 
 export default defineConfig({
   base,
+  server: {
+    port: 5173,
+  },
   plugins: [
     react(),
     VitePWA({
@@ -42,6 +45,7 @@ export default defineConfig({
         ]
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB to accommodate pdf worker
         globPatterns: ['assets/**/*', 'index.html', '*.{ico,png,svg}'],
         globIgnores: [
           'app/**/*',

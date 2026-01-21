@@ -14,6 +14,11 @@ Data logic should reside in `app/src/data/`.
 
 Styling: CSS Modules or global CSS (app/src/index.css).
 
+Port Configuration:
+- NEVER use port 3000 (reserved for Cine Power Planner).
+- NEVER use port 8080 (reserved for Gear List Editor production/other).
+- ALWAYS use port 5173 for local development.
+
 2. Directory Structure
 Adhere to the following structure for scalability:
 

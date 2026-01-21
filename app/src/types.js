@@ -189,6 +189,8 @@
  * @typedef {Object} UseProjectsOptions
  * @property {(key: string, fallback?: string) => string} t - Translation function
  * @property {(message: string) => void} setStatus - Status message setter
+ * @property {DeviceLibrary} [deviceLibrary] - Global device library state
+ * @property {(value: DeviceLibrary | ((prev: DeviceLibrary) => DeviceLibrary)) => void} [setDeviceLibrary] - Device library updater
  */
 
 /**

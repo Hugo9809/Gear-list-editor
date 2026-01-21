@@ -1,5 +1,10 @@
-import { useState } from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { useMemo, useRef, useState } from 'react';
+import {
+    ArrowDownTrayIcon,
+    ArrowPathIcon,
+    ArrowUpTrayIcon,
+    PlusIcon
+} from '@heroicons/react/24/outline';
 import { useDeviceLibrary } from './useDeviceLibrary.js';
 import DeviceList from './DeviceList.jsx';
 import DeviceEditor from './DeviceEditor.jsx';
@@ -14,11 +19,40 @@ export default function DeviceLibraryPage({
         libraryItems,
         addLibraryItem,
         updateLibraryItem,
-        deleteLibraryItem
+        deleteLibraryItem,
+        exportLibrary,
+        importLibrary,
+        resetLibrary
     } = useDeviceLibrary({ deviceLibrary, setDeviceLibrary, t, setStatus });
 
     const [editingItem, setEditingItem] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const libraryStats = useMemo(() => {
+        const categories = new Set();
+        let latestTimestamp = null;
+        let totalQuantity = 0;
+
+        libraryItems.forEach((item) => {
+            if (item.category) {
+                categories.add(item.category);
+            }
+            const timestamp = Date.parse(item.dateAdded || '');
+            if (Number.isFinite(timestamp)) {
+                latestTimestamp = latestTimestamp === null ? timestamp : Math.max(latestTimestamp, timestamp);
+            }
+            const quantity = Number(item.quantity);
+            totalQuantity += Number.isFinite(quantity) ? quantity : 0;
+        });
+
+        return {
+            itemCount: libraryItems.length,
+            categoryCount: categories.size,
+            totalQuantity,
+            lastAdded: latestTimestamp ? new Date(latestTimestamp).toLocaleDateString() : null
+        };
+    }, [libraryItems]);
 
     const handleSave = (draft) => {
         if (editingItem) {
@@ -41,30 +75,138 @@ export default function DeviceLibraryPage({
         }
     };
 
+    const handleExport = () => {
+        const { json, fileName } = exportLibrary();
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setStatus(t('status.libraryExported', 'Device library export downloaded.'));
+    };
+
+    const handleImport = (event) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            importLibrary(reader.result);
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    };
+
+    const handleReset = () => {
+        const confirmed = window.confirm(
+            t(
+                'library.resetConfirm',
+                'Resetting the device library will remove all global items. Project gear lists are not affected.'
+            )
+        );
+        if (!confirmed) {
+            return;
+        }
+        resetLibrary();
+        setEditingItem(null);
+        setIsAdding(false);
+    };
+
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="md:flex md:items-center md:justify-between mb-8">
-                <div className="min-w-0 flex-1">
-                    <h2 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
-                        {t('library.title', 'Device Library')}
+        <section className="ui-tile bg-surface-elevated/60 p-6">
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json"
+                onChange={handleImport}
+                className="hidden"
+            />
+            <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="max-w-2xl">
+                    <h2 className="text-xl font-semibold ui-heading">
+                        {t('library.title', 'Device library')}
                     </h2>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        {t('library.description', 'Manage your global inventory of gear items.')}
+                    <p className="text-sm text-text-secondary">
+                        {t(
+                            'library.description',
+                            'Manage your global database of gear items, and keep project additions synced automatically.'
+                        )}
                     </p>
                 </div>
-                <div className="mt-4 flex md:ml-4 md:mt-0">
+                <div className="flex flex-wrap gap-2">
                     <button
                         type="button"
                         onClick={() => setIsAdding(true)}
-                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="ui-button ui-button-primary gap-2"
                     >
-                        <PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
-                        {t('library.addItem', 'Add Item')}
+                        <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                        {t('library.addItem', 'Add item')}
+                    </button>
+                    <button type="button" onClick={handleExport} className="ui-button ui-button-outline gap-2">
+                        <ArrowDownTrayIcon className="h-4 w-4" aria-hidden="true" />
+                        {t('library.export', 'Export library')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="ui-button ui-button-outline gap-2"
+                    >
+                        <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
+                        {t('library.import', 'Import library')}
+                    </button>
+                    <button type="button" onClick={handleReset} className="ui-button ui-button-danger gap-2">
+                        <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                        {t('library.reset', 'Factory reset')}
                     </button>
                 </div>
             </div>
+            <p className="mt-3 text-xs text-text-muted">
+                {t(
+                    'library.helper',
+                    'Items added in projects appear here automatically. Imports merge into the current library without overwriting existing items.'
+                )}
+            </p>
 
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+                <div className="ui-panel bg-surface-muted/60 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                        {t('library.stats.items', 'Library items')}
+                    </p>
+                    <p className="text-2xl font-semibold ui-heading">{libraryStats.itemCount}</p>
+                    <p className="text-xs text-text-secondary">
+                        {libraryStats.lastAdded
+                            ? t('library.stats.lastAdded', 'Last added {date}', {
+                                date: libraryStats.lastAdded
+                            })
+                            : t('library.stats.lastAddedEmpty', 'No items yet')}
+                    </p>
+                </div>
+                <div className="ui-panel bg-surface-muted/60 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                        {t('library.stats.categories', 'Categories tracked')}
+                    </p>
+                    <p className="text-2xl font-semibold ui-heading">{libraryStats.categoryCount}</p>
+                    <p className="text-xs text-text-secondary">
+                        {t('library.stats.categoriesHelper', 'Use categories to group gear families.')}
+                    </p>
+                </div>
+                <div className="ui-panel bg-surface-muted/60 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                        {t('library.stats.quantities', 'Total units')}
+                    </p>
+                    <p className="text-2xl font-semibold ui-heading">{libraryStats.totalQuantity}</p>
+                    <p className="text-xs text-text-secondary">
+                        {t('library.stats.quantitiesHelper', 'Combined quantities across the library.')}
+                    </p>
+                </div>
+            </div>
+
+            <div className="mt-6 ui-panel bg-surface-base/80 p-4">
                 <DeviceList
                     t={t}
                     items={libraryItems}
@@ -81,6 +223,6 @@ export default function DeviceLibraryPage({
                     onCancel={handleCancel}
                 />
             )}
-        </div>
+        </section>
     );
 }

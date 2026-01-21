@@ -95,7 +95,7 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
         return;
       }
       template.categories.forEach((category) => {
-        category.items.forEach((item) => rememberItem(item));
+        category.items.forEach((item) => rememberItem(item, category.name));
       });
       updateProject(activeProject.id, (project) => ({
         ...project,

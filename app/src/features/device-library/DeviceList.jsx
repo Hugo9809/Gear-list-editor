@@ -1,70 +1,70 @@
-import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export default function DeviceList({ t, items, onEdit, onDelete }) {
     if (!items || items.length === 0) {
         return (
-            <div className="text-gray-500 text-center py-10">
+            <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted">
                 {t('library.empty', 'Your device library is empty. Add items to track them globally.')}
             </div>
         );
     }
 
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            {t('library.item', 'Item')}
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            {t('library.category', 'Category')}
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            {t('library.details', 'Details')}
-                        </th>
-                        <th className="relative px-6 py-3">
-                            <span className="sr-only">{t('general.actions', 'Actions')}</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                    {items.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</div>
-                                {(item.quantity > 1 || item.unit) && (
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        {item.quantity} {item.unit}
-                                    </div>
-                                )}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                {item.category || '-'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                {item.details || '-'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-2">
+        <div className="grid gap-4 md:grid-cols-2">
+            {items.map((item) => {
+                const quantityValue = Number.isFinite(Number(item.quantity))
+                    ? Number(item.quantity)
+                    : 1;
+                const quantityLabel = item.unit ? `${quantityValue} ${item.unit}` : `${quantityValue}`;
+                const categoryLabel = item.category || t('library.category.empty', 'Uncategorized');
+                const detailsLabel = item.details || t('library.details.empty', 'No details yet.');
+                const dateLabel = item.dateAdded
+                    ? new Date(item.dateAdded).toLocaleDateString()
+                    : t('library.dateAdded.empty', 'Date unavailable');
+
+                return (
+                    <div key={item.id} className="ui-panel flex h-full flex-col gap-3 bg-surface-muted/60 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <h3 className="text-base font-semibold ui-heading">{item.name}</h3>
+                                <p className="text-xs text-text-secondary">{quantityLabel}</p>
+                            </div>
+                            <div className="flex gap-2">
                                 <button
+                                    type="button"
                                     onClick={() => onEdit(item)}
-                                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
-                                    title={t('general.edit', 'Edit')}
+                                    className="ui-button ui-button-outline px-2 py-1 text-xs"
+                                    aria-label={t('general.edit', 'Edit')}
                                 >
-                                    <PencilSquareIcon className="h-5 w-5" />
+                                    <PencilSquareIcon className="h-4 w-4" aria-hidden="true" />
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={() => onDelete(item.id)}
-                                    className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
-                                    title={t('general.delete', 'Delete')}
+                                    className="ui-button ui-button-danger px-2 py-1 text-xs"
+                                    aria-label={t('general.delete', 'Delete')}
                                 >
-                                    <TrashIcon className="h-5 w-5" />
+                                    <TrashIcon className="h-4 w-4" aria-hidden="true" />
                                 </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-xs text-text-muted">
+                            <span className="rounded-full border border-surface-sunken bg-surface-base/70 px-2 py-0.5">
+                                {categoryLabel}
+                            </span>
+                            {item.unit ? (
+                                <span className="rounded-full border border-surface-sunken bg-surface-base/70 px-2 py-0.5">
+                                    {t('library.unit', 'Unit')}: {item.unit}
+                                </span>
+                            ) : null}
+                        </div>
+                        <p className="text-sm text-text-secondary">{detailsLabel}</p>
+                        <p className="mt-auto text-xs text-text-muted">
+                            {t('library.dateAdded', 'Added {date}', { date: dateLabel })}
+                        </p>
+                    </div>
+                );
+            })}
         </div>
     );
 }

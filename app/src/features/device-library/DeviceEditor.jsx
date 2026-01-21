@@ -46,100 +46,91 @@ export default function DeviceEditor({ t, item, onSave, onCancel }) {
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center p-4">
-            <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
-                <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
-                    {item ? t('library.editItem', 'Edit Item') : t('library.addItem', 'Add New Item')}
-                </h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                {t('item.name', 'Item Name')}
-                            </label>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-sunken/70 p-4 backdrop-blur-sm">
+            <div className="ui-tile w-full max-w-lg bg-surface-elevated/95 p-6">
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-lg font-semibold ui-heading">
+                        {item ? t('library.editItem', 'Edit item') : t('library.addItem', 'Add new item')}
+                    </h3>
+                    <p className="text-sm text-text-secondary">
+                        {t(
+                            'library.editor.helper',
+                            'Update the global library so new projects can reuse consistent gear details.'
+                        )}
+                    </p>
+                </div>
+                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
+                        {t('item.name', 'Item name')}
+                        <input
+                            type="text"
+                            name="name"
+                            id="name"
+                            required
+                            value={draft.name}
+                            onChange={handleChange}
+                            className="ui-input ui-input-lg"
+                        />
+                    </label>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <label className="flex flex-col gap-2 text-sm text-text-secondary">
+                            {t('item.quantity', 'Quantity')}
+                            <input
+                                type="number"
+                                name="quantity"
+                                id="quantity"
+                                min="1"
+                                value={draft.quantity}
+                                onChange={handleChange}
+                                className="ui-input"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm text-text-secondary">
+                            {t('item.unit', 'Unit')}
                             <input
                                 type="text"
-                                name="name"
-                                id="name"
-                                required
-                                value={draft.name}
+                                name="unit"
+                                id="unit"
+                                value={draft.unit}
                                 onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                placeholder={t('library.unitPlaceholder', 'pcs, kg, days')}
+                                className="ui-input"
                             />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    {t('item.quantity', 'Quantity')}
-                                </label>
-                                <input
-                                    type="number"
-                                    name="quantity"
-                                    id="quantity"
-                                    min="1"
-                                    value={draft.quantity}
-                                    onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="unit" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    {t('item.unit', 'Unit')}
-                                </label>
-                                <input
-                                    type="text"
-                                    name="unit"
-                                    id="unit"
-                                    value={draft.unit}
-                                    onChange={handleChange}
-                                    placeholder="pcs, kg"
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                {t('library.category', 'Category')}
-                            </label>
-                            <input
-                                type="text"
-                                name="category"
-                                id="category"
-                                value={draft.category}
-                                onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="details" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                {t('item.details', 'Details')}
-                            </label>
-                            <textarea
-                                name="details"
-                                id="details"
-                                rows="3"
-                                value={draft.details}
-                                onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            />
-                        </div>
+                        </label>
                     </div>
 
-                    <div className="mt-6 flex justify-end gap-3">
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-                        >
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
+                        {t('library.category', 'Category')}
+                        <input
+                            type="text"
+                            name="category"
+                            id="category"
+                            value={draft.category}
+                            onChange={handleChange}
+                            placeholder={t('library.categoryPlaceholder', 'Camera, lighting, audio')}
+                            className="ui-input"
+                        />
+                    </label>
+
+                    <label className="flex flex-col gap-2 text-sm text-text-secondary">
+                        {t('item.details', 'Details')}
+                        <textarea
+                            name="details"
+                            id="details"
+                            rows="3"
+                            value={draft.details}
+                            onChange={handleChange}
+                            placeholder={t('library.detailsPlaceholder', 'Lens type, kit notes, or rental info')}
+                            className="ui-textarea"
+                        />
+                    </label>
+
+                    <div className="mt-6 flex flex-wrap justify-end gap-3">
+                        <button type="button" onClick={onCancel} className="ui-button ui-button-outline">
                             {t('general.cancel', 'Cancel')}
                         </button>
-                        <button
-                            type="submit"
-                            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
-                        >
+                        <button type="submit" className="ui-button ui-button-primary">
                             {t('general.save', 'Save')}
                         </button>
                     </div>

@@ -35,7 +35,7 @@ const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
  * Manage project state, item/category edits, and history suggestions.
  * Assumes persistence is handled by a higher-level storage hook.
  */
-export const useProjects = ({ t, setStatus, deviceLibrary }) => {
+export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) => {
   const [projects, setProjects] = useState([]);
   const [history, setHistory] = useState({ items: [], categories: [] });
   // activeProjectId and activeProject logic removed in favor of URL state
@@ -80,32 +80,110 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
    * Ignores empty or default names.
    * @param {Item} item - The item to remember.
    */
-  const rememberItem = useCallback((item) => {
-    const name = item.name.trim();
-    if (!name || DEFAULT_NAME_KEYS.has(name)) {
-      return;
-    }
-    setHistory((prev) => {
-      const nextItems = [...(prev.items || [])];
-      const index = nextItems.findIndex((entry) => entry.name.toLowerCase() === name.toLowerCase());
-      const existing = index >= 0 ? nextItems[index] : null;
-      const updated = {
-        name,
-        unit: item.unit || existing?.unit || '',
-        details: item.details || existing?.details || '',
-        lastUsed: new Date().toISOString()
-      };
-      if (index >= 0) {
-        nextItems[index] = { ...nextItems[index], ...updated };
-      } else {
-        nextItems.push(updated);
+  const normalizeText = useCallback((value) => (typeof value === 'string' ? value.trim() : ''), []);
+
+  const normalizeCategory = useCallback(
+    (value) => {
+      const trimmed = normalizeText(value);
+      return trimmed && !DEFAULT_NAME_KEYS.has(trimmed) ? trimmed : '';
+    },
+    [normalizeText]
+  );
+
+  const rememberItem = useCallback(
+    (item, categoryName = '') => {
+      const name = normalizeText(item?.name);
+      if (!name || DEFAULT_NAME_KEYS.has(name)) {
+        return;
       }
-      return {
-        ...prev,
-        items: nextItems
-      };
-    });
-  }, []);
+
+      setHistory((prev) => {
+        const nextItems = [...(prev.items || [])];
+        const index = nextItems.findIndex((entry) => entry.name.toLowerCase() === name.toLowerCase());
+        const existing = index >= 0 ? nextItems[index] : null;
+        const updated = {
+          name,
+          unit: normalizeText(item?.unit) || existing?.unit || '',
+          details: normalizeText(item?.details) || existing?.details || '',
+          lastUsed: new Date().toISOString()
+        };
+        if (index >= 0) {
+          nextItems[index] = { ...nextItems[index], ...updated };
+        } else {
+          nextItems.push(updated);
+        }
+        return {
+          ...prev,
+          items: nextItems
+        };
+      });
+
+      if (typeof setDeviceLibrary !== 'function') {
+        return;
+      }
+
+      const unit = normalizeText(item?.unit);
+      const details = normalizeText(item?.details);
+      const quantity = Math.max(1, Number(item?.quantity) || 1);
+      const category = normalizeCategory(categoryName || item?.category);
+
+      setDeviceLibrary((prev) => {
+        const safePrev = prev && typeof prev === 'object' ? prev : { items: [] };
+        const items = Array.isArray(safePrev.items) ? safePrev.items : [];
+        const existingIndex = items.findIndex(
+          (entry) => normalizeText(entry?.name).toLowerCase() === name.toLowerCase()
+        );
+        if (existingIndex >= 0) {
+          const existing = items[existingIndex] || {};
+          const existingUnit = normalizeText(existing.unit);
+          const existingDetails = normalizeText(existing.details);
+          const existingCategory = normalizeText(existing.category);
+          const hasValidQuantity =
+            Number.isFinite(Number(existing.quantity)) && Number(existing.quantity) > 0;
+          const merged = {
+            ...existing,
+            name,
+            unit: existingUnit || unit,
+            details: existingDetails || details,
+            category: existingCategory || category,
+            quantity: hasValidQuantity ? Number(existing.quantity) : quantity
+          };
+          if (
+            existing.name === merged.name &&
+            existing.unit === merged.unit &&
+            existing.details === merged.details &&
+            existing.category === merged.category &&
+            Number(existing.quantity) === merged.quantity
+          ) {
+            return safePrev;
+          }
+          const nextItems = [...items];
+          nextItems[existingIndex] = merged;
+          return {
+            ...safePrev,
+            items: nextItems
+          };
+        }
+
+        return {
+          ...safePrev,
+          items: [
+            {
+              id: createId(),
+              name,
+              quantity,
+              unit,
+              details,
+              category,
+              dateAdded: new Date().toISOString()
+            },
+            ...items
+          ]
+        };
+      });
+    },
+    [normalizeCategory, normalizeText, setDeviceLibrary, setHistory]
+  );
 
   /**
    * Adds a category name to history.
@@ -175,6 +253,15 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
   const updateProjectDraftField = useCallback((field, value) => {
     setProjectDraft((prev) => ({ ...prev, [field]: value }));
   }, []);
+
+  const getCategoryName = useCallback(
+    (projectId, categoryId) => {
+      const project = projects.find((entry) => entry.id === projectId);
+      const category = project?.categories.find((entry) => entry.id === categoryId);
+      return category?.name || '';
+    },
+    [projects]
+  );
 
   const addProject = useCallback(
     (event) => {
@@ -251,6 +338,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
         setStatus(t('status.itemNameRequired', 'Please provide an item name before adding.'));
         return;
       }
+      const categoryName = getCategoryName(projectId, categoryId);
       const newItem = {
         id: createId(),
         name,
@@ -263,14 +351,14 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
         ...category,
         items: [...category.items, newItem]
       }));
-      rememberItem(newItem);
+      rememberItem(newItem, categoryName);
       setItemDrafts((prev) => ({
         ...prev,
         [categoryId]: { ...emptyItemDraft }
       }));
       setStatus(t('status.itemAdded', 'Item added. Autosave will secure it immediately.'));
     },
-    [itemDrafts, rememberItem, setStatus, t, updateCategory]
+    [getCategoryName, itemDrafts, rememberItem, setStatus, t, updateCategory]
   );
 
   const moveCategoryUp = useCallback(
@@ -325,17 +413,18 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
 
   const updateItemField = useCallback(
     (projectId, categoryId, itemId, field, value) => {
+      const categoryName = getCategoryName(projectId, categoryId);
       updateItem(projectId, categoryId, itemId, (item) => {
         const next = {
           ...item,
           [field]: field === 'quantity' ? Math.max(1, Number(value) || 1) : value
         };
-        rememberItem(next);
+        rememberItem(next, categoryName);
         return next;
       });
       setStatus(t('status.changesQueued', 'Changes queued for autosave.'));
     },
-    [rememberItem, setStatus, t, updateItem]
+    [getCategoryName, rememberItem, setStatus, t, updateItem]
   );
 
   const updateCategoryField = useCallback(
@@ -398,6 +487,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
 
   const applySuggestionToItem = useCallback(
     (projectId, categoryId, itemId, suggestion) => {
+      const categoryName = getCategoryName(projectId, categoryId);
       const updated = {
         name: suggestion.name,
         unit: suggestion.unit || '',
@@ -407,10 +497,10 @@ export const useProjects = ({ t, setStatus, deviceLibrary }) => {
         ...item,
         ...updated
       }));
-      rememberItem(updated);
+      rememberItem(updated, categoryName);
       setStatus(t('status.suggestionApplied', 'Suggestion applied and ready for autosave.'));
     },
-    [rememberItem, setStatus, t, updateItem]
+    [getCategoryName, rememberItem, setStatus, t, updateItem]
   );
 
   return {

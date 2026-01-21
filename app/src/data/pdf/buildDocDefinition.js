@@ -1,6 +1,98 @@
 import { format } from 'date-fns';
 import { getShootScheduleDates } from '../../shared/utils/shootSchedule.js';
 
+const CAMERA_BADGE_COLOR = '#E10078';
+const LINE_COLOR = '#9CA3AF';
+const PAGE_LINE_WIDTH = 515;
+
+const normalizeText = (value) => (value != null && value !== '' ? String(value).trim() : '');
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  try {
+    return format(new Date(dateStr), 'P');
+  } catch (_error) {
+    return dateStr;
+  }
+};
+
+const formatRange = (range) => {
+  const startValue = range?.start ? formatDate(range.start) : '';
+  const endValue = range?.end ? formatDate(range.end) : '';
+  if (startValue && endValue) {
+    return `${startValue} - ${endValue}`;
+  }
+  return startValue || endValue || '';
+};
+
+const formatDateList = (values, emptyValue) => {
+  const formatted = values.map(formatRange).filter(Boolean);
+  return formatted.length ? formatted.join(', ') : emptyValue;
+};
+
+const splitMetaValue = (value, emptyValue) => {
+  const normalized = normalizeText(value);
+  if (!normalized) {
+    return { main: emptyValue, aside: '' };
+  }
+  const parts = normalized
+    .split('|')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (parts.length <= 1) {
+    return { main: normalized, aside: '' };
+  }
+  const footerProjectName = project.name || t('project.untitled', 'Untitled Project');
+
+  return {
+    main: parts.slice(0, -1).join(' | '),
+    aside: parts[parts.length - 1]
+  };
+};
+
+const normalizeItemDetails = (details) => {
+  const normalized = normalizeText(details);
+  if (!normalized) return '';
+  return normalized.replace(/\s*\|\s*/g, ' - ');
+};
+
+const isPrimaryCameraCategory = (name) => {
+  const normalized = normalizeText(name).toLowerCase();
+  if (!normalized) return false;
+  if (normalized === 'camera' || normalized === 'kamera') return true;
+  if (normalized.startsWith('camera ') || normalized.startsWith('kamera ')) {
+    return !normalized.includes('support') && !normalized.includes('zubehoer');
+  }
+  return false;
+};
+
+const extractCameraLetter = (name) => {
+  const match = normalizeText(name).match(/\b(?:camera|kamera)\s*([a-z])\b/i);
+  return match?.[1]?.toUpperCase() || 'A';
+};
+
+const buildCameraSpec = (categories) => {
+  const category = categories.find(
+    (candidate) => isPrimaryCameraCategory(candidate.name) && (candidate.items || []).length > 0
+  );
+  if (!category) return null;
+
+  const specItem = category.items[0];
+  const rawDetails = normalizeText(specItem.details);
+  const detailSegments = rawDetails.includes('|')
+    ? rawDetails.split('|').map((segment) => segment.trim()).filter(Boolean)
+    : [];
+  const values = [normalizeText(specItem.name), ...detailSegments].filter((value) => value !== '');
+  while (values.length < 5) {
+    values.push('');
+  }
+  return {
+    label: normalizeText(category.name) || 'Camera',
+    letter: extractCameraLetter(category.name),
+    values: values.slice(0, 5)
+  };
+};
+
 /**
  * Build pdfmake document definition from export snapshot.
  * @param {import('./snapshotTypes.js').PdfExportSnapshot} snapshot
@@ -12,227 +104,260 @@ export function buildDocDefinition(snapshot, t, theme) {
   const { project } = snapshot.data;
   const categories = project.categories || [];
   const shootSchedule = getShootScheduleDates(project.shootSchedule ?? project.shootDate);
+  const emptyValue = t('ui.emptyValue', '—');
 
-  // Theme Configuration
   const isPinkMode = theme === 'pink';
-  const THEME_COLOR = isPinkMode ? '#E10078' : '#001589'; // Pink vs Brightmode Blue
-  const LOGO_SUBTITLE_COLOR = isPinkMode ? '#F06292' : '#5C6BC0'; // Lighter variation
-  const LINE_COLOR = '#000000'; // Black lines
+  const themeColor = isPinkMode ? '#E10078' : '#001589';
+  const subtitleColor = isPinkMode ? '#F06292' : '#5C6BC0';
 
-  // Helper to format values
-  const formatValue = (val) => (val != null && val !== '' ? String(val) : '');
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '—';
-    try {
-      return format(new Date(dateStr), 'P'); // Localized date format
-    } catch (_e) { // eslint-disable-line no-unused-vars
-      return dateStr;
+  const subtitle = shootSchedule.shootingPeriods.length
+    ? formatDateList(shootSchedule.shootingPeriods, emptyValue)
+    : '';
+
+  const metaEntries = [
+    { label: t('project.print.labels.client', 'Production Company'), value: project.client },
+    { label: t('project.print.labels.contact', 'Production Manager'), value: project.contact },
+    { label: t('project.print.labels.location', 'Rental House'), value: project.location },
+    {
+      label: t('project.print.labels.prep', 'Prep'),
+      value: formatDateList(shootSchedule.prepPeriods, emptyValue)
+    },
+    {
+      label: t('project.print.labels.shooting', 'Shooting'),
+      value: formatDateList(shootSchedule.shootingPeriods, emptyValue)
+    },
+    {
+      label: t('project.print.labels.return', 'Return'),
+      value: formatDateList(shootSchedule.returnDays, emptyValue)
     }
-  };
-  const formatRange = (range) => {
-    const startValue = range?.start ? formatDate(range.start) : '';
-    const endValue = range?.end ? formatDate(range.end) : '';
-    if (startValue && endValue) {
-      return `${startValue} - ${endValue}`;
-    }
-    return startValue || endValue || '';
-  };
-  const formatDateList = (values) => {
-    const formatted = values.map(formatRange).filter(Boolean);
-    return formatted.length ? formatted.join(', ') : '—';
-  };
+  ];
 
-  // Helper: Check if category is a Camera category
-  // const isCameraCategory = (name) => {
-  //   const n = (name || '').toLowerCase();
-  //   return n.includes('camera') || n.includes('kamera');
-  // };
-
-  // Build category tables
-  const categoryContent = categories.flatMap((category, idx) => {
-    const items = category.items || [];
-    if (items.length === 0) return [];
-
-    // const isCam = isCameraCategory(category.name);
-
-    // Special render for Camera A in Camera category?
-    // For now, we'll render a special "Spec Box" if it's the Camera category and has items.
-    // We act as if the first item is the main camera body.
-    // let specialCameraBlock = null;
-    let tableItems = items;
-
-    // If strict design matching is needed, one could extract the first item here
-    // but for safety, we just keep the list uniform for now unless we are sure.
-    // Let's implement the "Header" style and standard list first.
-
+  const metaTableBody = metaEntries.map(({ label, value }) => {
+    const { main, aside } = splitMetaValue(value, emptyValue);
     return [
-      // Section Divider Line (thin black)
       {
-        canvas: [
-          { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: LINE_COLOR }
-        ],
-        margin: [0, 8, 0, 8]
+        text: [{ text: `${label} `, style: 'metaLabel' }, { text: main, style: 'metaValue' }],
+        style: 'metaRow'
       },
-
-      // Category header
-      {
-        text: category.name || `${t('project.category.defaultName', 'Category')} ${idx + 1}`,
-        style: 'categoryHeader',
-        color: THEME_COLOR,
-        pageBreak: 'avoid',
-        margin: [0, 0, 0, 8] // Spacing after line
-      },
-
-      // Items table
-      {
-        table: {
-          headerRows: 0, // No header row in the "list" style reference described (or it was simple)
-          // "Equipment is listed line-by-line starting with quantities... no vertical borders"
-          widths: [20, 30, '*', '*'],
-          body: [
-            // Data rows
-            ...tableItems.map((item) => [
-              { text: formatValue(item.quantity) + 'x', alignment: 'right', bold: true }, // "1x" style
-              { text: '', margin: [0, 0, 0, 0] }, // Spacer/Unit implicitly handled or empty
-              {
-                text: [
-                  { text: formatValue(item.name), bold: true },
-                  item.details ? { text: ` | ${formatValue(item.details)}`, color: '#444' } : ''
-                ]
-              },
-              { text: '' } // Extra filler if needed or used for "Notes"
-            ])
-          ]
-        },
-        layout: {
-          hLineWidth: function (_i, _node) {
-            return 0; // No horizontal lines between list items for "open list" look?
-          },
-          vLineWidth: function (_i, _node) {
-            return 0;
-          },
-          paddingLeft: function (_i) {
-            return _i === 0 ? 0 : 4;
-          },
-          paddingRight: function (_i) {
-            return 0;
-          }
-        }
-      }
+      { text: aside, style: 'metaAside', alignment: 'right' }
     ];
   });
 
-  return {
-    pageSize: 'A4',
-    pageMargins: [40, 40, 40, 60], // Standard margins
-
-    // Dynamic footer
-    footer: (currentPage, pageCount) => ({
-      columns: [
-        {
-          text: `Seite ${currentPage} von ${pageCount} | ${project.name || ''}`,
-          alignment: 'center',
-          color: '#666',
-          fontSize: 9
-        }
-      ],
-      margin: [40, 20, 40, 0]
-    }),
-
-    content: [
-      // Title Header
-      {
-        text: project.name || t('project.untitled', 'Untitled Project'),
-        fontSize: 26,
-        bold: true,
-        color: THEME_COLOR,
-        margin: [0, 0, 0, 2]
-      },
-      // Subtitle (Client or custom)
-      // Subtitle (Client or custom)
-      ...(project.client
-        ? [
-          {
-            text: project.client,
-            fontSize: 14,
-            bold: true,
-            color: LOGO_SUBTITLE_COLOR,
-            margin: [0, 0, 0, 20]
-          }
-        ]
-        : []),
-
-      // Metadata Grid (Production Company, AC, etc.)
-      {
-        columns: [
-          // Column 1
-          {
-            width: 'auto',
-            stack: [
-              { text: t('project.print.labels.prep', 'Prep'), bold: true },
-              { text: t('project.print.labels.shooting', 'Shoot'), bold: true },
-              { text: t('project.print.labels.return', 'Return'), bold: true },
-              { text: t('project.print.labels.location', 'Location'), bold: true },
-              { text: t('project.print.labels.contact', 'Contact'), bold: true }
+  const cameraSpec = buildCameraSpec(categories);
+  const cameraSpecRow = cameraSpec
+    ? {
+        table: {
+          widths: [90, '*', '*', '*', '*', '*'],
+          body: [
+            [
+              {
+                text: [
+                  {
+                    text: `${
+                      cameraSpec.label.replace(/\s+[a-z]$/i, '').trim() || cameraSpec.label
+                    } `,
+                    bold: true
+                  },
+                  { text: cameraSpec.letter, bold: true, color: CAMERA_BADGE_COLOR }
+                ],
+                fontSize: 9
+              },
+              ...cameraSpec.values.map((value) => ({ text: value, alignment: 'center', fontSize: 9 }))
             ]
-          },
+          ]
+        },
+        layout: {
+          hLineWidth: () => 0.5,
+          vLineWidth: (index, node) =>
+            index === 0 || index === node.table.widths.length ? 0 : 0.5,
+          hLineColor: () => LINE_COLOR,
+          vLineColor: () => LINE_COLOR,
+          paddingLeft: (index) => (index === 0 ? 0 : 6),
+          paddingRight: () => 6,
+          paddingTop: () => 4,
+          paddingBottom: () => 4
+        },
+        margin: [0, 6, 0, 10]
+      }
+    : null;
+
+  const categoryContent = categories.flatMap((category, idx) => {
+    const items = category.items || [];
+    if (items.length === 0) return [];
+    const categoryName =
+      category.name || `${t('project.category.defaultName', 'Category')} ${idx + 1}`;
+    const itemLines = items.map((item) => {
+      const quantity = normalizeText(item.quantity) || '1';
+      const name = normalizeText(item.name);
+      const details = normalizeItemDetails(item.details);
+      const fullName = details ? `${name} - ${details}` : name;
+      return {
+        text: [{ text: `${quantity}x `, bold: true }, { text: fullName }],
+        fontSize: 9.5,
+        margin: [0, 0, 0, 2]
+      };
+    });
+    return [
+      {
+        canvas: [
           {
-            width: '*',
-            stack: [
-              { text: formatDateList(shootSchedule.prepPeriods) },
-              { text: formatDateList(shootSchedule.shootingPeriods) },
-              { text: formatDateList(shootSchedule.returnDays) },
-              { text: formatValue(project.location) || '—' },
-              { text: formatValue(project.contact) || '—' }
-            ],
-            margin: [10, 0, 0, 0]
+            type: 'line',
+            x1: 0,
+            y1: 0,
+            x2: PAGE_LINE_WIDTH,
+            y2: 0,
+            lineWidth: 0.5,
+            lineColor: LINE_COLOR
           }
         ],
-        columnGap: 20,
-        margin: [0, 0, 0, 20]
+        margin: [0, 6, 0, 4]
       },
+      {
+        text: categoryName,
+        style: 'categoryHeader',
+        color: themeColor,
+        margin: [0, 0, 0, 4]
+      },
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0,
+            y1: 0,
+            x2: PAGE_LINE_WIDTH,
+            y2: 0,
+            lineWidth: 0.5,
+            lineColor: LINE_COLOR
+          }
+        ],
+        margin: [0, 0, 0, 6]
+      },
+      { stack: itemLines, margin: [0, 0, 0, 6] }
+    ];
+  });
 
-      // Categories
-      ...categoryContent,
+  const projectNotes = normalizeText(project.notes);
+  const notesSection = projectNotes
+    ? [
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 0,
+              x2: PAGE_LINE_WIDTH,
+              y2: 0,
+              lineWidth: 0.5,
+              lineColor: LINE_COLOR
+            }
+          ],
+          margin: [0, 10, 0, 4]
+        },
+        {
+          text: t('project.print.notes.title', 'Project notes'),
+          style: 'categoryHeader',
+          color: themeColor,
+          margin: [0, 0, 0, 4]
+        },
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 0,
+              x2: PAGE_LINE_WIDTH,
+              y2: 0,
+              lineWidth: 0.5,
+              lineColor: LINE_COLOR
+            }
+          ],
+          margin: [0, 0, 0, 6]
+        },
+        { text: projectNotes, fontSize: 9.5 }
+      ]
+    : [];
 
-      // Notes
-      // Notes
-      ...(project.notes
+  const locale = snapshot.locale || 'en';
+  const pageLabel = locale.startsWith('de') ? 'Seite' : 'Page';
+  const ofLabel = locale.startsWith('de') ? 'von' : 'of';
+  const listLabel = t('ui.gearList', 'Gear list');
+
+  return {
+    pageSize: 'A4',
+    pageMargins: [40, 40, 40, 60],
+    footer: (currentPage, pageCount) => ({
+      text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${footerProjectName}`,
+      alignment: 'center',
+      color: '#666',
+      fontSize: 9,
+      margin: [40, 20, 40, 0]
+    }),
+    content: [
+      {
+        text: project.name || t('project.untitled', 'Untitled Project'),
+        style: 'title',
+        color: themeColor,
+        margin: [0, 0, 0, 2]
+      },
+      ...(subtitle
         ? [
-          {
-            canvas: [
-              {
-                type: 'line',
-                x1: 0,
-                y1: 0,
-                x2: 515,
-                y2: 0,
-                lineWidth: 0.5,
-                lineColor: LINE_COLOR
-              }
-            ],
-            margin: [0, 16, 0, 8]
-          },
-          {
-            text: t('project.print.notes.title', 'Notes'),
-            style: 'categoryHeader',
-            color: THEME_COLOR,
-            margin: [0, 0, 0, 8]
-          },
-          { text: project.notes, color: '#333' }
-        ]
-        : [])
+            {
+              text: subtitle,
+              style: 'subtitle',
+              color: subtitleColor,
+              margin: [0, 0, 0, 16]
+            }
+          ]
+        : []),
+      {
+        table: {
+          widths: ['*', 'auto'],
+          body: metaTableBody
+        },
+        layout: {
+          hLineWidth: () => 0,
+          vLineWidth: () => 0,
+          paddingLeft: () => 0,
+          paddingRight: () => 0,
+          paddingTop: () => 2,
+          paddingBottom: () => 2
+        },
+        margin: [0, 0, 0, 12]
+      },
+      ...(cameraSpecRow
+        ? [cameraSpecRow]
+        : [
+            {
+              canvas: [
+                {
+                  type: 'line',
+                  x1: 0,
+                  y1: 0,
+                  x2: PAGE_LINE_WIDTH,
+                  y2: 0,
+                  lineWidth: 0.5,
+                  lineColor: LINE_COLOR
+                }
+              ],
+              margin: [0, 6, 0, 10]
+            }
+          ]),
+      ...categoryContent,
+      ...notesSection
     ],
-
     styles: {
-      categoryHeader: { fontSize: 14, bold: true },
-      tableHeader: { bold: true, color: '#000' }
+      title: { fontSize: 20, bold: true },
+      subtitle: { fontSize: 11, bold: true, characterSpacing: 1 },
+      metaRow: { fontSize: 9.5 },
+      metaLabel: { bold: true },
+      metaValue: { color: '#222' },
+      metaAside: { fontSize: 9.5, color: '#444' },
+      categoryHeader: { fontSize: 10.5, bold: true }
     },
-
     defaultStyle: {
       font: 'Ubuntu',
       fontSize: 10,
-      color: '#000'
+      color: '#111'
     }
   };
 }

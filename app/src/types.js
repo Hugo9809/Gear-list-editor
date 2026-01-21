@@ -43,13 +43,21 @@
  */
 
 /**
+ * @typedef {Object} CrewMember
+ * @property {string} id - Unique identifier (UUID)
+ * @property {string} name - Crew member name
+ * @property {string} role - Crew member role
+ */
+
+/**
  * @typedef {Object} Project
  * @property {string} id - Unique identifier (UUID)
  * @property {string} name - Project name
  * @property {string} client - Client name
  * @property {ShootSchedule} shootSchedule - Prep, shooting, and return dates
  * @property {string} location - Shoot location
- * @property {string} contact - Contact person/info
+ * @property {string} contact - Rental house contact info
+ * @property {CrewMember[]} crew - Crew members assigned to the project
  * @property {string} notes - Project-level notes
  * @property {Category[]} categories - Categories within this project
  */
@@ -191,7 +199,8 @@
  * @property {string} client - Draft client
  * @property {ShootSchedule} shootSchedule - Draft shoot schedule
  * @property {string} location - Draft location
- * @property {string} contact - Draft contact
+ * @property {string} contact - Draft rental house contact
+ * @property {CrewMember[]} crew - Draft crew list
  */
 
 /**

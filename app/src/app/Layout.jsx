@@ -16,23 +16,33 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
   ];
 
   const statusClasses = status
-    ? 'border border-brand/40 bg-brand/10 text-brand'
-    : 'border border-surface-sunken bg-surface-elevated/60 text-text-secondary';
+    ? 'border-brand/40 bg-brand/10 text-brand'
+    : 'border-surface-sunken/70 bg-surface-muted/60 text-text-secondary';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="ui-sidebar flex w-full flex-col gap-6 p-5 lg:w-80">
-            <div className="flex flex-col gap-3">
-              <h1 className="w-full text-[1.6rem] font-normal ui-heading tracking-tight">
-                {t('ui.appName', 'Gear List Creator')}
-              </h1>
-              <div className="rounded-2xl border border-surface-sunken/60 bg-surface-elevated/70 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+          <aside className="ui-sidebar w-full lg:w-80">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="ui-sidebar-logo" aria-hidden="true">
+                  GL
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="ui-sidebar-eyebrow">
+                    {t('ui.sidebar.eyebrow', 'Gear list workspace')}
+                  </p>
+                  <h1 className="w-full text-[1.6rem] font-semibold ui-heading tracking-tight">
+                    {t('ui.appName', 'Gear List Creator')}
+                  </h1>
+                </div>
+              </div>
+              <div className="ui-sidebar-intro">
+                <p className="ui-sidebar-intro-title">
                   {t('ui.sidebar.title', 'Safe offline workspace')}
                 </p>
-                <p className="mt-2 text-sm text-text-secondary">
+                <p className="ui-sidebar-intro-description">
                   {t(
                     'ui.sidebar.description',
                     'Your All Projects view keeps projects close while autosave runs in the background.'
@@ -52,7 +62,11 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
                       `ui-sidebar-tab ${isActive ? 'ui-sidebar-tab-active' : ''}`
                     }
                   >
-                    {tab.label}
+                    <span className="ui-sidebar-tab-content">
+                      <span className="ui-sidebar-tab-dot" aria-hidden="true" />
+                      <span className="ui-sidebar-tab-label">{tab.label}</span>
+                    </span>
+                    <span className="ui-sidebar-tab-arrow" aria-hidden="true" />
                   </NavLink>
                 ))}
               </nav>
@@ -61,7 +75,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
             <div className="ui-sidebar-section">
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                  <p className="ui-sidebar-eyebrow">
                     {t('theme.label', 'Theme')}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -84,7 +98,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                  <p className="ui-sidebar-eyebrow">
                     {t('language.label', 'Language')}
                   </p>
                   <select
@@ -103,10 +117,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
               </div>
             </div>
 
-            <div
-              className={`rounded-xl bg-surface-elevated/60 p-4 text-sm ${statusClasses}`}
-              aria-live="polite"
-            >
+            <div className={`ui-sidebar-status ${statusClasses}`} aria-live="polite">
               {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
             </div>
           </aside>

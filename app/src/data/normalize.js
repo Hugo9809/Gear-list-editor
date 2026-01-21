@@ -141,6 +141,19 @@ const normalizeCategories = (categories) => {
   });
 };
 
+const normalizeCrew = (crew) => {
+  if (!Array.isArray(crew)) {
+    return [];
+  }
+  return crew
+    .map((entry) => ({
+      id: typeof entry?.id === 'string' && entry.id ? entry.id : createId(),
+      name: normalizeText(entry?.name),
+      role: normalizeText(entry?.role)
+    }))
+    .filter((entry) => entry.name || entry.role);
+};
+
 export const normalizeProject = (project) => {
   const rawName = normalizeText(project?.name);
   return {
@@ -150,6 +163,7 @@ export const normalizeProject = (project) => {
     shootSchedule: normalizeShootSchedule(project?.shootSchedule ?? project?.shootDate),
     location: normalizeText(project?.location),
     contact: normalizeText(project?.contact),
+    crew: normalizeCrew(project?.crew),
     notes: normalizeNotes(project?.notes),
     categories: normalizeCategories(project?.categories)
   };

@@ -100,13 +100,14 @@
       "shootingPeriod": "Drehzeitraum",
       "returnDay": "Rückgabetag",
       "location": "Ort",
-      "contact": "Hauptkontakt"
+      "contact": "Rentalhaus",
+      "crew": "Crew"
     },
     "placeholders": {
       "name": "z. B. Studioshoot im Oktober",
       "client": "Kunde, Agentur oder Show",
       "location": "Studio, Stadt oder Venue",
-      "contact": "Produktion oder Abteilungskontakt"
+      "contact": "Rentalhaus Name, Adresse, Telefon"
     },
     "actions": {
       "create": "Projekt erstellen",
@@ -116,7 +117,9 @@
       "active": "Aktiv",
       "open": "Projekt öffnen",
       "backToDashboard": "Zurück zu Alle Projekte",
-      "archive": "Archivieren"
+      "archive": "Archivieren",
+      "addCrewMember": "Crewmitglied hinzufügen",
+      "removeCrewMember": "Crewmitglied entfernen"
     },
     "list": {
       "title": "Projekte",
@@ -161,14 +164,20 @@
       "placeholder": "Crew-Notizen, Abholinfos oder Rückgabeanweisungen",
       "empty": "Keine Notizen hinzugefügt."
     },
+    "crew": {
+      "namePlaceholder": "Crewmitglied",
+      "rolePlaceholder": "Rolle auswählen",
+      "empty": "Noch keine Crew hinzugefügt."
+    },
     "print": {
       "labels": {
-        "client": "Kunde",
+        "client": "Production Company",
         "prep": "Prep",
-        "shooting": "Dreh",
-        "return": "Rückgabe",
-        "location": "Ort",
-        "contact": "Kontakt"
+        "shooting": "Shooting",
+        "return": "Return",
+        "location": "Rental House",
+        "contact": "Production Manager",
+        "crew": "Crew"
       },
       "notes": {
         "title": "Projekt-Notizen"

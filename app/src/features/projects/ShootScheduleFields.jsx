@@ -47,7 +47,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
     updateSchedule(key, nextValues);
   };
 
-  const wrapperClassName = `grid gap-4 lg:grid-cols-2 xl:grid-cols-3 ${className}`.trim();
+  const wrapperClassName = `grid gap-4 md:grid-cols-2 xl:grid-cols-3 ${className}`.trim();
 
   return (
     <div className={wrapperClassName}>
@@ -56,11 +56,8 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
           <span>{section.label}</span>
           <div className="flex flex-col gap-2">
             {normalized[section.key].map((value, index) => (
-              <div
-                key={`${section.key}-${index}`}
-                className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
-              >
-                <label className="flex min-w-0 flex-col gap-1 text-xs text-text-muted">
+              <div key={`${section.key}-${index}`} className="flex flex-wrap items-end gap-2">
+                <label className="flex min-w-[12rem] flex-1 flex-col gap-1 text-xs text-text-muted">
                   <span>{startLabel}</span>
                   <input
                     type="date"
@@ -70,7 +67,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
                     aria-label={`${section.label} ${startLabel} ${index + 1}`}
                   />
                 </label>
-                <label className="flex min-w-0 flex-col gap-1 text-xs text-text-muted">
+                <label className="flex min-w-[12rem] flex-1 flex-col gap-1 text-xs text-text-muted">
                   <span>{endLabel}</span>
                   <input
                     type="date"
@@ -84,7 +81,7 @@ const ShootScheduleFields = ({ t, schedule, onChange, className = '' }) => {
                   type="button"
                   onClick={() => handleRemove(section.key, index)}
                   disabled={normalized[section.key].length === 1}
-                  className="ui-button ui-button-outline justify-self-start px-3 py-2 text-xs disabled:opacity-40"
+                  className="ui-button ui-button-outline px-3 py-2 text-xs disabled:opacity-40"
                   aria-label={`${removeLabel}: ${section.label}`}
                   title={`${removeLabel}: ${section.label}`}
                 >

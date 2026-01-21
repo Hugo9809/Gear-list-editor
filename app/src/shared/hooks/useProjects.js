@@ -26,7 +26,8 @@ const createEmptyProjectDraft = () => ({
   client: '',
   shootSchedule: createEmptyShootSchedule(),
   location: '',
-  contact: ''
+  contact: '',
+  crew: []
 });
 
 const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
@@ -81,6 +82,18 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
    * @param {Item} item - The item to remember.
    */
   const normalizeText = useCallback((value) => (typeof value === 'string' ? value.trim() : ''), []);
+  const normalizeCrewDraft = useCallback((crew) => {
+    if (!Array.isArray(crew)) {
+      return [];
+    }
+    return crew
+      .map((entry) => ({
+        id: typeof entry?.id === 'string' && entry.id ? entry.id : createId(),
+        name: normalizeText(entry?.name),
+        role: normalizeText(entry?.role)
+      }))
+      .filter((entry) => entry.name || entry.role);
+  }, [normalizeText]);
 
   const normalizeCategory = useCallback(
     (value) => {
@@ -273,6 +286,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         shootSchedule: normalizeShootSchedule(projectDraft.shootSchedule),
         location: projectDraft.location.trim(),
         contact: projectDraft.contact.trim(),
+        crew: normalizeCrewDraft(projectDraft.crew),
         notes: '',
         categories: []
       };
@@ -281,7 +295,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
       setStatus(t('status.projectCreated', 'New project created and protected by autosave.'));
       return newProject.id;
     },
-    [projectDraft, setStatus, t]
+    [normalizeCrewDraft, projectDraft, setStatus, t]
   );
 
   const deleteProject = useCallback(

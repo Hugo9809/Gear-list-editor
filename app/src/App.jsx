@@ -188,7 +188,12 @@ export default function App() {
         setStatus(t('status.pdfExportComplete', 'PDF downloaded successfully.'));
       } catch (err) {
         console.error('PDF export failed:', err);
-        setStatus(t('status.pdfExportError', 'PDF generation failed. Please try again.'));
+        const messageKey = err?.message === 'popup-blocked' ? 'status.popupBlocked' : 'status.pdfExportError';
+        const fallback =
+          messageKey === 'status.popupBlocked'
+            ? 'Popup blocked. Please allow popups for PDF export.'
+            : 'PDF generation failed. Please try again.';
+        setStatus(t(messageKey, fallback));
       }
     },
     [locale, setStatus, t, theme]

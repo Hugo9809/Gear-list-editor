@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom';
 import { getShootScheduleDates } from '../../shared/utils/shootSchedule.js';
+import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
+import { crewRoles } from '../../data/crewRoles.js';
+import { rentalHouseSuggestions, formatRentalHouseValue } from '../../data/rentalHouses.js';
+import CrewFieldList from './CrewFieldList.jsx';
 import ShootScheduleFields from './ShootScheduleFields.jsx';
 
 /**
@@ -25,6 +29,10 @@ const ProjectDashboard = ({
   autoBackups,
   resolveStorageSource
 }) => {
+  const handleRentalHouseSelect = (suggestion) => {
+    onProjectDraftChange('contact', formatRentalHouseValue(suggestion));
+  };
+
   const formatScheduleSummary = (schedule) => {
     const { prepPeriods, shootingPeriods, returnDays } = getShootScheduleDates(schedule);
     const formatRange = (range) => {
@@ -165,14 +173,28 @@ const ProjectDashboard = ({
           />
         </label>
         <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
-          {t('project.fields.contact', 'Lead contact')}
-          <input
+          {t('project.fields.contact', 'Rental house')}
+          <TypeaheadInput
             value={projectDraft.contact}
-            onChange={(event) => onProjectDraftChange('contact', event.target.value)}
-            placeholder={t('project.placeholders.contact', 'Producer or department contact')}
-            className="ui-input ui-input-lg"
+            onChange={(value) => onProjectDraftChange('contact', value)}
+            onSelectSuggestion={handleRentalHouseSelect}
+            suggestions={rentalHouseSuggestions}
+            placeholder={t(
+              'project.placeholders.contact',
+              'Rental house name, address, phone'
+            )}
+            label={t('project.fields.contact', 'Rental house')}
+            inputClassName="ui-input ui-input-lg"
           />
         </label>
+        <div className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
+          <CrewFieldList
+            t={t}
+            crew={projectDraft.crew}
+            roles={crewRoles}
+            onChange={(nextCrew) => onProjectDraftChange('crew', nextCrew)}
+          />
+        </div>
       </div>
       <button type="submit" className="ui-button ui-button-primary w-fit px-5">
         {t('project.actions.create', 'Create project')}

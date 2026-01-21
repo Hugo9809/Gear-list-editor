@@ -38,6 +38,22 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
     const formatted = values.map(formatRange).filter(Boolean);
     return formatted.length ? formatted.join(', ') : t('ui.emptyValue', '—');
   };
+  const formatCrewEntry = (entry) => {
+    const name = typeof entry?.name === 'string' ? entry.name.trim() : '';
+    const role = typeof entry?.role === 'string' ? entry.role.trim() : '';
+    if (name && role) {
+      return `${role}: ${name}`;
+    }
+    return name || role;
+  };
+  const formatCrewList = (crew) => {
+    if (!Array.isArray(crew)) {
+      return t('ui.emptyValue', '—');
+    }
+    const entries = crew.map(formatCrewEntry).filter(Boolean);
+    return entries.length ? entries.join(', ') : t('ui.emptyValue', '—');
+  };
+  const crewList = formatCrewList(project.crew);
   const categoriesHtml = project.categories
     .map((category, categoryIndex) => {
       const rows = category.items
@@ -151,6 +167,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0) => 
             <div><strong>${escapeHtml(t('project.print.labels.return'))}:</strong> ${escapeHtml(formatScheduleList(shootSchedule.returnDays))}</div>
             <div><strong>${escapeHtml(t('project.print.labels.location'))}:</strong> ${escapeHtml(project.location || t('ui.emptyValue', '—'))}</div>
             <div><strong>${escapeHtml(t('project.print.labels.contact'))}:</strong> ${escapeHtml(project.contact || t('ui.emptyValue', '—'))}</div>
+            <div><strong>${escapeHtml(t('project.print.labels.crew'))}:</strong> ${escapeHtml(crewList)}</div>
           </div>
         </header>
         ${categoriesHtml}

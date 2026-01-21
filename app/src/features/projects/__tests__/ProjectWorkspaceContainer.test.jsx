@@ -110,7 +110,7 @@ describe('ProjectWorkspaceContainer', () => {
   it('renders the workspace for a valid project id', () => {
     renderWorkspace();
 
-    expect(screen.getByText('Active project workspace')).toBeInTheDocument();
+    expect(screen.getByText('Test Project')).toBeInTheDocument();
   });
 
   it('navigates back to the dashboard for an invalid project id', () => {

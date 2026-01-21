@@ -90,13 +90,14 @@
       "shootingPeriod": "Shooting period",
       "returnDay": "Return day",
       "location": "Location",
-      "contact": "Lead contact"
+      "contact": "Rental house",
+      "crew": "Crew"
     },
     "placeholders": {
       "name": "e.g. October studio shoot",
       "client": "Client, agency, or show",
       "location": "Studio, city, or venue",
-      "contact": "Producer or department contact"
+      "contact": "Rental house name, address, phone"
     },
     "actions": {
       "create": "Create project",
@@ -106,7 +107,9 @@
       "active": "Active",
       "open": "Open project",
       "backToDashboard": "Back to All Projects",
-      "archive": "Archive"
+      "archive": "Archive",
+      "addCrewMember": "Add crew member",
+      "removeCrewMember": "Remove crew member"
     },
     "list": {
       "title": "Projects",
@@ -151,14 +154,20 @@
       "placeholder": "Crew notes, pickup info, or return instructions",
       "empty": "No notes added."
     },
+    "crew": {
+      "namePlaceholder": "Crew member name",
+      "rolePlaceholder": "Select role",
+      "empty": "No crew added yet."
+    },
     "print": {
       "labels": {
-        "client": "Client",
+        "client": "Production Company",
         "prep": "Prep",
-        "shooting": "Shoot",
+        "shooting": "Shooting",
         "return": "Return",
-        "location": "Location",
-        "contact": "Contact"
+        "location": "Rental House",
+        "contact": "Production Manager",
+        "crew": "Crew"
       },
       "notes": {
         "title": "Project notes"

@@ -1,4 +1,7 @@
 import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
+import { crewRoles } from '../../data/crewRoles.js';
+import { rentalHouseSuggestions, formatRentalHouseValue } from '../../data/rentalHouses.js';
+import CrewFieldList from './CrewFieldList.jsx';
 import ShootScheduleFields from './ShootScheduleFields.jsx';
 
 /**
@@ -38,7 +41,11 @@ const ProjectWorkspace = ({
     <div className="flex flex-wrap items-center justify-between gap-4">
       <div>
         <h2 className="text-xl font-semibold ui-heading">
-          {t('project.workspace.title', 'Active project workspace')}
+          {resolveDisplayName(
+            activeProject?.name,
+            { index: Math.max(activeProjectIndex, 0) + 1 },
+            'defaults.untitled_project'
+          )}
         </h2>
         <p className="text-sm text-text-secondary">
           {activeProject
@@ -111,13 +118,30 @@ const ProjectWorkspace = ({
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
-            {t('project.fields.contact', 'Lead contact')}
-            <input
+            {t('project.fields.contact', 'Rental house')}
+            <TypeaheadInput
               value={activeProject.contact}
-              onChange={(event) => onUpdateProjectField('contact', event.target.value)}
-              className="ui-input ui-input-lg"
+              onChange={(value) => onUpdateProjectField('contact', value)}
+              onSelectSuggestion={(suggestion) =>
+                onUpdateProjectField('contact', formatRentalHouseValue(suggestion))
+              }
+              suggestions={rentalHouseSuggestions}
+              placeholder={t(
+                'project.placeholders.contact',
+                'Rental house name, address, phone'
+              )}
+              label={t('project.fields.contact', 'Rental house')}
+              inputClassName="ui-input ui-input-lg"
             />
           </label>
+          <div className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
+            <CrewFieldList
+              t={t}
+              crew={activeProject.crew}
+              roles={crewRoles}
+              onChange={(nextCrew) => onUpdateProjectField('crew', nextCrew)}
+            />
+          </div>
         </div>
 
         <form

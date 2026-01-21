@@ -16,55 +16,97 @@ import { createId } from '../../data/normalize.js';
  * @param {(media: string) => void} params.setStatus
  */
 export const useDeviceLibrary = ({ deviceLibrary, setDeviceLibrary, t, setStatus }) => {
-
-    const addLibraryItem = useCallback((draft) => {
-        const name = draft.name?.trim();
-        if (!name) {
-            setStatus(t('status.libraryItemNameRequired', 'Please provide a name for the item.'));
-            return;
-        }
-
-        const newItem = {
-            id: createId(),
-            name,
-            quantity: Math.max(1, Number(draft.quantity) || 1),
-            unit: draft.unit?.trim() || '',
-            details: draft.details?.trim() || '',
-            category: draft.category?.trim() || '',
-            dateAdded: new Date().toISOString()
-        };
-
-        setDeviceLibrary(prev => ({
-            ...prev,
-            items: [newItem, ...(prev.items || [])]
-        }));
-
-        setStatus(t('status.libraryItemAdded', 'Item added to Device Library.'));
-    }, [setDeviceLibrary, setStatus, t]);
-
-    const updateLibraryItem = useCallback((id, updates) => {
-        setDeviceLibrary(prev => ({
-            ...prev,
-            items: (prev.items || []).map(item => {
-                if (item.id !== id) return item;
-                return { ...item, ...updates };
-            })
-        }));
-        setStatus(t('status.libraryItemUpdated', 'Item updated.'));
-    }, [setDeviceLibrary, setStatus, t]);
-
-    const deleteLibraryItem = useCallback((id) => {
-        setDeviceLibrary(prev => ({
-            ...prev,
-            items: (prev.items || []).filter(item => item.id !== id)
-        }));
-        setStatus(t('status.libraryItemDeleted', 'Item deleted from library.'));
-    }, [setDeviceLibrary, setStatus, t]);
-
+  const normalizeDraft = (draft, existing = null) => {
+    const name = typeof draft?.name === 'string' ? draft.name.trim() : existing?.name || '';
+    if (!name) {
+      return { error: t('status.libraryItemNameRequired', 'Please provide a name for the item.') };
+    }
+    const quantityCandidate = draft?.quantity ?? existing?.quantity ?? 1;
+    const quantity = Math.max(1, Number(quantityCandidate) || 1);
     return {
-        libraryItems: deviceLibrary?.items || [],
-        addLibraryItem,
-        updateLibraryItem,
-        deleteLibraryItem
+      name,
+      quantity,
+      unit: typeof draft?.unit === 'string' ? draft.unit.trim() : existing?.unit || '',
+      details: typeof draft?.details === 'string' ? draft.details.trim() : existing?.details || '',
+      category: typeof draft?.category === 'string' ? draft.category.trim() : existing?.category || ''
     };
+  };
+
+  const addLibraryItem = useCallback(
+    (draft) => {
+      const normalized = normalizeDraft(draft);
+      if (normalized.error) {
+        setStatus(normalized.error);
+        return;
+      }
+
+      const newItem = {
+        id: createId(),
+        ...normalized,
+        dateAdded: new Date().toISOString()
+      };
+
+      setDeviceLibrary((prev) => {
+        const safePrev = prev && typeof prev === 'object' ? prev : { items: [] };
+        return {
+          ...safePrev,
+          items: [newItem, ...(safePrev.items || [])]
+        };
+      });
+
+      setStatus(t('status.libraryItemAdded', 'Item added to Device Library.'));
+    },
+    [setDeviceLibrary, setStatus, t]
+  );
+
+  const updateLibraryItem = useCallback(
+    (id, updates) => {
+      let hasError = false;
+      setDeviceLibrary((prev) => {
+        const safePrev = prev && typeof prev === 'object' ? prev : { items: [] };
+        const items = (safePrev.items || []).map((item) => {
+          if (item.id !== id) return item;
+          const normalized = normalizeDraft(updates, item);
+          if (normalized.error) {
+            hasError = true;
+            return item;
+          }
+          return { ...item, ...normalized };
+        });
+        return {
+          ...safePrev,
+          items
+        };
+      });
+
+      if (hasError) {
+        setStatus(t('status.libraryItemNameRequired', 'Please provide a name for the item.'));
+        return;
+      }
+
+      setStatus(t('status.libraryItemUpdated', 'Item updated.'));
+    },
+    [setDeviceLibrary, setStatus, t]
+  );
+
+  const deleteLibraryItem = useCallback(
+    (id) => {
+      setDeviceLibrary((prev) => {
+        const safePrev = prev && typeof prev === 'object' ? prev : { items: [] };
+        return {
+          ...safePrev,
+          items: (safePrev.items || []).filter((item) => item.id !== id)
+        };
+      });
+      setStatus(t('status.libraryItemDeleted', 'Item deleted from library.'));
+    },
+    [setDeviceLibrary, setStatus, t]
+  );
+
+  return {
+    libraryItems: deviceLibrary?.items || [],
+    addLibraryItem,
+    updateLibraryItem,
+    deleteLibraryItem
+  };
 };

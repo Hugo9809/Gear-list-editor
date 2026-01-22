@@ -1,0 +1,128 @@
+/* Global design system styles */
+/* Base variables derived from design tokens (ASCII-safe defaults) */
+:root {
+  --font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
+  --font-size-base: 16px;
+  --line-height-base: 1.5;
+
+  /* Colors (light theme) */
+  --color-bg: #F9FAFB;
+  --color-surface: #FFFFFF;
+  --color-text: #0F172A;
+  --color-muted: #64748B;
+  --color-border: #E5E7EB;
+  --color-primary: #2563EB;
+  --color-primary-fg: #FFFFFF;
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+
+  /* Radius & shadow tokens */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.12);
+
+  /* Spacing scale */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+}
+
+/* Dark theme support */
+[data-theme="dark"] {
+  --color-bg: #0B1020;
+  --color-surface: #141A2B;
+  --color-text: #E5E7EB;
+  --color-muted: #94A3B8;
+  --color-border: #1F2A44;
+  --color-primary: #60A5FA;
+  --color-primary-fg: #0B1020;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.5);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.6);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.7);
+}
+
+/* Reset-ish baseline for predictable typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+/* Simple global typography helpers */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--space-3) 0;
+  font-weight: 700;
+}
+p {
+  margin: 0 0 var(--space-3) 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn.secondary {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* Inputs and form basics */
+input, textarea, select {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}

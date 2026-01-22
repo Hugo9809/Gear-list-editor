@@ -254,11 +254,7 @@ h6 {
 
   .ui-sidebar-logo {
     @apply flex h-12 w-12 items-center justify-center rounded-2xl border border-surface-sunken text-sm font-semibold text-text-primary;
-    background: linear-gradient(
-      145deg,
-      rgb(var(--v2-surface-elevated) / 0.92),
-      rgb(var(--v2-surface-muted) / 0.88)
-    );
+    background: rgb(var(--v2-brand-secondary) / 1);
     box-shadow: var(--v2-shadow-sm);
     letter-spacing: 0.12em;
   }

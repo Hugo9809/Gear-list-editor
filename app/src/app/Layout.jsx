@@ -171,14 +171,17 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
   return (
     <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
-        <div className="flex flex-col gap-8 lg:flex-row lg:gap-0">
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-6">
           <aside
             className="v2-sidebar w-full lg:w-[260px]"
             aria-label={t('navigation.sidebar.label', 'Primary navigation')}
           >
             <div className="v2-sidebar-header">
               <img src={`${baseUrl}pwa-192x192.png`} alt="" className="v2-sidebar-logo" />
-              <h1 className="v2-sidebar-title">{t('ui.appName', 'Gear List Creator')}</h1>
+              <div className="v2-sidebar-header-text">
+                <h1 className="v2-sidebar-title">{t('ui.appName', 'Gear List Creator')}</h1>
+                <div className="v2-sidebar-subtitle">{t('ui.sidebar.subtitle', 'Safe offline workspace')}</div>
+              </div>
             </div>
             <div className="v2-sidebar-nav">
               {navigationSections.map((section) => (

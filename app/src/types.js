@@ -47,6 +47,17 @@
  * @property {string} id - Unique identifier (UUID)
  * @property {string} name - Crew member name
  * @property {string} role - Crew member role
+ * @property {string} phone - Crew member phone
+ * @property {string} email - Crew member email
+ */
+
+/**
+ * @typedef {Object} Contact
+ * @property {string} id - Unique identifier (UUID)
+ * @property {string} name - Contact name
+ * @property {string} role - Contact role
+ * @property {string} phone - Contact phone
+ * @property {string} email - Contact email
  */
 
 /**
@@ -115,6 +126,7 @@
  * @property {Project[]} projects - All user projects
  * @property {Template[]} templates - Saved templates
  * @property {DeviceLibrary} deviceLibrary - Global device inventory
+ * @property {Contact[]} contacts - Global contacts directory
  * @property {History} history - Autocomplete suggestions history
  * @property {string|null} activeProjectId - Currently open project ID
  * @property {string|null} lastSaved - ISO timestamp of last save

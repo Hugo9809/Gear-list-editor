@@ -26,6 +26,7 @@ export const STORAGE_MESSAGE_KEYS = {
     payloadInvalid: 'errors.payload_invalid',
     projectsInvalid: 'errors.projects_invalid',
     templatesInvalid: 'errors.templates_invalid',
+    contactsInvalid: 'errors.contacts_invalid',
     historyInvalid: 'errors.history_invalid',
     deviceLibraryInvalid: 'errors.device_library_invalid',
     versionInvalid: 'errors.version_invalid'
@@ -149,9 +150,11 @@ const normalizeCrew = (crew) => {
     .map((entry) => ({
       id: typeof entry?.id === 'string' && entry.id ? entry.id : createId(),
       name: normalizeText(entry?.name),
-      role: normalizeText(entry?.role)
+      role: normalizeText(entry?.role),
+      phone: normalizeText(entry?.phone),
+      email: normalizeText(entry?.email)
     }))
-    .filter((entry) => entry.name || entry.role);
+    .filter((entry) => entry.name || entry.role || entry.phone || entry.email);
 };
 
 export const normalizeProject = (project) => {
@@ -194,6 +197,21 @@ export const normalizeHistory = (history) => {
       .filter((entry) => entry.name),
     categories: categories.map((entry) => normalizeText(entry)).filter(Boolean)
   };
+};
+
+export const normalizeContacts = (contacts) => {
+  if (!Array.isArray(contacts)) {
+    return [];
+  }
+  return contacts
+    .map((entry) => ({
+      id: typeof entry?.id === 'string' && entry.id ? entry.id : createId(),
+      name: normalizeText(entry?.name),
+      role: normalizeText(entry?.role),
+      phone: normalizeText(entry?.phone),
+      email: normalizeText(entry?.email)
+    }))
+    .filter((entry) => entry.name || entry.role || entry.phone || entry.email);
 };
 
 export const mergeHistoryEntries = (current, incoming) => {
@@ -246,6 +264,9 @@ export const validatePayload = (payload) => {
   }
   if (payload.history && typeof payload.history !== 'object') {
     errors.push(STORAGE_MESSAGE_KEYS.errors.historyInvalid);
+  }
+  if (payload.contacts && !Array.isArray(payload.contacts)) {
+    errors.push(STORAGE_MESSAGE_KEYS.errors.contactsInvalid);
   }
   if (payload.deviceLibrary && typeof payload.deviceLibrary !== 'object') {
     errors.push(STORAGE_MESSAGE_KEYS.errors.deviceLibraryInvalid);

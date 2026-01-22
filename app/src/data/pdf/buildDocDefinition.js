@@ -42,8 +42,6 @@ const splitMetaValue = (value, emptyValue) => {
   if (parts.length <= 1) {
     return { main: normalized, aside: '' };
   }
-  const footerProjectName = project.name || t('project.untitled', 'Untitled Project');
-
   return {
     main: parts.slice(0, -1).join(' | '),
     aside: parts[parts.length - 1]
@@ -93,6 +91,14 @@ const buildCameraSpec = (categories) => {
   };
 };
 
+const formatCrewValue = (entry) => {
+  if (!entry) return '';
+  const name = normalizeText(entry.name);
+  const asideParts = [normalizeText(entry.phone), normalizeText(entry.email)].filter(Boolean);
+  const aside = asideParts.join(' / ');
+  return [name, aside].filter(Boolean).join(' | ');
+};
+
 /**
  * Build pdfmake document definition from export snapshot.
  * @param {import('./snapshotTypes.js').PdfExportSnapshot} snapshot
@@ -105,6 +111,10 @@ export function buildDocDefinition(snapshot, t, theme) {
   const categories = project.categories || [];
   const shootSchedule = getShootScheduleDates(project.shootSchedule ?? project.shootDate);
   const emptyValue = t('ui.emptyValue', '—');
+  const rawProjectName = normalizeText(project.name);
+  const projectName = rawProjectName && !rawProjectName.startsWith('defaults.')
+    ? rawProjectName
+    : t('project.untitled', 'Untitled Project');
 
   const isPinkMode = theme === 'pink';
   const themeColor = isPinkMode ? '#E10078' : '#001589';
@@ -114,16 +124,45 @@ export function buildDocDefinition(snapshot, t, theme) {
     ? formatDateList(shootSchedule.shootingPeriods, emptyValue)
     : '';
 
+  const resolveCategoryName = (name, index) => {
+    const normalized = normalizeText(name);
+    if (!normalized || normalized.startsWith('defaults.')) {
+      return `${t('project.category.defaultName', 'Category')} ${index + 1}`;
+    }
+    return normalized;
+  };
+
+  const resolveItemName = (name, index) => {
+    const normalized = normalizeText(name);
+    if (!normalized || normalized.startsWith('defaults.')) {
+      return `${t('items.print.headers.item', 'Item')} ${index + 1}`;
+    }
+    return normalized;
+  };
+
+  const crewEntries = Array.isArray(project.crew) ? project.crew : [];
+  const crewMetaEntries = crewEntries
+    .map((entry) => {
+      const label = normalizeText(entry.role) || t('project.print.labels.crew', 'Crew');
+      const value = formatCrewValue(entry);
+      if (!value) {
+        return null;
+      }
+      return { label, value };
+    })
+    .filter(Boolean);
+
   const metaEntries = [
-    { label: t('project.print.labels.client', 'Production Company'), value: project.client },
-    { label: t('project.print.labels.contact', 'Production Manager'), value: project.contact },
-    { label: t('project.print.labels.location', 'Rental House'), value: project.location },
+    { label: t('project.print.labels.client', 'Client'), value: project.client },
+    { label: t('project.print.labels.location', 'Location'), value: project.location },
+    { label: t('project.print.labels.contact', 'Rental house'), value: project.contact },
+    ...crewMetaEntries,
     {
       label: t('project.print.labels.prep', 'Prep'),
       value: formatDateList(shootSchedule.prepPeriods, emptyValue)
     },
     {
-      label: t('project.print.labels.shooting', 'Shooting'),
+      label: t('project.print.labels.shooting', 'Shoot'),
       value: formatDateList(shootSchedule.shootingPeriods, emptyValue)
     },
     {
@@ -184,11 +223,10 @@ export function buildDocDefinition(snapshot, t, theme) {
   const categoryContent = categories.flatMap((category, idx) => {
     const items = category.items || [];
     if (items.length === 0) return [];
-    const categoryName =
-      category.name || `${t('project.category.defaultName', 'Category')} ${idx + 1}`;
-    const itemLines = items.map((item) => {
+    const categoryName = resolveCategoryName(category.name, idx);
+    const itemLines = items.map((item, itemIndex) => {
       const quantity = normalizeText(item.quantity) || '1';
-      const name = normalizeText(item.name);
+      const name = resolveItemName(item.name, itemIndex);
       const details = normalizeItemDetails(item.details);
       const fullName = details ? `${name} - ${details}` : name;
       return {
@@ -286,7 +324,7 @@ export function buildDocDefinition(snapshot, t, theme) {
     pageSize: 'A4',
     pageMargins: [40, 40, 40, 60],
     footer: (currentPage, pageCount) => ({
-      text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${footerProjectName}`,
+      text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${projectName}`,
       alignment: 'center',
       color: '#666',
       fontSize: 9,
@@ -294,7 +332,7 @@ export function buildDocDefinition(snapshot, t, theme) {
     }),
     content: [
       {
-        text: project.name || t('project.untitled', 'Untitled Project'),
+        text: projectName,
         style: 'title',
         color: themeColor,
         margin: [0, 0, 0, 2]

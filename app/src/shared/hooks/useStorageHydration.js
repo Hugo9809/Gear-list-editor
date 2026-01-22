@@ -11,10 +11,12 @@ export const useStorageHydration = ({
   projects,
   templates,
   deviceLibrary,
+  contacts,
   history,
   setProjects,
   setTemplates,
   setDeviceLibrary,
+  setContacts,
   setHistory,
   setStatus
 }) => {
@@ -134,6 +136,7 @@ export const useStorageHydration = ({
       setProjects(result.state.projects);
       setTemplates(result.state.templates);
       setDeviceLibrary(result.state.deviceLibrary);
+      setContacts(result.state.contacts);
       setHistory(result.state.history);
       // activeProjectId is no longer managed here
       setLastSaved(result.state.lastSaved);
@@ -169,6 +172,7 @@ export const useStorageHydration = ({
     setStatus,
     setTemplates,
     setDeviceLibrary,
+    setContacts,
     storageService,
     t
   ]);
@@ -186,12 +190,13 @@ export const useStorageHydration = ({
       projects,
       templates,
       deviceLibrary,
+      contacts,
       history,
       activeProjectId: null, // Legacy support
       lastSaved,
       showAutoBackups
     });
-  }, [projects, templates, deviceLibrary, history, isHydrated, theme, showAutoBackups, lastSaved, storageService]);
+  }, [projects, templates, deviceLibrary, contacts, history, isHydrated, theme, showAutoBackups, lastSaved, storageService]);
 
   useEffect(() => {
     if (!isHydrated || !showAutoBackups) {
@@ -217,11 +222,12 @@ export const useStorageHydration = ({
         projects,
         templates,
         deviceLibrary,
+        contacts,
         history,
         activeProjectId: null,
         lastSaved
       }),
-    [deviceLibrary, history, lastSaved, projects, templates, storageService]
+    [deviceLibrary, contacts, history, lastSaved, projects, templates, storageService]
   );
 
   const exportProjectBackup = useCallback(
@@ -231,13 +237,14 @@ export const useStorageHydration = ({
           projects,
           templates,
           deviceLibrary,
+          contacts,
           history,
           activeProjectId: null,
           lastSaved
         },
         projectId
       ),
-    [deviceLibrary, history, lastSaved, projects, templates, storageService]
+    [deviceLibrary, contacts, history, lastSaved, projects, templates, storageService]
   );
 
   const importBackupFile = useCallback(
@@ -252,6 +259,7 @@ export const useStorageHydration = ({
             projects,
             templates,
             deviceLibrary,
+            contacts,
             history,
             activeProjectId: null,
             lastSaved
@@ -259,6 +267,7 @@ export const useStorageHydration = ({
           setProjects(state.projects);
           setTemplates(state.templates);
           setDeviceLibrary(state.deviceLibrary);
+          setContacts(state.contacts);
           setHistory(state.history);
           // setActiveProjectId(state.activeProjectId); // Removed
           resolve({ state, warnings });
@@ -274,8 +283,10 @@ export const useStorageHydration = ({
       setProjects,
       setTemplates,
       setDeviceLibrary,
+      setContacts,
       templates,
       deviceLibrary,
+      contacts,
       storageService
     ]
   );
@@ -285,6 +296,7 @@ export const useStorageHydration = ({
     setProjects(result.state.projects);
     setTemplates(result.state.templates);
     setDeviceLibrary(result.state.deviceLibrary);
+    setContacts(result.state.contacts);
     setHistory(result.state.history);
     // setActiveProjectId(result.state.activeProjectId); // Removed
     setLastSaved(result.state.lastSaved);
@@ -310,6 +322,7 @@ export const useStorageHydration = ({
     setStatus,
     setTemplates,
     setDeviceLibrary,
+    setContacts,
     t,
     storageService
   ]);

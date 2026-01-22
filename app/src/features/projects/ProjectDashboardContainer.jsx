@@ -13,6 +13,7 @@ const ProjectDashboardContainer = ({
     selectedTemplateId,
     projectDraft,
     projects,
+    contacts,
     lastSaved,
     showAutoBackups,
     autoBackups
@@ -37,6 +38,7 @@ const ProjectDashboardContainer = ({
       onLoadTemplate={onLoadTemplate}
       onImportProject={onImportProject}
       projectDraft={projectDraft}
+      contacts={contacts}
       onProjectDraftChange={onProjectDraftChange}
       onCreateProject={onCreateProject}
       projects={projects}

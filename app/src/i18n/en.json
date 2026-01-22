@@ -12,6 +12,7 @@
     "sidebar": {
       "dashboard": "All Projects",
       "templates": "Templates",
+      "contacts": "Contacts",
       "settings": "Settings",
       "help": "Help"
     },
@@ -157,16 +158,18 @@
     "crew": {
       "namePlaceholder": "Crew member name",
       "rolePlaceholder": "Select role",
+      "phonePlaceholder": "Phone",
+      "emailPlaceholder": "Email",
       "empty": "No crew added yet."
     },
     "print": {
       "labels": {
-        "client": "Production Company",
+        "client": "Client",
         "prep": "Prep",
-        "shooting": "Shooting",
+        "shooting": "Shoot",
         "return": "Return",
-        "location": "Rental House",
-        "contact": "Production Manager",
+        "location": "Location",
+        "contact": "Rental house",
         "crew": "Crew"
       },
       "notes": {
@@ -270,6 +273,7 @@
     "payload_invalid": "Backup payload is missing or invalid.",
     "projects_invalid": "Projects must be an array.",
     "templates_invalid": "Templates must be an array.",
+    "contacts_invalid": "Contacts must be an array.",
     "history_invalid": "History must be an object when provided.",
     "version_invalid": "Version must be numeric when provided."
   },
@@ -311,6 +315,10 @@
     "categoryMoved": "Category moved.",
     "projectDetailsUpdated": "Project details updated.",
     "projectNotesSaved": "Project notes saved for autosave.",
+    "contactNameRequired": "Please provide a contact name.",
+    "contactAdded": "Contact added.",
+    "contactUpdated": "Contact updated.",
+    "contactDeleted": "Contact deleted.",
     "suggestionApplied": "Suggestion applied and ready for autosave.",
     "projectNeededForTemplate": "Create a project before saving a template.",
     "templateNameRequired": "Please name the template.",
@@ -339,6 +347,36 @@
       "packed": "Packed",
       "missing": "Missing",
       "rented": "Rented"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "description": "Manage your global crew contacts so phone and email details are ready in every project.",
+    "helper": "Contacts sync into crew entry suggestions and keep role, phone, and email details consistent.",
+    "add": "Add contact",
+    "empty": "No contacts yet. Add crew contacts to reuse them in projects.",
+    "confirmDelete": "Are you sure you want to delete this contact?",
+    "roleEmpty": "Role not set",
+    "suggestionFallback": "No contact details",
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "fields": {
+      "name": "Name",
+      "role": "Role",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "placeholders": {
+      "name": "Crew member name",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "editor": {
+      "titleAdd": "Add contact",
+      "titleEdit": "Edit contact",
+      "helper": "Store trusted crew contacts so projects can reuse phone and email details quickly."
     }
   },
   "settings": {

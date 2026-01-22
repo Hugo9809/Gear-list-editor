@@ -1,4 +1,5 @@
 import { buildExportSnapshot } from './snapshotTypes.js';
+import { buildPrintableHtml } from '../../shared/utils/print.js';
 
 /**
  * Exports the project as a PDF file.
@@ -6,7 +7,7 @@ import { buildExportSnapshot } from './snapshotTypes.js';
  * @param {string} locale - The user's locale (e.g., 'en', 'de').
  * @param {(key: string, fallback?: string) => string} t - Translation function.
  * @param {'light'|'dark'|'pink'} theme - The current theme for styling.
- * @returns {Promise<void>} Resolves when download is initiated.
+ * @returns {Promise<'download'|'print'>} Resolves when export is initiated.
  */
 export async function exportPdf(project, locale, t, theme) {
   let previewWindow;
@@ -25,12 +26,14 @@ export async function exportPdf(project, locale, t, theme) {
       'project.untitled': t('project.untitled', 'Untitled Project'),
       'ui.emptyValue': t('ui.emptyValue', '—'),
       'ui.gearList': t('ui.gearList', 'Gear list'),
-      'project.print.labels.client': t('project.print.labels.client', 'Production Company'),
+      'items.print.headers.item': t('items.print.headers.item', 'Item'),
+      'project.print.labels.client': t('project.print.labels.client', 'Client'),
       'project.print.labels.prep': t('project.print.labels.prep', 'Prep'),
-      'project.print.labels.shooting': t('project.print.labels.shooting', 'Shooting'),
+      'project.print.labels.shooting': t('project.print.labels.shooting', 'Shoot'),
       'project.print.labels.return': t('project.print.labels.return', 'Return'),
-      'project.print.labels.location': t('project.print.labels.location', 'Rental House'),
-      'project.print.labels.contact': t('project.print.labels.contact', 'Production Manager'),
+      'project.print.labels.location': t('project.print.labels.location', 'Location'),
+      'project.print.labels.contact': t('project.print.labels.contact', 'Rental house'),
+      'project.print.labels.crew': t('project.print.labels.crew', 'Crew'),
       'project.print.notes.title': t('project.print.notes.title', 'Project notes')
     };
 
@@ -41,12 +44,21 @@ export async function exportPdf(project, locale, t, theme) {
       blob = await generatePdfInWorker(snapshot, translations, theme);
     } catch (error) {
       console.warn('PDF export worker failed, retrying on main thread.', error);
-      blob = await generatePdfOnMainThread(snapshot, translations, theme);
+      try {
+        blob = await generatePdfOnMainThread(snapshot, translations, theme);
+      } catch (mainError) {
+        console.error('PDF export failed on main thread, falling back to print.', mainError);
+        await printHtmlFallback(snapshot, translations, theme, previewWindow);
+        return 'print';
+      }
     }
 
     // 4. Download file
-    const filename = `${project.name || 'gear-list'}.pdf`;
+    const rawName = typeof project.name === 'string' ? project.name.trim() : '';
+    const safeName = rawName && !rawName.startsWith('defaults.') ? rawName : 'gear-list';
+    const filename = `${safeName}.pdf`;
     downloadBlob(blob, filename, previewWindow);
+    return 'download';
   } catch (error) {
     if (previewWindow && !previewWindow.closed) {
       previewWindow.close();
@@ -155,6 +167,47 @@ function downloadBlob(blob, filename, previewWindow) {
     window.open(url, '_blank');
   }
   setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+async function printHtmlFallback(snapshot, translations, theme, previewWindow) {
+  const t = (key, fallback) => translations[key] || fallback || key;
+  const html = buildPrintableHtml(snapshot.data.project, t, 0, theme);
+  if (previewWindow && !previewWindow.closed) {
+    previewWindow.document.open();
+    previewWindow.document.write(html);
+    previewWindow.document.close();
+    previewWindow.focus();
+    setTimeout(() => previewWindow.print(), 250);
+    return;
+  }
+  if (typeof document === 'undefined') {
+    throw new Error('print-unavailable');
+  }
+  const frame = document.createElement('iframe');
+  frame.title = 'pdf-print-fallback';
+  frame.style.position = 'fixed';
+  frame.style.right = '0';
+  frame.style.bottom = '0';
+  frame.style.width = '0';
+  frame.style.height = '0';
+  frame.style.border = '0';
+  frame.onload = () => {
+    const contentWindow = frame.contentWindow;
+    if (contentWindow) {
+      contentWindow.focus();
+      contentWindow.print();
+    }
+    setTimeout(() => frame.remove(), 1000);
+  };
+  document.body.appendChild(frame);
+  const doc = frame.contentDocument || frame.contentWindow?.document;
+  if (!doc) {
+    frame.remove();
+    throw new Error('print-unavailable');
+  }
+  doc.open();
+  doc.write(html);
+  doc.close();
 }
 
 function shouldOpenPreviewWindow() {

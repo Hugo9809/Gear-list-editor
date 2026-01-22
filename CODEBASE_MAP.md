@@ -1,74 +1,77 @@
 # Codebase Map
 
-> **Generated**: 2026-01-18
-> **Status**: Verified
+> **Generated**: 2026-01-21
+> **Status**: Updated
 
-## 🗺️ Navigation
+## Navigation
 
-**Start here:** [.agentlens/INDEX.md](.agentlens/INDEX.md)  
-For deep codebase introspection, use the generated AgentLens documentation.
+**Start here:** `README.md` for setup and doc links.  
+**Deep index:** `.agentlens/INDEX.md` (partial coverage).
 
-## 🏛️ Architecture Overview
+**Related docs:**
+- `docs/ARCHITECTURE.md`
+- `docs/DATA_STORAGE.md`
+- `docs/CONTRIBUTING.md`
+- `resources/tech-stack.md`
+- `resources/voice-tone.md`
+- `resources/design-tokens.json`
+
+## Architecture Overview
 
 **Stack**:
-- **Build**: Vite (Native ESM)
-- **Frontend**: React (JSX), JavaScript (ES2022+ Modules)
-- **Styling**: CSS Modules / Global CSS (`app/src/index.css`)
-- **State/Storage**: Local-First Architecture
-  - Primary: IndexedDB / OPFS (via `storageService.js`)
-  - Logic: `app/src/data/`
+- **Build**: Vite (ESM)
+- **Frontend**: React + React Router
+- **Styling**: Tailwind CSS + CSS variables (`app/src/index.css`)
+- **State/Storage**: Local-first (IndexedDB primary + OPFS backup) via `app/src/data/storageService.js`
+- **Testing**: Vitest
 
-**Structure**:
+**Source layout**:
 ```
 app/src/
-├── components/ # UI Components (Atoms, Molecules, Views)
-├── data/       # Persistence, Migrations, Storage Services
-├── hooks/      # Custom React Hooks
-├── utils/      # Shared Utilities
-└── i18n/       # Translations
+├── app/          # Shell layout and chrome
+├── data/         # Persistence, migrations, PDF export
+├── features/     # Feature modules (projects, templates, device library, settings, help)
+├── i18n/         # Translations + helpers
+├── shared/       # Shared hooks/components/utils
+├── App.jsx       # Routes + page orchestration
+├── main.jsx      # React entry point
+├── index.css     # Tailwind layers + design tokens
+└── types.js      # JSDoc type definitions
 ```
 
-## 📦 Key Modules (AgentLens)
+## Feature Modules
 
-| Module | Description | Path |
+- `app/src/features/projects/` - dashboard + workspace, crew, schedule
+- `app/src/features/templates/` - template editor + apply flow
+- `app/src/features/device-library/` - device list + editor
+- `app/src/features/settings/` - backups, restore, factory reset
+- `app/src/features/help/` - help and offline guidance
+
+## Key Modules
+
+| Area | Purpose | Path |
 |---|---|---|
-| **Root** | Core configs, App entry | [View Module](.agentlens/modules/root/MODULE.md) |
-| **Components** | UI Library | [View Module](.agentlens/modules/app-src-components/MODULE.md) |
-| **I18n** | Internationalization | [View Module](.agentlens/modules/app-src-i18n/MODULE.md) |
+| App entry | Bootstraps React + router | `app/src/main.jsx` |
+| App shell | Layout + sidebar/top chrome | `app/src/app/Layout.jsx` |
+| Routes | Page wiring + handlers | `app/src/App.jsx` |
+| Projects hook | Project CRUD + list logic | `app/src/shared/hooks/useProjects.js` |
+| Templates hook | Template state + apply flow | `app/src/shared/hooks/useTemplates.js` |
+| Storage hydration | Load/save orchestration + theme | `app/src/shared/hooks/useStorageHydration.js` |
+| Storage facade | IndexedDB/OPFS + backups | `app/src/data/storageService.js` |
+| PDF export | Build + download PDF | `app/src/data/pdf/pdfExportService.js` |
+| i18n | Dictionaries + translation helpers | `app/src/i18n/index.js` |
 
-## 🛠️ Skills & Capabilities
+## Build Output
 
-The following agentic skills are available in `.agent/skills/`:
+The repo root contains built assets for GitHub Pages (`index.html`, `assets/`, `sw.js`, `manifest.webmanifest`). Source lives under `app/`.
 
-| Skill | Purpose |
-|---|---|
-| **concise-planning** | Generate unclear, actionable, and atomic checklists for tasks. |
-| **debugging-systematically** | Rigorous 4-phase debugging (Root Cause -> Pattern -> Hypothesis -> Implementation). |
-| **git-commit-workflow** | Standardized staging, committing, and pushing with conventional messages. |
-| **requesting-code-review** | Verify work against requirements before user review. |
-| **ui-ux-design-patterns** | UI/UX best practices, accessibility, and responsive design checks. |
-| **verification-before-completion** | Mandatory verification commands before claiming success. |
-| **writing-implementation-plans** | Create comprehensive technical plans before coding. |
+## AgentLens Coverage
 
-## 📜 Rules & Protocols
-
-### 1. Identity & Communication
-- **Persona**: Senior Full-Stack Engineer. Professional, Technical, Concise.
-- **Efficiency**: No fluff ("Certainly", "I can help"). Direct execution.
-- **Reporting**: "✅ Task Complete.." only.
-
-### 2. Implementation Protocol
-- **Persistence**: ALWAYS save artifacts to `.agent/tasks`, `.agent/plans`, `.agent/walkthrough`.
-- **Definition of Done**: 
-  - Zero "TODOs".
-  - Mandatory Unit & Integration Tests.
-  - Edge Case verification.
-- **Visual Verification**: Browser screenshots/videos for UI changes using `browser` tool.
-
-### 3. Testing Mandate
-- **No Mirroring**: Tests must verify behavior, not repeat implementation.
-- **Red/Green/Refactor**: Write failing tests first where possible.
-- **Integration**: Verify component interactions (e.g., Save writes to DB).
+AgentLens docs exist for a limited subset of modules.
+- `.agentlens/modules/root/MODULE.md`
+- `.agentlens/modules/app-src-i18n/MODULE.md`
+- `.agentlens/modules/app-src-components/MODULE.md` (legacy; components now live under `app/src/shared` and `app/src/features`)
 
 ---
-*Map improved by AgentLens integration.*
+
+*Map updated to reflect current feature-based structure.*

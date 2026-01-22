@@ -90,9 +90,11 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
       .map((entry) => ({
         id: typeof entry?.id === 'string' && entry.id ? entry.id : createId(),
         name: normalizeText(entry?.name),
-        role: normalizeText(entry?.role)
+        role: normalizeText(entry?.role),
+        phone: normalizeText(entry?.phone),
+        email: normalizeText(entry?.email)
       }))
-      .filter((entry) => entry.name || entry.role);
+      .filter((entry) => entry.name || entry.role || entry.phone || entry.email);
   }, [normalizeText]);
 
   const normalizeCategory = useCallback(

@@ -22,6 +22,7 @@ const ProjectDashboard = ({
   onProjectDraftChange,
   onCreateProject,
   projects,
+  contacts,
   onDeleteProject,
   resolveDisplayName,
   lastSaved,
@@ -191,6 +192,7 @@ const ProjectDashboard = ({
           <CrewFieldList
             t={t}
             crew={projectDraft.crew}
+            contacts={contacts}
             roles={crewRoles}
             onChange={(nextCrew) => onProjectDraftChange('crew', nextCrew)}
           />

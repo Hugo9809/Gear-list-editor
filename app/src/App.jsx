@@ -6,6 +6,7 @@ import HelpPanel from './features/help/HelpPanel.jsx';
 import ProjectDashboardContainer from './features/projects/ProjectDashboardContainer.jsx';
 import ProjectWorkspaceContainer from './features/projects/ProjectWorkspaceContainer.jsx';
 import DeviceLibraryPage from './features/device-library/DeviceLibraryPage.jsx';
+import ContactsPage from './features/contacts/ContactsPage.jsx';
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import TemplateManager from './features/templates/TemplateManager.jsx';
 import { useProjects } from './shared/hooks/useProjects.js';
@@ -17,6 +18,7 @@ const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWi
 export default function App() {
   const { locale, locales, setLocale, t, tPlural } = useI18n();
   const [deviceLibrary, setDeviceLibrary] = useState({ items: [] });
+  const [contacts, setContacts] = useState([]);
   const [status, setStatus] = useState(() =>
     t('status.loading', 'Loading your saved gear list...')
   );
@@ -93,10 +95,12 @@ export default function App() {
     projects,
     templates,
     deviceLibrary,
+    contacts,
     history,
     setProjects,
     setTemplates,
     setDeviceLibrary,
+    setContacts,
     setHistory,
     setStatus
   });
@@ -184,8 +188,12 @@ export default function App() {
       try {
         // Dynamic import to keep initial bundle size small, though it's already split by Vite
         const { exportPdf } = await import('./data/pdf/pdfExportService.js');
-        await exportPdf(project, locale, t, theme);
-        setStatus(t('status.pdfExportComplete', 'PDF downloaded successfully.'));
+        const result = await exportPdf(project, locale, t, theme);
+        const successMessage =
+          result === 'print'
+            ? t('status.pdfReady', 'PDF export ready. Confirm printing to save the file.')
+            : t('status.pdfExportComplete', 'PDF downloaded successfully.');
+        setStatus(successMessage);
       } catch (err) {
         console.error('PDF export failed:', err);
         const messageKey = err?.message === 'popup-blocked' ? 'status.popupBlocked' : 'status.pdfExportError';
@@ -262,6 +270,7 @@ export default function App() {
       setProjects(result.state.projects);
       setTemplates(result.state.templates);
       setHistory(result.state.history);
+      setContacts(result.state.contacts);
       // setActiveProjectId no longer exists
       navigate('/');
       setStatus(
@@ -285,6 +294,7 @@ export default function App() {
     setProjects,
     setStatus,
     setTemplates,
+    setContacts,
     navigate,
     setTheme,
     storageRef,
@@ -314,6 +324,7 @@ export default function App() {
     selectedTemplateId,
     projectDraft,
     projects,
+    contacts,
     lastSaved,
     showAutoBackups,
     autoBackups
@@ -388,6 +399,7 @@ export default function App() {
                 t={t}
                 tPlural={tPlural}
                 projects={projects}
+                contacts={contacts}
                 resolveDisplayName={resolveDisplayName}
                 onBackToDashboard={() => navigate('/')}
                 onExportPdf={exportPdf}
@@ -416,6 +428,17 @@ export default function App() {
                 onUpdateTemplateField={updateTemplateField}
                 onApplyTemplate={(id) => applyTemplateToProject(id, null)} // Templates tab has no active project
                 onRemoveTemplate={removeTemplate}
+              />
+            }
+          />
+          <Route
+            path="/contacts"
+            element={
+              <ContactsPage
+                t={t}
+                contacts={contacts}
+                setContacts={setContacts}
+                setStatus={setStatus}
               />
             }
           />

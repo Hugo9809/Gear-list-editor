@@ -13,6 +13,7 @@ const ProjectWorkspace = ({
   tPlural,
   activeProject,
   activeProjectIndex,
+  contacts,
   totals,
   resolveDisplayName,
   onBackToDashboard,
@@ -138,6 +139,7 @@ const ProjectWorkspace = ({
             <CrewFieldList
               t={t}
               crew={activeProject.crew}
+              contacts={contacts}
               roles={crewRoles}
               onChange={(nextCrew) => onUpdateProjectField('crew', nextCrew)}
             />

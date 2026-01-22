@@ -14,6 +14,7 @@ import {
   createId,
   deriveHistoryFromProjects,
   mergeHistoryEntries,
+  normalizeContacts,
   normalizeHistory,
   normalizeItems,
   normalizeLibraryItems,
@@ -32,6 +33,7 @@ export const createEmptyState = () => ({
   deviceLibrary: {
     items: []
   },
+  contacts: [],
   history: {
     items: [],
     categories: []
@@ -72,6 +74,7 @@ export const migratePayload = (payload) => {
   const deviceLibrary = {
     items: normalizeLibraryItems(payload.deviceLibrary?.items)
   };
+  const contacts = normalizeContacts(payload.contacts);
   const history = normalizeHistory(payload.history);
   const mergedHistory = {
     ...history,
@@ -90,6 +93,7 @@ export const migratePayload = (payload) => {
     projects,
     templates,
     deviceLibrary,
+    contacts,
     history: mergedHistory,
     activeProjectId,
     lastSaved,
@@ -135,6 +139,16 @@ const mergeLibraryItems = (current, incoming) => {
   return Array.from(map.values());
 };
 
+const mergeContacts = (current, incoming) => {
+  const map = new Map();
+  const upsert = (contact) => {
+    map.set(contact.id, contact);
+  };
+  current.forEach(upsert);
+  incoming.forEach(upsert);
+  return Array.from(map.values());
+};
+
 export const mergePayloads = (current, incoming) => {
   const base = migratePayload(current);
   const next = migratePayload(incoming);
@@ -143,6 +157,7 @@ export const mergePayloads = (current, incoming) => {
   const deviceLibrary = {
     items: mergeLibraryItems(base.deviceLibrary.items, next.deviceLibrary.items)
   };
+  const contacts = mergeContacts(base.contacts, next.contacts);
   const history = {
     items: mergeHistoryEntries(base.history.items, next.history.items),
     categories: Array.from(
@@ -156,6 +171,7 @@ export const mergePayloads = (current, incoming) => {
     projects,
     templates,
     deviceLibrary,
+    contacts,
     history,
     showAutoBackups: base.showAutoBackups,
     activeProjectId: base.activeProjectId || next.activeProjectId || projects[0]?.id || null
@@ -188,6 +204,7 @@ export const validationSamples = () => ({
         }
     ],
     templates: [],
+    contacts: [],
     history: {
       items: [
         { name: 'Camera body', details: 'FX6', lastUsed: new Date().toISOString() }

@@ -12,6 +12,7 @@
     "sidebar": {
       "dashboard": "Alle Projekte",
       "templates": "Vorlagen",
+      "contacts": "Kontakte",
       "settings": "Einstellungen",
       "help": "Hilfe"
     },
@@ -167,16 +168,18 @@
     "crew": {
       "namePlaceholder": "Crewmitglied",
       "rolePlaceholder": "Rolle auswählen",
+      "phonePlaceholder": "Telefon",
+      "emailPlaceholder": "E-Mail",
       "empty": "Noch keine Crew hinzugefügt."
     },
     "print": {
       "labels": {
-        "client": "Production Company",
+        "client": "Produktionsfirma",
         "prep": "Prep",
-        "shooting": "Shooting",
-        "return": "Return",
-        "location": "Rental House",
-        "contact": "Production Manager",
+        "shooting": "Dreh",
+        "return": "Rückgabe",
+        "location": "Verleih",
+        "contact": "Produktionsleitung",
         "crew": "Crew"
       },
       "notes": {
@@ -280,6 +283,7 @@
     "payload_invalid": "Backup-Daten fehlen oder sind ungültig.",
     "projects_invalid": "Projekte müssen als Array vorliegen.",
     "templates_invalid": "Vorlagen müssen als Array vorliegen.",
+    "contacts_invalid": "Kontakte müssen als Array vorliegen.",
     "history_invalid": "Historie muss ein Objekt sein, wenn sie vorhanden ist.",
     "version_invalid": "Version muss numerisch sein, wenn sie vorhanden ist."
   },
@@ -321,6 +325,10 @@
     "categoryMoved": "Kategorie verschoben.",
     "projectDetailsUpdated": "Projektdetails aktualisiert.",
     "projectNotesSaved": "Projekt-Notizen für Autosave gespeichert.",
+    "contactNameRequired": "Bitte gib einen Kontaktnamen an.",
+    "contactAdded": "Kontakt hinzugefügt.",
+    "contactUpdated": "Kontakt aktualisiert.",
+    "contactDeleted": "Kontakt gelöscht.",
     "suggestionApplied": "Vorschlag übernommen und bereit für Autosave.",
     "projectNeededForTemplate": "Erstelle ein Projekt, bevor du eine Vorlage speicherst.",
     "templateNameRequired": "Bitte benenne die Vorlage.",
@@ -349,6 +357,36 @@
       "packed": "Gepackt",
       "missing": "Fehlt",
       "rented": "Gemietet"
+    }
+  },
+  "contacts": {
+    "title": "Kontakte",
+    "description": "Verwalte globale Crew-Kontakte, damit Telefon- und E-Mail-Daten in jedem Projekt bereitstehen.",
+    "helper": "Kontakte erscheinen als Vorschläge im Crew-Bereich und halten Rolle, Telefon und E-Mail konsistent.",
+    "add": "Kontakt hinzufügen",
+    "empty": "Noch keine Kontakte. Füge Crew-Kontakte hinzu, um sie in Projekten wiederzuverwenden.",
+    "confirmDelete": "Möchtest du diesen Kontakt wirklich löschen?",
+    "roleEmpty": "Rolle nicht gesetzt",
+    "suggestionFallback": "Keine Kontaktdetails",
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "fields": {
+      "name": "Name",
+      "role": "Rolle",
+      "phone": "Telefon",
+      "email": "E-Mail"
+    },
+    "placeholders": {
+      "name": "Crewmitglied",
+      "phone": "Telefon",
+      "email": "E-Mail"
+    },
+    "editor": {
+      "titleAdd": "Kontakt hinzufügen",
+      "titleEdit": "Kontakt bearbeiten",
+      "helper": "Speichere Crew-Kontakte, damit Projekte Telefonnummern und E-Mail-Adressen schnell übernehmen."
     }
   },
   "settings": {

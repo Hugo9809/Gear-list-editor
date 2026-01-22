@@ -1,10 +1,27 @@
+import { useMemo } from 'react';
 import { createId } from '../../data/storage.js';
+import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
 
 const normalizeCrewList = (crew) => (Array.isArray(crew) ? crew : []);
 
-const CrewFieldList = ({ t, crew, roles, onChange }) => {
+const CrewFieldList = ({ t, crew, roles, contacts, onChange }) => {
   const entries = normalizeCrewList(crew);
   const availableRoles = Array.isArray(roles) ? roles : [];
+  const availableContacts = Array.isArray(contacts) ? contacts : [];
+
+  const contactSuggestions = useMemo(() =>
+    availableContacts
+      .map((contact) => {
+        const details = [contact.role, contact.phone, contact.email].filter(Boolean).join(' | ');
+        return {
+          ...contact,
+          name: contact.name,
+          details
+        };
+      })
+      .filter((contact) => contact.name),
+    [availableContacts]
+  );
 
   const handleAdd = () => {
     onChange([
@@ -12,7 +29,9 @@ const CrewFieldList = ({ t, crew, roles, onChange }) => {
       {
         id: createId(),
         name: '',
-        role: ''
+        role: '',
+        phone: '',
+        email: ''
       }
     ]);
   };
@@ -31,6 +50,23 @@ const CrewFieldList = ({ t, crew, roles, onChange }) => {
             }
           : entry
       )
+    );
+  };
+
+  const handleSelectContact = (entryId, contact) => {
+    onChange(
+      entries.map((entry) => {
+        if (entry.id !== entryId) {
+          return entry;
+        }
+        return {
+          ...entry,
+          name: contact.name || entry.name,
+          role: contact.role || entry.role,
+          phone: contact.phone || entry.phone,
+          email: contact.email || entry.email
+        };
+      })
     );
   };
 
@@ -61,13 +97,17 @@ const CrewFieldList = ({ t, crew, roles, onChange }) => {
             return (
               <div
                 key={entry.id}
-                className="grid items-center gap-2 md:grid-cols-[2fr_2fr_auto]"
+                className="grid items-center gap-2 md:grid-cols-[2fr_2fr_1.5fr_2fr_auto]"
               >
-                <input
+                <TypeaheadInput
                   value={entry.name}
-                  onChange={(event) => handleUpdate(entry.id, 'name', event.target.value)}
+                  onChange={(value) => handleUpdate(entry.id, 'name', value)}
+                  onSelectSuggestion={(suggestion) => handleSelectContact(entry.id, suggestion)}
+                  suggestions={contactSuggestions}
                   placeholder={t('project.crew.namePlaceholder', 'Crew member name')}
-                  className="ui-input"
+                  label={t('project.crew.namePlaceholder', 'Crew member name')}
+                  detailsFallback={t('contacts.suggestionFallback', 'No contact details')}
+                  inputClassName="ui-input"
                 />
                 <select
                   value={entry.role}
@@ -81,6 +121,20 @@ const CrewFieldList = ({ t, crew, roles, onChange }) => {
                     </option>
                   ))}
                 </select>
+                <input
+                  type="tel"
+                  value={entry.phone || ''}
+                  onChange={(event) => handleUpdate(entry.id, 'phone', event.target.value)}
+                  placeholder={t('project.crew.phonePlaceholder', 'Phone')}
+                  className="ui-input"
+                />
+                <input
+                  type="email"
+                  value={entry.email || ''}
+                  onChange={(event) => handleUpdate(entry.id, 'email', event.target.value)}
+                  placeholder={t('project.crew.emailPlaceholder', 'Email')}
+                  className="ui-input"
+                />
                 <button
                   type="button"
                   onClick={() => handleRemove(entry.id)}

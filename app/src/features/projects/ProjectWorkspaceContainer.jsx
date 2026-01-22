@@ -6,6 +6,7 @@ const ProjectWorkspaceContainer = ({
   t,
   tPlural,
   projects,
+  contacts,
   resolveDisplayName,
   onBackToDashboard,
   onExportPdf,
@@ -45,6 +46,7 @@ const ProjectWorkspaceContainer = ({
       tPlural={tPlural}
       activeProject={project}
       activeProjectIndex={projectIndex}
+      contacts={contacts}
       totals={totals}
       resolveDisplayName={resolveDisplayName}
       onBackToDashboard={onBackToDashboard}

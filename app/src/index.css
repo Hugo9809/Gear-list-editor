@@ -342,9 +342,21 @@ h6 {
     height: 100%;
     font-family: var(--v2-font-family);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.92);
+    /* Subtle glassy background that adapts with theme */
+    background: rgb(var(--v2-surface-base) / 0.96);
     backdrop-filter: saturate(1.2) blur(6px);
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  /* Theme tweaks for dark mode to improve contrast and depth on the new sidebar design */
+  :root[data-theme='dark'] .ui-sidebar::before {
+    background: radial-gradient(circle, rgb(var(--v2-brand-primary) / 0.12), transparent 70%);
+  }
+  :root[data-theme='dark'] .ui-sidebar::after {
+    background: radial-gradient(circle, rgb(var(--v2-brand-secondary) / 0.12), transparent 70%);
+  }
+  :root[data-theme='dark'] .v2-sidebar {
+    background: rgb(var(--v2-surface-base) / 0.92);
   }
 
   .v2-sidebar-header {

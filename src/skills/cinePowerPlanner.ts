@@ -35,5 +35,6 @@ export function migrateFromCinePowerPlanner(data: CinePowerSkillInput[]): Skill[
       run: runner
     }
   }
-  return (data ?? []).map(toSkill)
+  // data is guaranteed to be an array by the function signature, so a direct map is fine
+  return data.map(toSkill)
 }

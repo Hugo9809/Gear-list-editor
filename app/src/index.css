@@ -144,6 +144,10 @@
   --v2-header-color: var(--v2-brand-primary);
 }
 
+:root[data-theme='pink'] .v2-sidebar-logo {
+  filter: sepia(82.08%) saturate(127.06%) hue-rotate(74.07deg) brightness(464.59%) contrast(134.34%);
+}
+
 body {
   font-family:
     'Inter',
@@ -459,7 +463,7 @@ h6 {
     gap: var(--v2-space-md);
     padding: var(--v2-space-sm) var(--v2-space-md);
     border-radius: var(--v2-radius-md);
-    color: rgb(var(--v2-text-secondary) / 1);
+    color: rgb(var(--v2-brand-primary) / 0.65);
     text-decoration: none;
     transition: background-color var(--v2-transition-fast), color var(--v2-transition-fast);
     font-size: var(--v2-font-size-base);
@@ -486,14 +490,12 @@ h6 {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
-    opacity: 0.5;
-    color: rgb(var(--v2-brand-primary) / 0.8);
+    opacity: 1;
+    color: currentColor;
     transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
   }
 
   .v2-sidebar-link:hover .v2-sidebar-link-icon {
-    opacity: 1;
-    color: rgb(var(--v2-brand-primary) / 1);
     transform: scale(1.1);
   }
 

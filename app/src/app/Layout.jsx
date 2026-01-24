@@ -185,20 +185,22 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
   return (
     <>
       {/* Mobile header with hamburger to toggle the drawer on narrow screens */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-surface border-b border-surface-sunken">
-        <div className="flex items-center justify-between p-2 px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-brand border-b border-brand-hover">
+        <div className="flex items-center justify-between h-14 px-4 text-white">
           <button
             type="button"
             aria-label="Open navigation"
             onClick={() => setDrawerOpen(true)}
-            className="p-2 rounded-md border border-surface-sunken"
+            className="p-2 -ml-2 rounded-md hover:bg-brand-hover transition-colors"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <span className="font-semibold">{t('ui.appName', 'Gear List Creator')}</span>
-          <span className="w-6" aria-hidden="true" />
+          <span className="font-bold text-lg tracking-tight">{t('ui.appName', 'Gear List Creator')}</span>
+          <div className="w-10" aria-hidden="true" />
         </div>
       </div>
       {/* Mobile overlay backdrop when drawer is open */}
@@ -210,7 +212,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
         />
       )}
       <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
-        <div className="mx-auto w-full max-w-7xl px-6 py-10 lg:py-10 pt-20">
+        <div className="mx-auto w-full max-w-7xl px-6 pt-16 lg:py-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:gap-6">
             <aside
               className={`v2-sidebar w-full lg:w-[260px] ${drawerOpen ? 'mobile-drawer-open' : 'mobile-drawer-closed'}`}

@@ -1,2 +1,2 @@
-- [ ] Apply new Dark Mode CSS variables in `app/src/index.css` <!-- id: 0 -->
-- [ ] Verify visual improvements in browser <!-- id: 1 -->
+- [ ] Apply Neutral/Black Dark Mode variables in `app/src/index.css` <!-- id: 0 -->
+- [ ] Verify Monochrome aesthetics in browser <!-- id: 1 -->

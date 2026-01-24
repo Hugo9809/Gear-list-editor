@@ -104,56 +104,57 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  /* Premium Midnight Palette */
-  --v2-surface-app-bg: 2 6 23;
-  /* Slate-950 */
-  --v2-surface-base: 15 23 42;
-  /* Slate-900 */
-  --v2-surface-elevated: 30 41 59;
-  /* Slate-800 */
-  --v2-surface-muted: 51 65 85;
-  /* Slate-700 */
-  --v2-surface-sunken: 10 15 30;
-  /* Dark inset */
-  --v2-surface-input: 15 23 42;
-  /* Slate-900 */
-  --v2-surface-inverse: 248 250 252;
-  /* Slate-50 */
+  /* Neutral/Zinc Mono Palette (No Blue Tint) */
+  --v2-surface-app-bg: 0 0 0;
+  /* Pure Black */
+  --v2-surface-base: 24 24 27;
+  /* Zinc-900 */
+  --v2-surface-elevated: 39 39 42;
+  /* Zinc-800 */
+  --v2-surface-muted: 63 63 70;
+  /* Zinc-700 */
+  --v2-surface-sunken: 12 12 14;
+  /* Near Black */
+  --v2-surface-input: 9 9 11;
+  /* Zinc-950 */
+  --v2-surface-inverse: 255 255 255;
+  /* White */
 
-  /* Electric Blue Brand Colors for Dark Mode */
-  --v2-brand-primary: 96 165 250;
-  /* Blue-400 */
-  --v2-brand-primary-hover: 147 197 253;
-  /* Blue-300 */
-  --v2-brand-primary-active: 59 130 246;
-  /* Blue-500 */
-  --v2-brand-primary-foreground: 15 23 42;
-  /* Dark text on bright button */
+  /* Dark Blue Brand Colors (Requested Accent) */
+  --v2-brand-primary: 0 21 137;
+  /* Deep Blue */
+  --v2-brand-primary-hover: 0 16 106;
+  /* Deep Blue Hover */
+  --v2-brand-primary-active: 0 10 75;
+  /* Deep Blue Active */
+  --v2-brand-primary-foreground: 255 255 255;
+  /* White text on Dark Blue button */
 
-  /* Text Colors */
-  --v2-text-primary: 241 245 249;
-  /* Slate-100 */
-  --v2-text-secondary: 148 163 184;
-  /* Slate-400 */
-  --v2-text-muted: 100 116 139;
-  /* Slate-500 */
-  --v2-text-inverse: 15 23 42;
-  --v2-text-link: 96 165 250;
-  /* Matches Brand */
-  --v2-heading-color: 248 250 252;
-  --v2-header-color: 248 250 252;
+  /* Text Colors (High Contrast) */
+  --v2-text-primary: 255 255 255;
+  /* Pure White */
+  --v2-text-secondary: 161 161 170;
+  /* Zinc-400 */
+  --v2-text-muted: 113 113 122;
+  /* Zinc-500 */
+  --v2-text-inverse: 9 9 11;
+  --v2-text-link: 255 255 255;
+  /* White (No Electric Blue) */
+  --v2-heading-color: 255 255 255;
+  --v2-header-color: 255 255 255;
 
-  /* Border Colors */
-  --v2-border-default: 30 41 59;
-  /* Slate-800 */
-  --v2-border-strong: 71 85 105;
-  /* Slate-600 */
-  --v2-border-muted: 15 23 42;
-  --v2-border-focus: 96 165 250;
+  /* Border Colors (Neutral) */
+  --v2-border-default: 39 39 42;
+  /* Zinc-800 */
+  --v2-border-strong: 82 82 91;
+  /* Zinc-600 */
+  --v2-border-muted: 24 24 27;
+  --v2-border-focus: 255 255 255;
+  /* White Focus Ring */
 
-  /* Shadows (Depth) */
-  --v2-shadow-tile: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --v2-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  /* Shadows */
+  --v2-shadow-tile: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --v2-shadow-popover: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
 
   /* Vibrant Project Colors for Dark Mode */
   --v2-project-blue: 96 165 250;
@@ -562,7 +563,7 @@ h6 {
     font-size: 13px;
     font-weight: 600;
     line-height: 1;
-    color: rgb(var(--v2-header-color) / 1);
+    color: currentColor;
   }
 
   .v2-sidebar-controls-container {

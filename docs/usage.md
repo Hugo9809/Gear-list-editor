@@ -2,6 +2,10 @@ Usage overview
 
 - This document describes how to use the Gear-list-editor CLI. Replace the placeholder commands with the actual implementation details once the codebase is wired up.
 
+- Form integration for Projects:
+  - New Project form now includes fields for Resolution, Aspect Ratio, Codec, and Framerate.
+  - The fields are wired to the internal Project model and will be fed into the PDF export path when generating a PDF for a Project.
+
 CLI basics
 - Command syntax: gear-list-editor <command> [options]
 - Help: gear-list-editor --help

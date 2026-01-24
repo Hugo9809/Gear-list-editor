@@ -139,13 +139,51 @@ const ProjectDashboard = ({
           )}
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
         <label className="flex flex-col gap-2 text-sm text-text-secondary">
           {t('project.fields.name', 'Project name')}
           <input
             value={projectDraft.name}
             onChange={(event) => onProjectDraftChange('name', event.target.value)}
             placeholder={t('project.placeholders.name', 'e.g. October studio shoot')}
+            className="ui-input ui-input-lg"
+          />
+        </label>
+        <label className="flex flex-col gap-2 text-sm text-text-secondary">
+          {t('project.fields.resolution', 'Resolution')}
+          <input
+            value={projectDraft.resolution}
+            onChange={(event) => onProjectDraftChange('resolution', event.target.value)}
+            placeholder={t('project.placeholders.resolution', 'e.g. 1920x1080')}
+            className="ui-input ui-input-lg"
+          />
+        </label>
+        <label className="flex flex-col gap-2 text-sm text-text-secondary">
+          {t('project.fields.aspectRatio', 'Aspect Ratio')}
+          <input
+            value={projectDraft.aspectRatio}
+            onChange={(event) => onProjectDraftChange('aspectRatio', event.target.value)}
+            placeholder={t('project.placeholders.aspectRatio', 'e.g. 16:9')}
+            className="ui-input ui-input-lg"
+          />
+        </label>
+        <label className="flex flex-col gap-2 text-sm text-text-secondary">
+          {t('project.fields.codec', 'Codec')}
+          <input
+            value={projectDraft.codec}
+            onChange={(event) => onProjectDraftChange('codec', event.target.value)}
+            placeholder={t('project.placeholders.codec', 'e.g. H.264')}
+            className="ui-input ui-input-lg"
+          />
+        </label>
+        <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
+          {t('project.fields.framerate', 'Framerate')}
+          <input
+            type="number"
+            min={1}
+            value={projectDraft.framerate}
+            onChange={(event) => onProjectDraftChange('framerate', event.target.value)}
+            placeholder={t('project.placeholders.framerate', 'e.g. 30')}
             className="ui-input ui-input-lg"
           />
         </label>

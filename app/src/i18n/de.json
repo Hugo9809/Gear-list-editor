@@ -102,7 +102,11 @@
       "returnDay": "Rückgabetag",
       "location": "Ort",
       "contact": "Rentalhaus",
-      "crew": "Crew"
+      "crew": "Crew",
+      "resolution": "Auflösung",
+      "aspectRatio": "Bildverhältnis",
+      "codec": "Codec",
+      "framerate": "Bildrate"
     },
     "placeholders": {
       "name": "z. B. Studioshoot im Oktober",
@@ -172,16 +176,20 @@
       "emailPlaceholder": "E-Mail",
       "empty": "Noch keine Crew hinzugefügt."
     },
-    "print": {
-      "labels": {
-        "client": "Produktionsfirma",
-        "prep": "Prep",
-        "shooting": "Dreh",
-        "return": "Rückgabe",
-        "location": "Verleih",
-        "contact": "Produktionsleitung",
-        "crew": "Crew"
-      },
+      "print": {
+        "labels": {
+          "client": "Produktionsfirma",
+          "resolution": "Auflösung",
+          "aspectRatio": "Bildverhältnis",
+          "codec": "Codec",
+          "framerate": "Bildrate",
+          "prep": "Prep",
+          "shooting": "Dreh",
+          "return": "Rückgabe",
+          "location": "Ort",
+          "contact": "Verantwortlicher",
+          "crew": "Crew"
+        },
       "notes": {
         "title": "Projekt-Notizen"
       }
@@ -381,7 +389,11 @@
     "placeholders": {
       "name": "Crewmitglied",
       "phone": "Telefon",
-      "email": "E-Mail"
+      "email": "E-Mail",
+      "resolution": "z. B. 1920x1080",
+      "aspectRatio": "z. B. 16:9",
+      "codec": "z. B. H.264",
+      "framerate": "z. B. 30"
     },
     "editor": {
       "titleAdd": "Kontakt hinzufügen",

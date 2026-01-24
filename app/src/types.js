@@ -71,6 +71,10 @@
  * @property {CrewMember[]} crew - Crew members assigned to the project
  * @property {string} notes - Project-level notes
  * @property {Category[]} categories - Categories within this project
+ * @property {string} [resolution] - Video resolution (e.g., 1920x1080)
+ * @property {string} [aspectRatio] - Aspect ratio (e.g., 16:9)
+ * @property {string} [codec] - Encoding codec (e.g., H.264)
+ * @property {number} [framerate] - Frame rate (fps)
  */
 
 /**
@@ -213,6 +217,10 @@
  * @property {string} location - Draft location
  * @property {string} contact - Draft rental house contact
  * @property {CrewMember[]} crew - Draft crew list
+ * @property {string} [resolution] - Draft project resolution
+ * @property {string} [aspectRatio] - Draft aspect ratio
+ * @property {string} [codec] - Draft codec
+ * @property {number} [framerate] - Draft framerate
  */
 
 /**

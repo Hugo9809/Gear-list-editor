@@ -156,6 +156,23 @@ export function buildDocDefinition(snapshot, t, theme) {
     { label: t('project.print.labels.client', 'Client'), value: project.client },
     { label: t('project.print.labels.location', 'Location'), value: project.location },
     { label: t('project.print.labels.contact', 'Rental house'), value: project.contact },
+    // PDF metadata fields for new project properties
+    {
+      label: t('project.print.labels.resolution', 'Resolution'),
+      value: project.resolution
+    },
+    {
+      label: t('project.print.labels.aspectRatio', 'Aspect ratio'),
+      value: project.aspectRatio
+    },
+    {
+      label: t('project.print.labels.codec', 'Codec'),
+      value: project.codec
+    },
+    {
+      label: t('project.print.labels.framerate', 'Framerate'),
+      value: project.framerate
+    },
     ...crewMetaEntries,
     {
       label: t('project.print.labels.prep', 'Prep'),

@@ -92,13 +92,21 @@
       "returnDay": "Return day",
       "location": "Location",
       "contact": "Rental house",
-      "crew": "Crew"
+      "crew": "Crew",
+      "resolution": "Resolution",
+      "aspectRatio": "Aspect Ratio",
+      "codec": "Codec",
+      "framerate": "Framerate"
     },
     "placeholders": {
       "name": "e.g. October studio shoot",
       "client": "Client, agency, or show",
       "location": "Studio, city, or venue",
-      "contact": "Rental house name, address, phone"
+      "contact": "Rental house name, address, phone",
+      "resolution": "e.g. 1920x1080",
+      "aspectRatio": "e.g. 16:9",
+      "codec": "e.g. H.264",
+      "framerate": "e.g. 30"
     },
     "actions": {
       "create": "Create project",
@@ -165,6 +173,10 @@
     "print": {
       "labels": {
         "client": "Client",
+        "resolution": "Resolution",
+        "aspectRatio": "Aspect ratio",
+        "codec": "Codec",
+        "framerate": "Framerate",
         "prep": "Prep",
         "shooting": "Shoot",
         "return": "Return",

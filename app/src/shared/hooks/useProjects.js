@@ -27,7 +27,12 @@ const createEmptyProjectDraft = () => ({
   shootSchedule: createEmptyShootSchedule(),
   location: '',
   contact: '',
-  crew: []
+  crew: [],
+  // PDF-related/export metadata fields
+  resolution: '',
+  aspectRatio: '',
+  codec: '',
+  framerate: ''
 });
 
 const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
@@ -38,6 +43,7 @@ const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
  */
 export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) => {
   const [projects, setProjects] = useState([]);
+  // @ts-ignore - allow flexible History typing in JS + TS-checking
   const [history, setHistory] = useState({ items: [], categories: [] });
   // activeProjectId and activeProject logic removed in favor of URL state
   const [projectDraft, setProjectDraft] = useState(createEmptyProjectDraft);
@@ -289,6 +295,11 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         location: projectDraft.location.trim(),
         contact: projectDraft.contact.trim(),
         crew: normalizeCrewDraft(projectDraft.crew),
+        // PDF related fields available on the project for later export
+        resolution: projectDraft.resolution?.trim(),
+        aspectRatio: projectDraft.aspectRatio?.trim(),
+        codec: projectDraft.codec?.trim(),
+        framerate: projectDraft.framerate ? Number(projectDraft.framerate) : undefined,
         notes: '',
         categories: []
       };

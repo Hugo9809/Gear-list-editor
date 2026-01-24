@@ -97,6 +97,40 @@ const ProjectWorkspace = ({
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
+            {t('project.fields.resolution', 'Resolution')}
+            <input
+              value={activeProject.resolution ?? ''}
+              onChange={(event) => onUpdateProjectField('resolution', event.target.value)}
+              className="ui-input ui-input-lg"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm text-text-secondary">
+            {t('project.fields.aspectRatio', 'Aspect Ratio')}
+            <input
+              value={activeProject.aspectRatio ?? ''}
+              onChange={(event) => onUpdateProjectField('aspectRatio', event.target.value)}
+              className="ui-input ui-input-lg"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm text-text-secondary">
+            {t('project.fields.codec', 'Codec')}
+            <input
+              value={activeProject.codec ?? ''}
+              onChange={(event) => onUpdateProjectField('codec', event.target.value)}
+              className="ui-input ui-input-lg"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
+            {t('project.fields.framerate', 'Framerate')}
+            <input
+              type="number"
+              min={1}
+              value={activeProject.framerate ?? ''}
+              onChange={(event) => onUpdateProjectField('framerate', event.target.value)}
+              className="ui-input ui-input-lg"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm text-text-secondary">
             {t('project.fields.client', 'Client / production')}
             <input
               value={activeProject.client}

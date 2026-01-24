@@ -35,3 +35,82 @@ export function createProject(name: string, parameters?: ProjectParameters): Pro
     parameters: parameters
   }
 }
+
+// --- Form schema support for UI integration ---
+export type FieldType = 'text' | 'number'
+
+export interface ProjectFormField {
+  id: string
+  label: string
+  type: FieldType
+  required?: boolean
+  placeholder?: string
+  min?: number
+  max?: number
+  minLength?: number
+  maxLength?: number
+  options?: string[]
+}
+
+// Build a simple, stable form schema for creating a Project
+export function getProjectFormSchema(): ProjectFormField[] {
+  return [
+    {
+      id: 'name',
+      label: 'Project Name',
+      type: 'text',
+      required: true,
+      placeholder: 'Enter project name',
+      minLength: 1,
+    },
+    {
+      id: 'resolution',
+      label: 'Resolution',
+      type: 'text',
+      placeholder: 'e.g. 1920x1080',
+    },
+    {
+      id: 'aspectRatio',
+      label: 'Aspect Ratio',
+      type: 'text',
+      placeholder: 'e.g. 16:9',
+    },
+    {
+      id: 'codec',
+      label: 'Codec',
+      type: 'text',
+      placeholder: 'e.g. H.264',
+    },
+    {
+      id: 'framerate',
+      label: 'Framerate (fps)',
+      type: 'number',
+      min: 1,
+      max: 240,
+      placeholder: 'e.g. 30',
+    }
+  ]
+}
+
+// Translate a raw form input into the internal ProjectParameters type
+export function formToProjectParameters(input: { [key: string]: any }): ProjectParameters {
+  const params: ProjectParameters = {}
+  if (typeof input.resolution === 'string' && input.resolution.trim()) {
+    params.resolution = input.resolution
+  }
+  if (typeof input.aspectRatio === 'string' && input.aspectRatio.trim()) {
+    params.aspectRatio = input.aspectRatio
+  }
+  if (typeof input.codec === 'string' && input.codec.trim()) {
+    params.codec = input.codec
+  }
+  if (typeof input.framerate === 'number') {
+    params.framerate = input.framerate
+  }
+  return params
+}
+
+// Convenience: extract the PDF-related metadata for a given project
+export function extractProjectPdfMeta(project: Project): ProjectParameters {
+  return project.parameters ?? {}
+}

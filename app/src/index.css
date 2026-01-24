@@ -104,29 +104,66 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --v2-surface-app-bg: 11 16 32;
-  --v2-surface-base: 20 28 53;
-  --v2-surface-elevated: 27 36 66;
-  --v2-surface-muted: 34 44 82;
-  --v2-surface-sunken: 15 22 42;
-  --v2-surface-input: 22 30 56;
-  --v2-surface-inverse: 245 247 250;
+  /* Premium Midnight Palette */
+  --v2-surface-app-bg: 2 6 23;
+  /* Slate-950 */
+  --v2-surface-base: 15 23 42;
+  /* Slate-900 */
+  --v2-surface-elevated: 30 41 59;
+  /* Slate-800 */
+  --v2-surface-muted: 51 65 85;
+  /* Slate-700 */
+  --v2-surface-sunken: 10 15 30;
+  /* Dark inset */
+  --v2-surface-input: 15 23 42;
+  /* Slate-900 */
+  --v2-surface-inverse: 248 250 252;
+  /* Slate-50 */
 
-  --v2-text-primary: 248 250 255;
-  --v2-text-secondary: 197 207 230;
-  --v2-text-muted: 154 168 200;
-  --v2-text-inverse: 15 22 42;
-  --v2-heading-color: 255 255 255;
+  /* Electric Blue Brand Colors for Dark Mode */
+  --v2-brand-primary: 96 165 250;
+  /* Blue-400 */
+  --v2-brand-primary-hover: 147 197 253;
+  /* Blue-300 */
+  --v2-brand-primary-active: 59 130 246;
+  /* Blue-500 */
+  --v2-brand-primary-foreground: 15 23 42;
+  /* Dark text on bright button */
 
-  --v2-border-default: 68 68 68;
-  --v2-border-strong: 85 85 85;
-  --v2-border-muted: 51 51 51;
-  --v2-border-focus: 92 124 250;
+  /* Text Colors */
+  --v2-text-primary: 241 245 249;
+  /* Slate-100 */
+  --v2-text-secondary: 148 163 184;
+  /* Slate-400 */
+  --v2-text-muted: 100 116 139;
+  /* Slate-500 */
+  --v2-text-inverse: 15 23 42;
+  --v2-text-link: 96 165 250;
+  /* Matches Brand */
+  --v2-heading-color: 248 250 252;
+  --v2-header-color: 248 250 252;
 
-  --v2-header-color: 255 255 255;
+  /* Border Colors */
+  --v2-border-default: 30 41 59;
+  /* Slate-800 */
+  --v2-border-strong: 71 85 105;
+  /* Slate-600 */
+  --v2-border-muted: 15 23 42;
+  --v2-border-focus: 96 165 250;
 
-  --v2-shadow-tile: 0 6px 12px rgba(0, 0, 0, 0.35);
-  --v2-shadow-popover: 0 10px 18px rgba(0, 0, 0, 0.45);
+  /* Shadows (Depth) */
+  --v2-shadow-tile: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --v2-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+
+  /* Vibrant Project Colors for Dark Mode */
+  --v2-project-blue: 96 165 250;
+  --v2-project-green: 74 222 128;
+  --v2-project-orange: 251 146 60;
+  --v2-project-purple: 192 132 252;
+  --v2-project-red: 248 113 113;
+  --v2-project-pink: 244 114 182;
+  --v2-project-teal: 45 212 191;
+  --v2-project-indigo: 129 140 248;
 }
 
 :root[data-theme='pink'] {

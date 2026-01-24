@@ -1,18 +1,9 @@
-# Setup and Environment
+Development Setup
 
-Overview
-- This guide covers the environment setup, dependencies, and basic project bootstrapping.
+- Prerequisites: Ensure you have a supported runtime and tooling installed. See docs/USAGE.md for a suggested stack and commands.
+- Install dependencies: Follow project-specific instructions to install dependencies (e.g., install packages, set up virtual environments). If unknown, refer to the root README for general guidance.
+- Environment: Define environment variables as needed (e.g., CONFIG_PATH, DATA_DIR). Use a local .env file if supported by your runtime.
+- Verification: After setup, run a quick smoke test or the project’s standard verification command as described in docs/USAGE.md.
 
-Prerequisites
-- Node.js (LTS) and npm
-- Git and a working development environment
-
-Getting started
-- Clone the repository and install dependencies: `npm install`
-- Run tests: `npm test` (or the test script defined in package.json)
-- If you need TypeScript or other tooling, ensure you have the required toolchain installed as specified by the project.
-
-Development notes
-- How to run a local build: `npm run build` (if defined)
-- How to run a local linter/formatter: `npm run lint` / `npm run fmt` (if defined)
-- How to run a local test suite with coverage: `npm run test:coverage` (if defined)
+Notes
+- This setup guide is intentionally generic to accommodate multiple backends and runtimes. Replace with concrete steps once the tech stack is decided.

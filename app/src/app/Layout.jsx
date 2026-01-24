@@ -1,6 +1,20 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 export default function Layout({ t, status, theme, setTheme, locale, setLocale, locales }) {
+  // Mobile hamburger-driven drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Close the mobile drawer when screen grows beyond the mobile breakpoint
+  useEffect(() => {
+    const onResize = () => {
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        setDrawerOpen(false);
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
   const baseUrl = import.meta.env?.BASE_URL ?? '/';
   const themeIcons = {
     light: (
@@ -169,13 +183,39 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
-      <div className="mx-auto w-full max-w-7xl px-6 py-10">
-        <div className="flex flex-col gap-8 lg:flex-row lg:gap-6">
-          <aside
-            className="v2-sidebar w-full lg:w-[260px]"
-            aria-label={t('navigation.sidebar.label', 'Primary navigation')}
+    <>
+      {/* Mobile header with hamburger to toggle the drawer on narrow screens */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-surface border-b border-surface-sunken">
+        <div className="flex items-center justify-between p-2 px-4">
+          <button
+            type="button"
+            aria-label="Open navigation"
+            onClick={() => setDrawerOpen(true)}
+            className="p-2 rounded-md border border-surface-sunken"
           >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <span className="font-semibold">{t('ui.appName', 'Gear List Creator')}</span>
+          <span className="w-6" aria-hidden="true" />
+        </div>
+      </div>
+      {/* Mobile overlay backdrop when drawer is open */}
+      {drawerOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
+        <div className="mx-auto w-full max-w-7xl px-6 py-10">
+          <div className="flex flex-col gap-8 lg:flex-row lg:gap-6">
+            <aside
+              className={`v2-sidebar w-full lg:w-[260px] ${drawerOpen ? 'mobile-drawer-open' : 'mobile-drawer-closed'} ${drawerOpen ? '' : ''}`}
+              aria-label={t('navigation.sidebar.label', 'Primary navigation')}
+            >
             <div className="v2-sidebar-header">
               <img src={`${baseUrl}pwa-192x192.png`} alt="" className="v2-sidebar-logo" />
               <div className="v2-sidebar-header-text">
@@ -251,8 +291,10 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
           <main className="flex flex-1 flex-col gap-6">
             <Outlet />
           </main>
+          </div>
         </div>
       </div>
-    </div>
+      {/* Mobile drawer closes content behind on small screens */}
+    </>
   );
 }

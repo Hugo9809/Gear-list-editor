@@ -39,6 +39,23 @@
   --space-16: 64px;
 }
 
+/* Mobile drawer behavior for the sidebar on narrow screens */
+@media (max-width: 1024px) {
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 260px;
+    transform: translateX(-260px);
+    transition: transform 0.25s ease;
+    z-index: 50;
+  }
+  .mobile-drawer-open {
+    transform: translateX(0);
+  }
+}
+
 /* Dark theme support */
 [data-theme="dark"] {
   --color-bg: #0B1020;

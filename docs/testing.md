@@ -1,17 +1,18 @@
-# Testing Guide
+Testing
 
-Overview
-- How to run tests, what to expect, and how to add tests for new features.
+This document provides guidance on testing Gear-list-editor. Adjust commands to match the project's actual test setup.
 
-Running tests
-- Install dependencies: `npm install`
-- Run test suite: `npm test`
-- Run with coverage: `npm run test:coverage` (if available)
+Unit tests
+- Run unit tests with the project's test command (e.g., npm test, pytest, go test).
+- Ensure tests cover core CLI behavior, data validation, and storage interactions.
 
-Fixtures and test data
-- See `tests/fixtures` for sample data used in tests (adjust paths as needed for your repo).
-- When adding tests, mirror existing patterns for setup/teardown.
+Integration tests
+- Verify end-to-end flows: add, list, export/import paths.
+- Use a test data directory to avoid clobbering real data.
 
 Quality checks
-- Linting and formatting: `npm run lint` and `npm run fmt` (if configured).
-- Ensure tests pass before submitting a PR.
+- Linting and formatting as per project guidelines.
+- Run tests before creating PRs.
+
+Notes
+- Replace placeholders with real commands as soon as the project tooling is established.

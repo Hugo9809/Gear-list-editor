@@ -1,19 +1,22 @@
-# Usage Guide
+Usage overview
 
-This guide provides common workflows for end users and contributors.
+- This document describes how to use the Gear-list-editor CLI. Replace the placeholder commands with the actual implementation details once the codebase is wired up.
 
-End-user workflows
-- Create a new gear list
-- Add items to a gear list
-- Update item metadata (e.g., quantity, notes)
-- Export or import gear lists in supported formats
-- Remove items or lists
+CLI basics
+- Command syntax: gear-list-editor <command> [options]
+- Help: gear-list-editor --help
 
-Developer workflows
-- Run the CLI against a sample dataset in tests/fixtures
-- Extend the core with new item types or storage backends (see docs/architecture.md)
-- Write tests for new features and run the test suite
+Common commands (placeholders)
+- list
+- add
+- remove
+- update
+- export
+- import
+
+Examples (illustrative)
+- gear-list-editor list
+- gear-list-editor add --name "Camping Tent" --qty 2
 
 Notes
-- See package.json for available scripts and options.
-- The exact command-line syntax may evolve; please refer to the CLI help output for current usage.
+- Update this document with concrete command descriptions and option flags as soon as they exist in the codebase.

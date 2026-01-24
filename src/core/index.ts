@@ -1,3 +1,5 @@
-export { Skill } from '../skills/skill'
-export { Rule } from '../rules/rule'
-export { RuleEngine } from '../rules/engine'
+export { Skill } from '../skills/skill.js'
+export { Rule } from '../rules/rule.js'
+export { RuleEngine } from '../rules/engine.js'
+export type { Project } from './project.js'
+export { createProject } from './project.js'

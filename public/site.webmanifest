@@ -1,0 +1,15 @@
+{
+  "name": "Gear List Editor",
+  "short_name": "GearList",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1a5f",
+  "theme_color": "#0a1a5f",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

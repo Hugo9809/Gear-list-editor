@@ -37,6 +37,8 @@ const ProjectWorkspace = ({
   onRemoveItem,
   onApplySuggestionToDraft,
   onApplySuggestionToItem
+  ,
+  onSyncCrewToContacts
 }) => (
   <div className="ui-tile bg-surface-elevated/60 p-6">
     <div className="flex flex-wrap items-center justify-between gap-4">
@@ -176,6 +178,7 @@ const ProjectWorkspace = ({
               contacts={contacts}
               roles={crewRoles}
               onChange={(nextCrew) => onUpdateProjectField('crew', nextCrew)}
+              onSyncCrewToContacts={typeof onSyncCrewToContacts === 'function' ? onSyncCrewToContacts : undefined}
             />
           </div>
         </div>

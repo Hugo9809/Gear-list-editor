@@ -69,7 +69,9 @@ const extractCameraLetter = (name) => {
   return match?.[1]?.toUpperCase() || 'A';
 };
 
-const buildCameraSpec = (categories) => {
+const buildCameraSpec = (categories, project) => {
+  // Note: project may be used by callers to embed extra camera-related data.
+  const _project = project
   const category = categories.find(
     (candidate) => isPrimaryCameraCategory(candidate.name) && (candidate.items || []).length > 0
   );
@@ -199,43 +201,50 @@ export function buildDocDefinition(snapshot, t, theme) {
     ];
   });
 
-  const cameraSpec = buildCameraSpec(categories);
-  const cameraSpecRow = cameraSpec
-    ? {
-        table: {
-          widths: [90, '*', '*', '*', '*', '*'],
-          body: [
-            [
-              {
-                text: [
-                  {
-                    text: `${
-                      cameraSpec.label.replace(/\s+[a-z]$/i, '').trim() || cameraSpec.label
-                    } `,
-                    bold: true
-                  },
-                  { text: cameraSpec.letter, bold: true, color: CAMERA_BADGE_COLOR }
-                ],
-                fontSize: 9
-              },
-              ...cameraSpec.values.map((value) => ({ text: value, alignment: 'center', fontSize: 9 }))
-            ]
+  const cameraSpec = buildCameraSpec(categories, project);
+  let cameraSpecRow = null;
+  if (cameraSpec) {
+    const extValues = [
+      String(project?.resolution ?? ''),
+      String(project?.aspectRatio ?? ''),
+      String(project?.codec ?? ''),
+      String(project?.framerate ?? '')
+    ];
+    const allValues = [...cameraSpec.values, ...extValues]
+    const widths = [90, ...Array(allValues.length).fill('*')]
+    cameraSpecRow = {
+      table: {
+        widths,
+        body: [
+          [
+            {
+              text: [
+                {
+                  text: `${cameraSpec.label.replace(/\s+[a-z]$/i, '').trim() || cameraSpec.label} `,
+                  bold: true
+                },
+                { text: cameraSpec.letter, bold: true, color: CAMERA_BADGE_COLOR }
+              ],
+              fontSize: 9
+            },
+            ...allValues.map((value) => ({ text: value, alignment: 'center', fontSize: 9 }))
           ]
-        },
-        layout: {
-          hLineWidth: () => 0.5,
-          vLineWidth: (index, node) =>
-            index === 0 || index === node.table.widths.length ? 0 : 0.5,
-          hLineColor: () => LINE_COLOR,
-          vLineColor: () => LINE_COLOR,
-          paddingLeft: (index) => (index === 0 ? 0 : 6),
-          paddingRight: () => 6,
-          paddingTop: () => 4,
-          paddingBottom: () => 4
-        },
-        margin: [0, 6, 0, 10]
-      }
-    : null;
+        ]
+      },
+      layout: {
+        hLineWidth: () => 0.5,
+        vLineWidth: (index, node) =>
+          index === 0 || index === node.table.widths.length ? 0 : 0.5,
+        hLineColor: () => LINE_COLOR,
+        vLineColor: () => LINE_COLOR,
+        paddingLeft: (index) => (index === 0 ? 0 : 6),
+        paddingRight: () => 6,
+        paddingTop: () => 4,
+        paddingBottom: () => 4
+      },
+      margin: [0, 6, 0, 10]
+    }
+  }
 
   const categoryContent = categories.flatMap((category, idx) => {
     const items = category.items || [];

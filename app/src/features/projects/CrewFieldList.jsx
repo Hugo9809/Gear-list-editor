@@ -4,7 +4,7 @@ import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
 
 const normalizeCrewList = (crew) => (Array.isArray(crew) ? crew : []);
 
-const CrewFieldList = ({ t, crew, roles, contacts, onChange }) => {
+const CrewFieldList = ({ t, crew, roles, contacts, onChange, onSyncCrewToContacts }) => {
   const entries = normalizeCrewList(crew);
   const availableRoles = Array.isArray(roles) ? roles : [];
   const availableContacts = Array.isArray(contacts) ? contacts : [];
@@ -41,16 +41,23 @@ const CrewFieldList = ({ t, crew, roles, contacts, onChange }) => {
   };
 
   const handleUpdate = (entryId, field, value) => {
-    onChange(
-      entries.map((entry) =>
-        entry.id === entryId
-          ? {
-              ...entry,
-              [field]: value
-            }
-          : entry
-      )
-    );
+    // Build updated entries so we can also sync to Contacts when a meaningful change happens
+    let updatedEntry = null;
+    const updatedEntries = entries.map((entry) => {
+      if (entry.id !== entryId) {
+        return entry;
+      }
+      updatedEntry = {
+        ...entry,
+        [field]: value
+      };
+      return updatedEntry;
+    });
+    onChange(updatedEntries);
+    // If a name was changed to a non-empty value, try to sync with global contacts
+    if (onSyncCrewToContacts && updatedEntry && typeof updatedEntry.name === 'string' && updatedEntry.name.trim()) {
+      onSyncCrewToContacts(updatedEntry);
+    }
   };
 
   const handleSelectContact = (entryId, contact) => {
@@ -59,13 +66,23 @@ const CrewFieldList = ({ t, crew, roles, contacts, onChange }) => {
         if (entry.id !== entryId) {
           return entry;
         }
-        return {
+        const updated = {
           ...entry,
           name: contact.name || entry.name,
           role: contact.role || entry.role,
           phone: contact.phone || entry.phone,
           email: contact.email || entry.email
         };
+        // Also attempt to sync the newly selected contact to global Contacts
+        if (onSyncCrewToContacts && contact?.name?.trim()) {
+          onSyncCrewToContacts({
+            name: contact.name,
+            role: contact.role,
+            phone: contact.phone,
+            email: contact.email
+          });
+        }
+        return updated;
       })
     );
   };

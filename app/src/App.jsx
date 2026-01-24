@@ -10,6 +10,7 @@ import ContactsPage from './features/contacts/ContactsPage.jsx';
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import TemplateManager from './features/templates/TemplateManager.jsx';
 import { useProjects } from './shared/hooks/useProjects.js';
+import { createId } from './data/storage.js';
 import { useStorageHydration } from './shared/hooks/useStorageHydration.js';
 import { useTemplates } from './shared/hooks/useTemplates.js';
 
@@ -127,6 +128,39 @@ export default function App() {
     },
     [addProject, navigate]
   );
+
+  // Sync a crew member to global Contacts when a crew entry gains a non-empty name
+  const syncCrewToContacts = useCallback((crewMember) => {
+    if (!crewMember || typeof crewMember.name !== 'string' || !crewMember.name.trim()) {
+      return;
+    }
+    setContacts((prev) => {
+      const safePrev = Array.isArray(prev) ? prev : [];
+      const match = safePrev.find((c) => c.name === crewMember.name);
+      if (match) {
+        // Update existing contact with any provided details
+        return safePrev.map((c) =>
+          c.id === match.id
+            ? {
+                ...c,
+                role: crewMember.role || c.role,
+                phone: crewMember.phone || c.phone,
+                email: crewMember.email || c.email
+              }
+            : c
+        );
+      }
+      // Create a new contact from the crew member details
+      const newContact = {
+        id: createId(),
+        name: crewMember.name,
+        role: crewMember.role || '',
+        phone: crewMember.phone || '',
+        email: crewMember.email || ''
+      };
+      return [newContact, ...safePrev];
+    });
+  }, [setContacts]);
 
   const handleOpenProject = useCallback(
     (projectId) => {
@@ -411,6 +445,7 @@ export default function App() {
                 getItemDraft={getItemDraft}
                 isHydrated={isHydrated}
                 projectActions={projectActions}
+                onSyncCrewToContacts={typeof syncCrewToContacts === 'function' ? syncCrewToContacts : undefined}
               />
             }
           />
@@ -431,10 +466,10 @@ export default function App() {
               />
             }
           />
-          <Route
-            path="/contacts"
-            element={
-              <ContactsPage
+              <Route
+                path="/contacts"
+                element={
+                  <ContactsPage
                 t={t}
                 contacts={contacts}
                 setContacts={setContacts}

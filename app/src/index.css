@@ -247,7 +247,7 @@ h6 {
     pointer-events: none;
   }
 
-  .ui-sidebar > * {
+  .ui-sidebar>* {
     position: relative;
     z-index: 1;
   }
@@ -332,6 +332,8 @@ h6 {
   }
 
   .v2-sidebar {
+    position: relative;
+    isolate: auto;
     display: flex;
     flex-direction: column;
     background-color: rgb(var(--v2-surface-base) / 1);
@@ -345,16 +347,47 @@ h6 {
     /* Subtle glassy background that adapts with theme */
     background: rgb(var(--v2-surface-base) / 0.96);
     backdrop-filter: saturate(1.2) blur(6px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .v2-sidebar::before {
+    content: '';
+    position: absolute;
+    inset: -20% auto auto -20%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgb(var(--v2-brand-primary) / 0.08), transparent 70%);
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .v2-sidebar::after {
+    content: '';
+    position: absolute;
+    inset: auto -20% -20% auto;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgb(var(--v2-brand-secondary) / 0.06), transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .v2-sidebar>* {
+    position: relative;
+    z-index: 1;
   }
 
   /* Theme tweaks for dark mode to improve contrast and depth on the new sidebar design */
   :root[data-theme='dark'] .ui-sidebar::before {
     background: radial-gradient(circle, rgb(var(--v2-brand-primary) / 0.12), transparent 70%);
   }
+
   :root[data-theme='dark'] .ui-sidebar::after {
     background: radial-gradient(circle, rgb(var(--v2-brand-secondary) / 0.12), transparent 70%);
   }
+
   :root[data-theme='dark'] .v2-sidebar {
     background: rgb(var(--v2-surface-base) / 0.92);
   }
@@ -412,10 +445,10 @@ h6 {
 
   .v2-sidebar-section-title {
     font-size: 11px;
-    font-weight: var(--v2-font-weight-semibold);
+    font-weight: var(--v2-font-weight-bold);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgb(var(--v2-text-muted) / 1);
+    letter-spacing: 0.12em;
+    color: rgb(var(--v2-brand-primary) / 0.7);
     padding: var(--v2-space-sm) var(--v2-space-md);
     margin-bottom: var(--v2-space-xs);
   }
@@ -434,13 +467,14 @@ h6 {
   }
 
   .v2-sidebar-link:hover {
-    background-color: rgb(var(--v2-surface-muted) / 1);
-    color: rgb(var(--v2-text-primary) / 1);
+    background-color: rgb(var(--v2-brand-primary) / 0.05);
+    color: rgb(var(--v2-brand-primary) / 1);
   }
 
   .v2-sidebar-link.active {
     background-color: rgb(var(--v2-brand-primary) / 1);
     color: rgb(var(--v2-text-inverse) / 1);
+    box-shadow: 0 4px 12px rgb(var(--v2-brand-primary) / 0.25);
   }
 
   .v2-sidebar-link.active:hover {
@@ -452,15 +486,21 @@ h6 {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
-    opacity: 0.7;
+    opacity: 0.5;
+    color: rgb(var(--v2-brand-primary) / 0.8);
+    transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
   }
 
   .v2-sidebar-link:hover .v2-sidebar-link-icon {
     opacity: 1;
+    color: rgb(var(--v2-brand-primary) / 1);
+    transform: scale(1.1);
   }
 
   .v2-sidebar-link.active .v2-sidebar-link-icon {
     opacity: 1;
+    color: currentColor;
+    transform: scale(1.05);
   }
 
   .v2-sidebar-link-text {
@@ -647,6 +687,34 @@ h6 {
 
     .v2-sidebar-footer {
       padding: var(--v2-space-sm) var(--v2-space-md);
+    }
+  }
+
+  /* Mobile Sidebar Drawer State Classes */
+  @media (max-width: 1023px) {
+    .v2-sidebar {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px !important;
+      z-index: 100;
+      border-radius: 0;
+      border-right: 1px solid rgb(var(--v2-border-default) / 1);
+      box-shadow: var(--v2-shadow-xl);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .v2-sidebar.mobile-drawer-closed {
+      transform: translateX(-100%);
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .v2-sidebar.mobile-drawer-open {
+      transform: translateX(0);
+      pointer-events: auto;
+      visibility: visible;
     }
   }
 }

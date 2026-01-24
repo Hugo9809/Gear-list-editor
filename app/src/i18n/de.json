@@ -100,11 +100,11 @@
       "prepPeriod": "Vorbereitung",
       "shootingPeriod": "Drehzeitraum",
       "returnDay": "Rückgabetag",
-      "location": "Ort",
+      "location": "Drehort",
       "contact": "Rentalhaus",
       "crew": "Crew",
       "resolution": "Auflösung",
-      "aspectRatio": "Bildverhältnis",
+      "aspectRatio": "Seitenverhältnis",
       "codec": "Codec",
       "framerate": "Bildrate"
     },
@@ -112,7 +112,11 @@
       "name": "z. B. Studioshoot im Oktober",
       "client": "Kunde, Agentur oder Show",
       "location": "Studio, Stadt oder Venue",
-      "contact": "Rentalhaus Name, Adresse, Telefon"
+      "contact": "Rentalhaus Name, Adresse, Telefon",
+      "resolution": "z. B. 1920x1080",
+      "aspectRatio": "z. B. 16:9",
+      "codec": "z. B. H.264",
+      "framerate": "z. B. 30"
     },
     "actions": {
       "create": "Projekt erstellen",
@@ -176,20 +180,20 @@
       "emailPlaceholder": "E-Mail",
       "empty": "Noch keine Crew hinzugefügt."
     },
-      "print": {
-        "labels": {
-          "client": "Produktionsfirma",
-          "resolution": "Auflösung",
-          "aspectRatio": "Bildverhältnis",
-          "codec": "Codec",
-          "framerate": "Bildrate",
-          "prep": "Prep",
-          "shooting": "Dreh",
-          "return": "Rückgabe",
-          "location": "Ort",
-          "contact": "Verantwortlicher",
-          "crew": "Crew"
-        },
+    "print": {
+      "labels": {
+        "client": "Produktionsfirma",
+        "resolution": "Auflösung",
+        "aspectRatio": "Bildverhältnis",
+        "codec": "Codec",
+        "framerate": "Bildrate",
+        "prep": "Prep",
+        "shooting": "Dreh",
+        "return": "Rückgabe",
+        "location": "Ort",
+        "contact": "Verantwortlicher",
+        "crew": "Crew"
+      },
       "notes": {
         "title": "Projekt-Notizen"
       }

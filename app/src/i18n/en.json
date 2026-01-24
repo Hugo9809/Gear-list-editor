@@ -91,12 +91,12 @@
       "shootingPeriod": "Shooting period",
       "returnDay": "Return day",
       "location": "Location",
-      "contact": "Rental house",
-      "crew": "Crew",
       "resolution": "Resolution",
       "aspectRatio": "Aspect Ratio",
       "codec": "Codec",
-      "framerate": "Framerate"
+      "framerate": "Framerate",
+      "contact": "Rental house",
+      "crew": "Crew"
     },
     "placeholders": {
       "name": "e.g. October studio shoot",

@@ -34,6 +34,10 @@ export async function exportPdf(project, locale, t, theme) {
       'project.print.labels.location': t('project.print.labels.location', 'Location'),
       'project.print.labels.contact': t('project.print.labels.contact', 'Rental house'),
       'project.print.labels.crew': t('project.print.labels.crew', 'Crew'),
+      'project.print.labels.resolution': t('project.print.labels.resolution', 'Resolution'),
+      'project.print.labels.aspectRatio': t('project.print.labels.aspectRatio', 'Aspect ratio'),
+      'project.print.labels.codec': t('project.print.labels.codec', 'Codec'),
+      'project.print.labels.framerate': t('project.print.labels.framerate', 'Framerate'),
       'project.print.notes.title': t('project.print.notes.title', 'Project notes')
     };
 

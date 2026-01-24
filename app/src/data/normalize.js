@@ -159,6 +159,7 @@ const normalizeCrew = (crew) => {
 
 export const normalizeProject = (project) => {
   const rawName = normalizeText(project?.name);
+  const framerateValue = Number(project?.framerate);
   return {
     id: typeof project?.id === 'string' && project.id ? project.id : createId(),
     name: rawName || STORAGE_MESSAGE_KEYS.defaults.project,
@@ -168,7 +169,11 @@ export const normalizeProject = (project) => {
     contact: normalizeText(project?.contact),
     crew: normalizeCrew(project?.crew),
     notes: normalizeNotes(project?.notes),
-    categories: normalizeCategories(project?.categories)
+    categories: normalizeCategories(project?.categories),
+    resolution: normalizeText(project?.resolution),
+    aspectRatio: normalizeText(project?.aspectRatio),
+    codec: normalizeText(project?.codec),
+    framerate: Number.isFinite(framerateValue) && framerateValue > 0 ? framerateValue : undefined
   };
 };
 

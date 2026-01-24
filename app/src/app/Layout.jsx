@@ -194,7 +194,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
             className="p-2 rounded-md border border-surface-sunken"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
           <span className="font-semibold">{t('ui.appName', 'Gear List Creator')}</span>
@@ -210,87 +210,99 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
         />
       )}
       <div className="min-h-screen bg-gradient-to-b from-surface-app via-surface-app to-surface-muted">
-        <div className="mx-auto w-full max-w-7xl px-6 py-10">
+        <div className="mx-auto w-full max-w-7xl px-6 py-10 lg:py-10 pt-20">
           <div className="flex flex-col gap-8 lg:flex-row lg:gap-6">
             <aside
-              className={`v2-sidebar w-full lg:w-[260px] ${drawerOpen ? 'mobile-drawer-open' : 'mobile-drawer-closed'} ${drawerOpen ? '' : ''}`}
+              className={`v2-sidebar w-full lg:w-[260px] ${drawerOpen ? 'mobile-drawer-open' : 'mobile-drawer-closed'}`}
               aria-label={t('navigation.sidebar.label', 'Primary navigation')}
             >
-            <div className="v2-sidebar-header">
-              <img src={`${baseUrl}pwa-192x192.png`} alt="" className="v2-sidebar-logo" />
-              <div className="v2-sidebar-header-text">
-                <h1 className="v2-sidebar-title">{t('ui.appName', 'Gear List Creator')}</h1>
-                <div className="v2-sidebar-subtitle">{t('ui.sidebar.subtitle', 'Safe offline workspace')}</div>
+              <div className="v2-sidebar-header relative">
+                <img src={`${baseUrl}pwa-192x192.png`} alt="" className="v2-sidebar-logo" />
+                <div className="v2-sidebar-header-text">
+                  <h1 className="v2-sidebar-title">{t('ui.appName', 'Gear List Creator')}</h1>
+                  <div className="v2-sidebar-subtitle">{t('ui.sidebar.subtitle', 'Safe offline workspace')}</div>
+                </div>
+                {/* Mobile-only close button */}
+                <button
+                  type="button"
+                  className="lg:hidden absolute top-2 right-2 p-2 text-text-muted hover:text-text-primary"
+                  onClick={() => setDrawerOpen(false)}
+                  aria-label="Close navigation"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
               </div>
-            </div>
-            <div className="v2-sidebar-nav">
-              {navigationSections.map((section) => (
-                <div key={section.id} className="v2-sidebar-section">
-                  <div className="v2-sidebar-section-title">{section.title}</div>
-                  {section.items.map((tab) => (
-                    <NavLink
-                      key={tab.path}
-                      to={tab.path}
-                      end={tab.end}
-                      className={({ isActive }) => `v2-sidebar-link ${isActive ? 'active' : ''}`}
-                    >
-                      {tab.icon}
-                      <span className="v2-sidebar-link-text">{tab.label}</span>
-                    </NavLink>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div className="v2-sidebar-controls-container">
-              <div className="v2-controls-row-1">
-                <div className="v2-lang-select-wrapper">
-                  <select
-                    value={locale}
-                    onChange={(e) => setLocale(e.target.value)}
-                    className="v2-lang-select"
-                    aria-label={t('language.label', 'Language')}
-                  >
-                    {locales.map((option) => (
-                      <option key={option.code} value={option.code}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="v2-theme-controls" role="group" aria-label={t('theme.label', 'Theme')}>
-                  {themeOptions.map((themeOption) => {
-                    const isActive = theme === themeOption.id;
-                    return (
-                      <button
-                        key={themeOption.id}
-                        type="button"
-                        onClick={() => setTheme(themeOption.id)}
-                        aria-pressed={isActive}
-                        aria-label={themeOption.label}
-                        title={themeOption.label}
-                        className={`v2-theme-toggle${isActive ? ' active' : ''}`}
-                        data-theme={themeOption.id === 'pink' ? 'pink' : undefined}
+              <div className="v2-sidebar-nav">
+                {navigationSections.map((section) => (
+                  <div key={section.id} className="v2-sidebar-section">
+                    <div className="v2-sidebar-section-title">{section.title}</div>
+                    {section.items.map((tab) => (
+                      <NavLink
+                        key={tab.path}
+                        to={tab.path}
+                        end={tab.end}
+                        className={({ isActive }) => `v2-sidebar-link ${isActive ? 'active' : ''}`}
                       >
-                        {themeOption.icon}
-                      </button>
-                    );
-                  })}
+                        {tab.icon}
+                        <span className="v2-sidebar-link-text">{tab.label}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <div className="v2-sidebar-controls-container">
+                <div className="v2-controls-row-1">
+                  <div className="v2-lang-select-wrapper">
+                    <select
+                      value={locale}
+                      onChange={(e) => setLocale(e.target.value)}
+                      className="v2-lang-select"
+                      aria-label={t('language.label', 'Language')}
+                    >
+                      {locales.map((option) => (
+                        <option key={option.code} value={option.code}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="v2-theme-controls" role="group" aria-label={t('theme.label', 'Theme')}>
+                    {themeOptions.map((themeOption) => {
+                      const isActive = theme === themeOption.id;
+                      return (
+                        <button
+                          key={themeOption.id}
+                          type="button"
+                          onClick={() => setTheme(themeOption.id)}
+                          aria-pressed={isActive}
+                          aria-label={themeOption.label}
+                          title={themeOption.label}
+                          className={`v2-theme-toggle${isActive ? ' active' : ''}`}
+                          data-theme={themeOption.id === 'pink' ? 'pink' : undefined}
+                        >
+                          {themeOption.icon}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="v2-sidebar-footer">
-              <p
-                className={`v2-sidebar-status${status ? ' is-active' : ''}`}
-                aria-live="polite"
-              >
-                {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
-              </p>
-            </div>
-          </aside>
+              <div className="v2-sidebar-footer">
+                <p
+                  className={`v2-sidebar-status${status ? ' is-active' : ''}`}
+                  aria-live="polite"
+                >
+                  {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
+                </p>
+              </div>
+            </aside>
 
-          <main className="flex flex-1 flex-col gap-6">
-            <Outlet />
-          </main>
+            <main className="flex flex-1 flex-col gap-6">
+              <Outlet />
+            </main>
           </div>
         </div>
       </div>

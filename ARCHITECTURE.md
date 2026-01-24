@@ -1,0 +1,20 @@
+Architecture Skeleton for Scalable Apps
+- Goal: establish clear boundaries between domain, application, and infrastructure.
+- Core structure:
+  - domain/entities: domain models
+  - domain/ValueObjects: domain value objects
+  - usecases/interactors: application logic and orchestration
+  - ports/interfaces: abstractions for repositories and external services
+  - adapters/infrastructure: concrete implementations for data access / services
+  - adapters/ui: front-end wiring and UI adapters
+  - app/DI: dependency injection wiring and environment configuration
+- Key patterns:
+  - Dependency Inversion: domain depends on abstractions, not on infrastructure
+  - Repository pattern: domain uses IItemRepository interface; infra provides concrete impls
+  - Data flow: input (controller/adapter) -> use case -> output (presenter/mapper)
+  - Observability: unify logging/metrics/error handling
+- Path aliases:
+  - @domain/*, @usecases/*, @ports/*, @adapters/*, @app/*
+- Next steps:
+  - Add ADRs for decisions, wire a real adapter, and expand domain/use cases.
+  - Add tests for domain and use cases, plus CI integration.

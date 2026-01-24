@@ -224,16 +224,18 @@ export function buildDocDefinition(snapshot, t, theme) {
     const items = category.items || [];
     if (items.length === 0) return [];
     const categoryName = resolveCategoryName(category.name, idx);
-    const itemLines = items.map((item, itemIndex) => {
+    // Build a table per category: one row per item
+    const rows = items.map((item, itemIndex) => {
       const quantity = normalizeText(item.quantity) || '1';
       const name = resolveItemName(item.name, itemIndex);
       const details = normalizeItemDetails(item.details);
-      const fullName = details ? `${name} - ${details}` : name;
-      return {
-        text: [{ text: `${quantity}x `, bold: true }, { text: fullName }],
-        fontSize: 9.5,
-        margin: [0, 0, 0, 2]
+      const nameCell = {
+        text: [
+          { text: name, bold: true },
+          ...(details ? [{ text: ` - ${details}` }] : [])
+        ]
       };
+      return [ { text: `${quantity}x`, bold: true }, { text: '' }, nameCell ];
     });
     return [
       {
@@ -270,7 +272,16 @@ export function buildDocDefinition(snapshot, t, theme) {
         ],
         margin: [0, 0, 0, 6]
       },
-      { stack: itemLines, margin: [0, 0, 0, 6] }
+      { table: { widths: ['auto', 'auto', '*'], body: rows }, layout: {
+          hLineWidth: () => 0.5,
+          vLineWidth: (index, node) => index === 0 || index === node.table.widths.length ? 0 : 0.5,
+          hLineColor: () => LINE_COLOR,
+          vLineColor: () => LINE_COLOR,
+          paddingLeft: (index) => (index === 0 ? 0 : 6),
+          paddingRight: () => 6,
+          paddingTop: () => 4,
+          paddingBottom: () => 4
+        }, margin: [0, 0, 0, 6] }
     ];
   });
 
@@ -335,7 +346,8 @@ export function buildDocDefinition(snapshot, t, theme) {
         text: projectName,
         style: 'title',
         color: themeColor,
-        margin: [0, 0, 0, 2]
+        margin: [0, 0, 0, 2],
+        fontSize: 26
       },
       ...(subtitle
         ? [

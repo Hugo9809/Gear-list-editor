@@ -7,7 +7,7 @@
   "theme_color": "#0a1a5f",
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "/Gear-list-editor/icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

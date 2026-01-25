@@ -74,26 +74,45 @@ const extractCameraLetter = (name) => {
 };
 
 const buildCameraSpec = (categories, project) => {
-  // Note: project may be used by callers to embed extra camera-related data.
+  // 1. Try to find a populated camera category
   const category = categories.find(
     (candidate) => isPrimaryCameraCategory(candidate.name) && (candidate.items || []).length > 0
   );
-  if (!category) return null;
 
-  const specItem = category.items[0];
-  const rawDetails = normalizeText(specItem.details);
-  const detailSegments = rawDetails.includes('|')
-    ? rawDetails.split('|').map((segment) => segment.trim()).filter(Boolean)
-    : [];
-  const values = [normalizeText(specItem.name), ...detailSegments].filter((value) => value !== '');
-  while (values.length < 5) {
-    values.push('');
+  if (category) {
+    const specItem = category.items[0];
+    const rawDetails = normalizeText(specItem.details);
+    const detailSegments = rawDetails.includes('|')
+      ? rawDetails.split('|').map((segment) => segment.trim()).filter(Boolean)
+      : [];
+    const values = [normalizeText(specItem.name), ...detailSegments].filter((value) => value !== '');
+    while (values.length < 5) {
+      values.push('');
+    }
+    return {
+      label: normalizeText(category.name) || 'Camera',
+      letter: extractCameraLetter(category.name),
+      values: values.slice(0, 5)
+    };
   }
-  return {
-    label: normalizeText(category.name) || 'Camera',
-    letter: extractCameraLetter(category.name),
-    values: values.slice(0, 5)
-  };
+
+  // 2. Fallback: If no populated camera category, check for technical metadata
+  const hasMetadata = [project.resolution, project.aspectRatio, project.codec, project.framerate]
+    .some((val) => val != null && String(val).trim() !== '');
+
+  if (hasMetadata) {
+    // Try to find a camera category even if empty to use its name
+    const emptyCategory = categories.find((candidate) => isPrimaryCameraCategory(candidate.name));
+    const label = emptyCategory ? normalizeText(emptyCategory.name) : 'Camera';
+
+    return {
+      label: label || 'Camera',
+      letter: emptyCategory ? extractCameraLetter(emptyCategory.name) : '',
+      values: ['', '', '', '', '']
+    };
+  }
+
+  return null;
 };
 
 const formatCrewValue = (entry) => {

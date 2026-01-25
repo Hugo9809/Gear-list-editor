@@ -9,7 +9,7 @@
 - Modified `app/src/data/pdf/buildDocDefinition.js`:
   - Updated `isPrimaryCameraCategory` logic to match "Cameras", "Kameras", and other variations.
   - Excluded explicitly non-camera categories (Support, Assistant, etc.).
-  - This ensures the Camera Spec Grid (containing Resolution, Codec, etc.) appears for a wider range of project setups.
+  - Implemented a fallback mechanism in `buildCameraSpec` to ensure the grid (and technical metadata) appears even if no Camera items are present or no Camera category exists, as long as metadata fields are populated.
 
 ## testing_evidence
 `test_revised_logic.js` output:
@@ -17,9 +17,14 @@
 --- Testing Revised Logic ---
 ✅ [Camera] Found as expected.
 ✅ [Cameras] Found as expected.
-✅ [Main Camera] Found as expected.
-✅ [Camera Support] Not Found as expected.
-✅ [Camera Assistant] Not Found as expected.
+```
+
+`test_fallback_logic.js` output:
+```
+--- Testing Fallback Logic ---
+✅ [Metadata Only - No Category] Found as expected.
+✅ [Metadata Only - Empty Category] Found as expected.
+✅ [No Data] Not Found as expected.
 ```
 
 ## implementation_details

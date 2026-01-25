@@ -45,7 +45,7 @@ import{t as mt,g as ft,a as ht,_ as N}from"./index-CkYn1GFl.js";function gt(t,e)
         <style>
           @page {
             /* Increase bottom margin to provide space for the footer on all pages */
-            margin: 40px 40px 100px;
+            margin: 40px 40px 180px;
           }
           body {
             margin: 0;
@@ -148,6 +148,7 @@ import{t as mt,g as ft,a as ht,_ as N}from"./index-CkYn1GFl.js";function gt(t,e)
             font-size: 9px;
             color: #666;
           }
+          .space-bottom { height: 260px; }
         </style>
       </head>
       <body>
@@ -163,6 +164,7 @@ import{t as mt,g as ft,a as ht,_ as N}from"./index-CkYn1GFl.js";function gt(t,e)
           ${ot}
           ${it}
         </main>
+        <div class="space-bottom"></div>
         <div class="footer">${b(st)}</div>
       </body>
     </html>

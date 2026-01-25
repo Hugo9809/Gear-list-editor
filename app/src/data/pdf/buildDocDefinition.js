@@ -3,7 +3,7 @@ import { getShootScheduleDates } from '../../shared/utils/shootSchedule.js';
 
 const CAMERA_BADGE_COLOR = '#E10078';
 const LINE_COLOR = '#9CA3AF';
-const PAGE_LINE_WIDTH = 475;
+const PAGE_LINE_WIDTH = 435;
 
 const normalizeText = (value) => (value != null && value !== '' ? String(value).trim() : '');
 
@@ -418,13 +418,13 @@ export function buildDocDefinition(snapshot, t, theme) {
 
   return {
     pageSize: 'A4',
-    pageMargins: [60, 60, 60, 80],
+    pageMargins: [80, 80, 80, 100],
     footer: (currentPage, pageCount) => ({
       text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${projectName}`,
       alignment: 'center',
       color: '#666',
       fontSize: 9,
-      margin: [60, 20, 60, 0]
+      margin: [80, 20, 80, 0]
     }),
     content: [
       {

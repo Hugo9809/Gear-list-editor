@@ -69,11 +69,13 @@ const normalizeItemDetails = (details) => {
 const isPrimaryCameraCategory = (name) => {
   const normalized = normalizeText(name).toLowerCase();
   if (!normalized) return false;
-  if (normalized === 'camera' || normalized === 'kamera') return true;
-  if (normalized.startsWith('camera ') || normalized.startsWith('kamera ')) {
-    return !normalized.includes('support') && !normalized.includes('zubehoer');
+
+  const exclusions = ['support', 'zubehoer', 'access', 'assistent', 'assistant', 'tripod', 'cart'];
+  if (exclusions.some((ex) => normalized.includes(ex))) {
+    return false;
   }
-  return false;
+
+  return /\b(camera|kamera|cameras|kameras)\b/.test(normalized);
 };
 
 const extractCameraLetter = (name) => {
@@ -81,26 +83,43 @@ const extractCameraLetter = (name) => {
   return match?.[1]?.toUpperCase() || 'A';
 };
 
-const buildCameraSpec = (categories, resolveItemName) => {
+const buildCameraSpec = (categories, project, resolveItemName) => {
   const category = categories.find(
     (candidate) => isPrimaryCameraCategory(candidate.name) && (candidate.items || []).length > 0
   );
-  if (!category) return null;
-  const specItem = category.items[0];
-  const rawDetails = normalizeText(specItem.details);
-  const detailSegments = rawDetails.includes('|')
-    ? rawDetails.split('|').map((segment) => segment.trim()).filter(Boolean)
-    : [];
-  const itemName = resolveItemName ? resolveItemName(specItem.name, 0) : normalizeText(specItem.name);
-  const values = [itemName, ...detailSegments].filter((value) => value !== '');
-  while (values.length < 5) {
-    values.push('');
+
+  if (category) {
+    const specItem = category.items[0];
+    const rawDetails = normalizeText(specItem.details);
+    const detailSegments = rawDetails.includes('|')
+      ? rawDetails.split('|').map((segment) => segment.trim()).filter(Boolean)
+      : [];
+    const itemName = resolveItemName ? resolveItemName(specItem.name, 0) : normalizeText(specItem.name);
+    const values = [itemName, ...detailSegments].filter((value) => value !== '');
+    while (values.length < 5) {
+      values.push('');
+    }
+    return {
+      label: normalizeText(category.name) || 'Camera',
+      letter: extractCameraLetter(category.name),
+      values: values.slice(0, 5)
+    };
   }
-  return {
-    label: normalizeText(category.name) || 'Camera',
-    letter: extractCameraLetter(category.name),
-    values: values.slice(0, 5)
-  };
+
+  const hasMetadata = [project?.resolution, project?.aspectRatio, project?.codec, project?.framerate]
+    .some((value) => normalizeText(value));
+
+  if (hasMetadata) {
+    const emptyCategory = categories.find((candidate) => isPrimaryCameraCategory(candidate.name));
+    const label = emptyCategory ? normalizeText(emptyCategory.name) : 'Camera';
+    return {
+      label: label || 'Camera',
+      letter: emptyCategory ? extractCameraLetter(emptyCategory.name) : '',
+      values: ['', '', '', '', '']
+    };
+  }
+
+  return null;
 };
 
 const formatCrewValue = (entry) => {
@@ -170,6 +189,22 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
       label: t('project.print.labels.contact', 'Rental house'),
       value: normalizeText(project.contact) || emptyValue
     },
+    {
+      label: t('project.print.labels.resolution', 'Resolution'),
+      value: normalizeText(project.resolution)
+    },
+    {
+      label: t('project.print.labels.aspectRatio', 'Aspect ratio'),
+      value: normalizeText(project.aspectRatio)
+    },
+    {
+      label: t('project.print.labels.codec', 'Codec'),
+      value: normalizeText(project.codec)
+    },
+    {
+      label: t('project.print.labels.framerate', 'Framerate'),
+      value: normalizeText(project.framerate)
+    },
     ...crewMetaEntries,
     {
       label: t('project.print.labels.prep', 'Prep'),
@@ -200,19 +235,48 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
     })
     .join('');
 
-  const cameraSpec = buildCameraSpec(project.categories || [], resolveItemName);
+  const cameraSpec = buildCameraSpec(project.categories || [], project, resolveItemName);
   const cameraLabel = cameraSpec
     ? cameraSpec.label.replace(/\s+[a-z]$/i, '').trim() || cameraSpec.label || 'Camera'
     : '';
+  const cameraMetadataValues = [
+    normalizeText(project.resolution),
+    normalizeText(project.aspectRatio),
+    normalizeText(project.codec),
+    normalizeText(project.framerate)
+  ];
+  const cameraSpecValues = cameraSpec
+    ? [...cameraSpec.values, ...cameraMetadataValues]
+    : [];
+  while (cameraSpecValues.length > 0 && cameraSpecValues.length < 9) {
+    cameraSpecValues.push('');
+  }
+  const cameraSpecHeaders = [
+    t('items.print.headers.item', 'Item'),
+    t('project.print.headers.detail1', 'Detail 1'),
+    t('project.print.headers.detail2', 'Detail 2'),
+    t('project.print.headers.detail3', 'Detail 3'),
+    t('project.print.headers.detail4', 'Detail 4'),
+    t('project.print.labels.resolution', 'Res'),
+    t('project.print.labels.aspectRatio', 'Aspect'),
+    t('project.print.labels.codec', 'Codec'),
+    t('project.print.labels.framerate', 'FPS')
+  ];
   const cameraSpecHtml = cameraSpec
     ? `
         <table class="camera-spec">
+          <tr class="camera-spec-header">
+            <td></td>
+            ${cameraSpecHeaders.map((value) => `<td>${escapeHtml(value)}</td>`).join('')}
+          </tr>
           <tr>
             <td class="camera-label">
               <strong>${escapeHtml(cameraLabel)}</strong>
-              <strong class="camera-badge">${escapeHtml(cameraSpec.letter)}</strong>
+              ${cameraSpec.letter
+                  ? `<strong class="camera-badge">${escapeHtml(cameraSpec.letter)}</strong>`
+                  : ''}
             </td>
-            ${cameraSpec.values
+            ${cameraSpecValues
       .map((value) => `<td>${escapeHtml(value)}</td>`)
       .join('')}
           </tr>
@@ -330,6 +394,16 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
           }
           .camera-spec td {
             padding: 4px 6px;
+          }
+          .camera-spec .camera-spec-header td {
+            padding: 2px 6px;
+            font-size: 8px;
+            color: #666;
+            font-weight: 700;
+            border-bottom: 1px solid ${lineColor};
+          }
+          .camera-spec .camera-spec-header td + td {
+            text-align: center;
           }
           .camera-spec td + td {
             border-left: 1px solid ${lineColor};

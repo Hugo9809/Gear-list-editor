@@ -86,6 +86,24 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
               <rect x="5" y="3" width="14" height="4" rx="1" />
             </svg>
           )
+        },
+        {
+          path: '/archived',
+          label: t('navigation.sidebar.archived', 'Archived Projects'),
+          icon: (
+            <svg
+              className="v2-sidebar-link-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <polyline points="21 8 21 21 3 21 3 8" />
+              <rect x="1" y="3" width="22" height="5" />
+              <line x1="10" y1="12" x2="14" y2="12" />
+            </svg>
+          )
         }
       ]
     },

@@ -37,8 +37,11 @@ export default function App() {
     projectDraft,
     updateProjectDraftField,
     addProject,
-    // openProject removed
-    deleteProject,
+    addProject,
+    // deleteProject removed
+    archiveProject, // New soft delete
+    restoreProject, // New restore
+    deleteProjectPermanently, // New hard delete
     newCategoryName,
     setNewCategoryName,
     addCategory,
@@ -142,11 +145,11 @@ export default function App() {
         return safePrev.map((c) =>
           c.id === match.id
             ? {
-                ...c,
-                role: crewMember.role || c.role,
-                phone: crewMember.phone || c.phone,
-                email: crewMember.email || c.email
-              }
+              ...c,
+              role: crewMember.role || c.role,
+              phone: crewMember.phone || c.phone,
+              email: crewMember.email || c.email
+            }
             : c
         );
       }
@@ -171,11 +174,25 @@ export default function App() {
 
   const handleDeleteProject = useCallback(
     (projectId) => {
-      deleteProject(projectId);
-      // If we were on that project page, we might ideally redirect,
-      // but simpler to just let the Wrapper render Navigate to / if not found
+      archiveProject(projectId); // Soft delete (Archive)
     },
-    [deleteProject]
+    [archiveProject]
+  );
+
+  const handleRestoreProject = useCallback(
+    (projectId) => {
+      restoreProject(projectId);
+    },
+    [restoreProject]
+  );
+
+  const handleDeletePermanently = useCallback(
+    (projectId) => {
+      if (window.confirm(t('status.confirmDeletePermanent', 'Are you sure you want to delete this project permanently? This cannot be undone.'))) {
+        deleteProjectPermanently(projectId);
+      }
+    },
+    [deleteProjectPermanently, t]
   );
 
   const handleTemplateSelect = useCallback(
@@ -353,11 +370,14 @@ export default function App() {
   const documentationSections = t('documentation.sections', []);
   const offlineSteps = t('offline.steps', []);
 
+  const activeProjects = projects.filter((p) => !p.archived);
+  const archivedProjectsList = projects.filter((p) => p.archived);
+
   const dashboardData = {
     templates,
     selectedTemplateId,
     projectDraft,
-    projects,
+    projects: activeProjects,
     contacts,
     lastSaved,
     showAutoBackups,
@@ -446,6 +466,7 @@ export default function App() {
                 isHydrated={isHydrated}
                 projectActions={projectActions}
                 onSyncCrewToContacts={typeof syncCrewToContacts === 'function' ? syncCrewToContacts : undefined}
+                onDeleteProject={handleDeleteProject}
               />
             }
           />
@@ -466,10 +487,10 @@ export default function App() {
               />
             }
           />
-              <Route
-                path="/contacts"
-                element={
-                  <ContactsPage
+          <Route
+            path="/contacts"
+            element={
+              <ContactsPage
                 t={t}
                 contacts={contacts}
                 setContacts={setContacts}
@@ -510,6 +531,29 @@ export default function App() {
                 helpSections={helpSections}
                 documentationSections={documentationSections}
                 offlineSteps={offlineSteps}
+              />
+            }
+          />
+            }
+          />
+          <Route
+            path="/archived"
+            element={
+              <ProjectDashboardContainer
+                t={t}
+                tPlural={tPlural}
+                dashboardData={{
+                  ...dashboardData,
+                  projects: archivedProjectsList,
+                  isArchivedView: true
+                }}
+                dashboardActions={{
+                  ...dashboardActions,
+                  onDeleteProject: handleDeletePermanently, // Archive view uses permanent delete
+                  onRestoreProject: handleRestoreProject
+                }}
+                resolveDisplayName={resolveDisplayName}
+                resolveStorageSource={resolveStorageSource}
               />
             }
           />

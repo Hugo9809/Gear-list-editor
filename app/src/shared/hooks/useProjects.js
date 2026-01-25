@@ -301,6 +301,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         codec: projectDraft.codec?.trim(),
         framerate: projectDraft.framerate ? Number(projectDraft.framerate) : undefined,
         notes: '',
+        archived: false,
         categories: []
       };
       setProjects((prev) => [newProject, ...prev]);
@@ -311,13 +312,35 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     [normalizeCrewDraft, projectDraft, setStatus, t]
   );
 
-  const deleteProject = useCallback(
+  const archiveProject = useCallback(
+    (projectId) => {
+      updateProject(projectId, (project) => ({
+        ...project,
+        archived: true
+      }));
+      setStatus(t('status.projectArchived', 'Project archived. You can find it in Archived Projects.'));
+    },
+    [setStatus, t, updateProject]
+  );
+
+  const restoreProject = useCallback(
+    (projectId) => {
+      updateProject(projectId, (project) => ({
+        ...project,
+        archived: false
+      }));
+      setStatus(t('status.projectRestored', 'Project restored to dashboard.'));
+    },
+    [setStatus, t, updateProject]
+  );
+
+  const deleteProjectPermanently = useCallback(
     (projectId) => {
       setProjects((prev) => {
         const remaining = prev.filter((project) => project.id !== projectId);
         return remaining;
       });
-      setStatus(t('status.projectArchived', 'Project archived. Backups remain intact.'));
+      setStatus(t('status.projectDeleted', 'Project permanently deleted.'));
     },
     [setStatus, t]
   );
@@ -530,7 +553,9 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     projectDraft,
     updateProjectDraftField,
     addProject,
-    deleteProject,
+    archiveProject,
+    restoreProject,
+    deleteProjectPermanently,
     newCategoryName,
     setNewCategoryName,
     addCategory,
@@ -550,6 +575,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     applySuggestionToItem,
     updateProject,
     rememberItem,
-    itemSuggestions
+    itemSuggestions,
+    deleteProject: deleteProjectPermanently
   };
 };

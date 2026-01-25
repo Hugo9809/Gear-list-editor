@@ -75,6 +75,7 @@
  * @property {string} [aspectRatio] - Aspect ratio (e.g., 16:9)
  * @property {string} [codec] - Encoding codec (e.g., H.264)
  * @property {number} [framerate] - Frame rate (fps)
+ * @property {boolean} [archived] - Whether the project is archived
  */
 
 /**

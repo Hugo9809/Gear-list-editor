@@ -18,7 +18,8 @@ const ProjectWorkspaceContainer = ({
   getItemDraft,
   isHydrated,
   onSyncCrewToContacts,
-  projectActions
+  projectActions,
+  onDeleteProject
 }) => {
   const { projectId } = useParams();
 
@@ -82,6 +83,7 @@ const ProjectWorkspaceContainer = ({
         projectActions.applySuggestionToItem(project.id, catId, itemId, sugg)
       }
       onSyncCrewToContacts={typeof onSyncCrewToContacts === 'function' ? onSyncCrewToContacts : undefined}
+      onDeleteProject={() => onDeleteProject(project.id)}
     />
   );
 };

@@ -81,7 +81,7 @@ describe('useProjects', () => {
     expect(result.current.newCategoryName).toBe(''); // Should reset
   });
 
-  it('should delete a project', () => {
+  it('should permanently delete a project', () => {
     const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
 
     let projectId;
@@ -96,10 +96,37 @@ describe('useProjects', () => {
     expect(result.current.projects).toHaveLength(1);
 
     act(() => {
-      result.current.deleteProject(projectId);
+      result.current.deleteProjectPermanently(projectId);
     });
 
     expect(result.current.projects).toHaveLength(0);
+  });
+
+  it('should archive and restore a project', () => {
+    const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+    let projectId;
+    act(() => {
+      result.current.updateProjectDraftField('name', 'Test Project');
+    });
+
+    act(() => {
+      projectId = result.current.addProject({ preventDefault: vi.fn() });
+    });
+
+    expect(result.current.projects[0].archived).toBe(false);
+
+    act(() => {
+      result.current.archiveProject(projectId);
+    });
+
+    expect(result.current.projects[0].archived).toBe(true);
+
+    act(() => {
+      result.current.restoreProject(projectId);
+    });
+
+    expect(result.current.projects[0].archived).toBe(false);
   });
 
   it('should move a category up', () => {

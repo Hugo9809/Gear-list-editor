@@ -25,8 +25,11 @@ const ProjectDashboardContainer = ({
     onProjectDraftChange,
     onCreateProject,
     onOpenProject,
-    onDeleteProject
+    onDeleteProject,
+    onRestoreProject
   } = dashboardActions;
+
+  const { isArchivedView } = dashboardData;
 
   return (
     <ProjectDashboard
@@ -49,6 +52,8 @@ const ProjectDashboardContainer = ({
       showAutoBackups={showAutoBackups}
       autoBackups={autoBackups}
       resolveStorageSource={resolveStorageSource}
+      isArchivedView={isArchivedView}
+      onRestoreProject={onRestoreProject}
     />
   );
 };

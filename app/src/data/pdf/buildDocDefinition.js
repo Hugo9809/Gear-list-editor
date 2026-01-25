@@ -7,6 +7,35 @@ const PAGE_LINE_WIDTH = 435;
 
 const normalizeText = (value) => (value != null && value !== '' ? String(value).trim() : '');
 
+// Parse inline bold markers using *...* and return segments
+// Each segment has { text, bold } indicating styling per portion.
+const parseBoldParts = (text) => {
+  const t = (text ?? '').toString();
+  const segments = [];
+  let buffer = '';
+  let bold = false;
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i];
+    if (ch === '*') {
+      if (buffer.length > 0) {
+        segments.push({ text: buffer, bold });
+        buffer = '';
+      }
+      bold = !bold;
+      continue;
+    }
+    buffer += ch;
+  }
+  if (buffer.length > 0) {
+    segments.push({ text: buffer, bold });
+  }
+  // If no explicit bold markers were provided, treat whole piece as bold
+  if (segments.length === 1 && segments[0].bold === false) {
+    segments[0].bold = true;
+  }
+  return segments;
+};
+
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   try {
@@ -339,10 +368,15 @@ export function buildDocDefinition(snapshot, t, theme) {
       const quantity = normalizeText(item.quantity) || '1';
       const name = resolveItemName(item.name, itemIndex);
       const details = normalizeItemDetails(item.details);
+      const nameSegments = parseBoldParts(name);
+      const nameSegs = nameSegments.map((seg) => ({ text: seg.text, bold: seg.bold }));
+      const detailsSegments = details ? parseBoldParts(details) : [];
       const nameCell = {
         text: [
-          { text: name, bold: true },
-          ...(details ? [{ text: ` - ${details}` }] : [])
+          ...nameSegs,
+          ...(details
+            ? [{ text: ' - ' }, ...detailsSegments.map((seg) => ({ text: seg.text, bold: seg.bold }))]
+            : [])
         ]
       };
       return [{ text: `${quantity}x`, bold: true }, { text: '' }, nameCell];

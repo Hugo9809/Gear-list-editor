@@ -1,4 +1,4 @@
-export { Skill } from './skill'
+export type { Skill } from './skill'
 
 // Runtime registry of loaded skills
 class SkillRegistry {

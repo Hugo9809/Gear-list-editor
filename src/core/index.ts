@@ -1,4 +1,4 @@
-export { Rule } from '../rules/rule'
+export type { Rule } from '../rules/rule'
 export { RuleEngine } from '../rules/engine'
 export type { Project } from './project'
 export { createProject, getProjectFormSchema, formToProjectParameters, extractProjectPdfMeta } from './project'

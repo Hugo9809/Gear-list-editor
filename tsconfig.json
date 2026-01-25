@@ -8,6 +8,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
+    ,
+    "types": []
   },
   "$schema": "https://json.schemastore.org/tsconfig.json",
   "include": ["src/**/*", "scripts/**/*", "domain/**/*"]

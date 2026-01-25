@@ -5,16 +5,18 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "lint": "eslint . --ext .ts",
     "migrate": "node ./scripts/migrate.js",
-    "gen-favicons": "node ./scripts/gen-favicons.js"
+    "gen-favicons": "node ./scripts/gen-favicons.js",
+    "test": "vitest run"
   },
   "dependencies": {
     "@types/node": "^18.0.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
-    "eslint": "^8.0.0"
+    "eslint": "^8.0.0",
+    "vitest": "^1.0.0"
   }
 }

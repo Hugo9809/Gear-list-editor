@@ -25,6 +25,10 @@ export default function DeviceLibraryPage({
         resetLibrary
     } = useDeviceLibrary({ deviceLibrary, setDeviceLibrary, t, setStatus });
 
+    // Internal delete confirmation state (instead of using an external confirm())
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [pendingDeleteItemId, setPendingDeleteItemId] = useState(null);
+
     const [editingItem, setEditingItem] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -115,10 +119,13 @@ export default function DeviceLibraryPage({
     };
 
     const handleDelete = (id) => {
-        if (window.confirm(t('library.confirmDelete', 'Are you sure you want to delete this item?'))) {
-            deleteLibraryItem(id);
-        }
+        // Trigger internal confirmation modal instead of external browser confirm
+        setPendingDeleteItemId(id);
+        setDeleteModalOpen(true);
     };
+
+    // Compute the item currently pending deletion for display in the modal
+    const pendingDeleteItem = libraryItems.find((it) => it.id === pendingDeleteItemId) || null;
 
     const handleExport = () => {
         const { json, fileName } = exportLibrary();
@@ -307,6 +314,42 @@ export default function DeviceLibraryPage({
                     onSave={handleSave}
                     onCancel={handleCancel}
                 />
+            )}
+
+            {deleteModalOpen && (
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" role="dialog" aria-label={t('library.deleteDialogTitle', 'Delete library item')}>
+                    <div className="bg-surface-elevated rounded-xl p-6 shadow-lg max-w-md w-full mx-4">
+                        <p className="text-sm text-text-secondary">{t('library.deleteConfirm', 'Delete this item from the Device Library?')}</p>
+                        {pendingDeleteItem && (
+                            <p className="mt-1 text-sm text-text-secondary">{pendingDeleteItem.name}</p>
+                        )}
+                        <div className="mt-6 flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setDeleteModalOpen(false);
+                                    setPendingDeleteItemId(null);
+                                }}
+                                className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (pendingDeleteItemId) {
+                                        deleteLibraryItem(pendingDeleteItemId);
+                                    }
+                                    setDeleteModalOpen(false);
+                                    setPendingDeleteItemId(null);
+                                }}
+                                className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </section>
     );

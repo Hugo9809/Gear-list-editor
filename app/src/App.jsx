@@ -455,6 +455,7 @@ export default function App() {
               locale={locale}
               setLocale={handleLocaleChange}
               locales={locales}
+              onHardRefresh={handleHardRefresh}
             />
           }
         >

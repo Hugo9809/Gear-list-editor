@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-export default function Layout({ t, status, theme, setTheme, locale, setLocale, locales }) {
+export default function Layout({ t, status, theme, setTheme, locale, setLocale, locales, onHardRefresh }) {
   // Mobile hamburger-driven drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -317,6 +317,17 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
                 >
                   {status || t('status.empty', 'Status updates appear here to confirm data safety.')}
                 </p>
+                {typeof onHardRefresh === 'function' && (
+                  <button
+                    type="button"
+                    onClick={onHardRefresh}
+                    className="mt-3 rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-brand hover:text-brand"
+                    aria-label={t('settings.hardRefresh.action', 'Hard refresh')}
+                    title={t('settings.hardRefresh.action', 'Hard refresh')}
+                  >
+                    {t('settings.hardRefresh.action', 'Hard refresh')}
+                  </button>
+                )}
               </div>
             </aside>
 

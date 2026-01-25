@@ -107,6 +107,20 @@ export default function App() {
     setHistory,
     setStatus
   });
+  const downloadBackup = useCallback(() => {
+    const { json, fileName } = exportBackup();
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
+  }, [exportBackup, setStatus, t]);
+
   // Factory reset modal state
   const [showFactoryResetModal, setShowFactoryResetModal] = useState(false);
   const [factoryResetModalStage, setFactoryResetModalStage] = useState(1);
@@ -199,12 +213,12 @@ export default function App() {
         return safePrev.map((c) =>
           c.id === target.id
             ? {
-                ...c,
-                name: crewMember.name,
-                role: crewMember.role || c.role,
-                phone: crewMember.phone || c.phone,
-                email: crewMember.email || c.email
-              }
+              ...c,
+              name: crewMember.name,
+              role: crewMember.role || c.role,
+              phone: crewMember.phone || c.phone,
+              email: crewMember.email || c.email
+            }
             : c
         );
       }
@@ -334,19 +348,6 @@ export default function App() {
     [exportProjectBackup, setStatus, t]
   );
 
-  const downloadBackup = useCallback(() => {
-    const { json, fileName } = exportBackup();
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
-  }, [exportBackup, setStatus, t]);
 
   // (Old inline factory reset dialog removed in favor of in-app modal)
 
@@ -589,13 +590,13 @@ export default function App() {
             <p className="text-sm text-text-secondary">
               {factoryResetModalStage === 1
                 ? t(
-                    'settings.factoryReset.confirmPrimary',
-                    'Factory reset will download a full backup, then erase all local data on this device.'
-                  )
+                  'settings.factoryReset.confirmPrimary',
+                  'Factory reset will download a full backup, then erase all local data on this device.'
+                )
                 : t(
-                    'settings.factoryReset.confirmSecondary',
-                    'This will remove projects, templates, and local backups from this device. Continue?'
-                  )}
+                  'settings.factoryReset.confirmSecondary',
+                  'This will remove projects, templates, and local backups from this device. Continue?'
+                )}
             </p>
             <div className="mt-6 flex justify-end gap-2">
               <button

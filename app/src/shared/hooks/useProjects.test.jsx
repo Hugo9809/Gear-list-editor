@@ -230,6 +230,104 @@ describe('useProjects', () => {
     expect(result.current.projects[0].categories[1].name).toBe('Camera');
   });
 
+  it('should move an item up within a category', () => {
+    const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+    let projectId;
+    act(() => {
+      result.current.updateProjectDraftField('name', 'Test Project');
+    });
+
+    act(() => {
+      projectId = result.current.addProject({ preventDefault: vi.fn() });
+    });
+
+    // Add a category to host items
+    act(() => {
+      result.current.setNewCategoryName('Camera');
+    });
+    act(() => {
+      result.current.addCategory(projectId, { preventDefault: vi.fn() });
+    });
+
+    const categoryId = result.current.projects[0].categories[0].id;
+
+    // Add two items to the category
+    act(() => {
+      result.current.updateDraftItem(categoryId, 'name', 'First Item');
+      result.current.updateDraftItem(categoryId, 'quantity', 1);
+      result.current.updateDraftItem(categoryId, 'details', '');
+      result.current.addItemToCategory(projectId, { preventDefault: vi.fn() }, categoryId);
+    });
+
+    // Second item
+    act(() => {
+      result.current.updateDraftItem(categoryId, 'name', 'Second Item');
+      result.current.updateDraftItem(categoryId, 'quantity', 1);
+      result.current.updateDraftItem(categoryId, 'details', '');
+      result.current.addItemToCategory(projectId, { preventDefault: vi.fn() }, categoryId);
+    });
+
+    const secondItemId = result.current.projects[0].categories[0].items[1].id;
+
+    act(() => {
+      result.current.moveItemUp(projectId, categoryId, secondItemId);
+    });
+
+    expect(result.current.projects[0].categories[0].items[0].name).toBe('Second Item');
+    expect(result.current.projects[0].categories[0].items[1].name).toBe('First Item');
+  });
+
+  it('should move an item down within a category', () => {
+    const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
+
+    let projectId;
+    act(() => {
+      result.current.updateProjectDraftField('name', 'Test Project 2');
+    });
+
+    act(() => {
+      projectId = result.current.addProject({ preventDefault: vi.fn() });
+    });
+
+    // Add a category to host items
+    act(() => {
+      result.current.setNewCategoryName('Camera');
+    });
+    act(() => {
+      result.current.addCategory(projectId, { preventDefault: vi.fn() });
+    });
+
+    const categoryId = result.current.projects[0].categories[0].id;
+
+    // First item
+    act(() => {
+      result.current.updateDraftItem(categoryId, 'name', 'Alpha');
+      result.current.updateDraftItem(categoryId, 'quantity', 1);
+      result.current.updateDraftItem(categoryId, 'details', '');
+      result.current.addItemToCategory(projectId, { preventDefault: vi.fn() }, categoryId);
+    });
+
+    // Second item
+    act(() => {
+      result.current.updateDraftItem(categoryId, 'name', 'Beta');
+      result.current.updateDraftItem(categoryId, 'quantity', 1);
+      result.current.updateDraftItem(categoryId, 'details', '');
+      result.current.addItemToCategory(projectId, { preventDefault: vi.fn() }, categoryId);
+    });
+
+    const firstItemId = result.current.projects[0].categories[0].items[0].id;
+    const secondItemId = result.current.projects[0].categories[0].items[1].id;
+
+    // Move first item down
+    act(() => {
+      result.current.moveItemDown(projectId, categoryId, firstItemId);
+    });
+
+    expect(result.current.projects[0].categories[0].items[0].name).toBe('Beta');
+    expect(result.current.projects[0].categories[0].items[1].name).toBe('Alpha');
+  });
+
   it('should not move the last category down', () => {
     const { result } = renderHook(() => useProjects({ t: mockT, setStatus: mockSetStatus }));
 

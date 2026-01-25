@@ -178,23 +178,33 @@ export default function App() {
   );
 
   // Sync a crew member to global Contacts when a crew entry gains a non-empty name
+  // Enhanced: deduplicate by email when possible; fallback to name; update fields safely
   const syncCrewToContacts = useCallback((crewMember) => {
     if (!crewMember || typeof crewMember.name !== 'string' || !crewMember.name.trim()) {
       return;
     }
     setContacts((prev) => {
       const safePrev = Array.isArray(prev) ? prev : [];
-      const match = safePrev.find((c) => c.name === crewMember.name);
-      if (match) {
+      // Prefer matching by email when available; fall back to name
+      let target = null;
+      if (typeof crewMember.email === 'string' && crewMember.email.trim()) {
+        target = safePrev.find((c) => c.email === crewMember.email);
+      }
+      if (!target && typeof crewMember.name === 'string' && crewMember.name.trim()) {
+        target = safePrev.find((c) => c.name === crewMember.name);
+      }
+
+      if (target) {
         // Update existing contact with any provided details
         return safePrev.map((c) =>
-          c.id === match.id
+          c.id === target.id
             ? {
-              ...c,
-              role: crewMember.role || c.role,
-              phone: crewMember.phone || c.phone,
-              email: crewMember.email || c.email
-            }
+                ...c,
+                name: crewMember.name,
+                role: crewMember.role || c.role,
+                phone: crewMember.phone || c.phone,
+                email: crewMember.email || c.email
+              }
             : c
         );
       }

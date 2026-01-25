@@ -35,6 +35,8 @@ const ProjectWorkspace = ({
   onRemoveCategory,
   onMoveCategoryUp,
   onMoveCategoryDown,
+  onMoveItemUp,
+  onMoveItemDown,
   onRemoveItem,
   onApplySuggestionToDraft,
   onApplySuggestionToItem
@@ -344,60 +346,79 @@ const ProjectWorkspace = ({
                   </form>
 
                   <div className="flex flex-col gap-3">
-                    {category.items.length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-4 text-center text-xs text-text-muted">
-                        {t('items.empty', 'No items yet. Add the first item above.')}
-                      </div>
-                    ) : (
-                      category.items.map((item, itemIndex) => (
-                        <div
-                          key={item.id}
+                  {category.items.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-4 text-center text-xs text-text-muted">
+                      {t('items.empty', 'No items yet. Add the first item above.')}
+                    </div>
+                  ) : (
+                    category.items.map((item, itemIndex) => (
+                      <div
+                        key={item.id}
                           className="ui-panel grid gap-3 bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_auto]"
-                        >
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="number"
-                              min="1"
-                              value={item.quantity}
-                              onChange={(event) =>
-                                onUpdateItemField(
-                                  category.id,
-                                  item.id,
-                                  'quantity',
-                                  event.target.value
-                                )
-                              }
-                              className="ui-input w-20"
-                            />
-                            <span className="text-sm font-semibold text-text-muted">×</span>
-                            <div className="min-w-0 flex-1">
-                              <TypeaheadInput
-                                value={resolveDisplayName(
-                                  item.name,
-                                  { index: itemIndex + 1 },
-                                  'defaults.untitled_item'
-                                )}
-                                onChange={(value) =>
-                                  onUpdateItemField(category.id, item.id, 'name', value)
-                                }
-                                onSelectSuggestion={(suggestion) =>
-                                  onApplySuggestionToItem(category.id, item.id, suggestion)
-                                }
-                                suggestions={itemSuggestions}
-                                placeholder={t('items.fields.name', 'Item name')}
-                                label={t('items.fields.name', 'Item name')}
-                                detailsFallback={t('items.suggestion.detailsFallback')}
-                                inputClassName="ui-input px-3 py-2"
-                              />
-                            </div>
-                          </div>
+                      >
+                        <div className="flex items-center gap-2">
                           <input
-                            value={item.details}
+                            type="number"
+                            min="1"
+                            value={item.quantity}
                             onChange={(event) =>
-                              onUpdateItemField(category.id, item.id, 'details', event.target.value)
+                              onUpdateItemField(
+                                category.id,
+                                item.id,
+                                'quantity',
+                                event.target.value
+                              )
                             }
-                            className="ui-input px-3 py-2"
+                            className="ui-input w-20"
                           />
+                          <span className="text-sm font-semibold text-text-muted">×</span>
+                          <div className="min-w-0 flex-1">
+                            <TypeaheadInput
+                              value={resolveDisplayName(
+                                item.name,
+                                { index: itemIndex + 1 },
+                                'defaults.untitled_item'
+                              )}
+                              onChange={(value) =>
+                                onUpdateItemField(category.id, item.id, 'name', value)
+                              }
+                              onSelectSuggestion={(suggestion) =>
+                                onApplySuggestionToItem(category.id, item.id, suggestion)
+                              }
+                              suggestions={itemSuggestions}
+                              placeholder={t('items.fields.name', 'Item name')}
+                              label={t('items.fields.name', 'Item name')}
+                              detailsFallback={t('items.suggestion.detailsFallback')}
+                              inputClassName="ui-input px-3 py-2"
+                            />
+                          </div>
+                        </div>
+                        <input
+                          value={item.details}
+                          onChange={(event) =>
+                            onUpdateItemField(category.id, item.id, 'details', event.target.value)
+                          }
+                          className="ui-input px-3 py-2"
+                        />
+                        <div className="flex flex-col items-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => onMoveItemUp(category.id, item.id)}
+                            disabled={itemIndex === 0}
+                            className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
+                            aria-label={t('items.actions.moveUp', 'Move up')}
+                          >
+                            ↑
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onMoveItemDown(category.id, item.id)}
+                            disabled={itemIndex === category.items.length - 1}
+                            className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
+                            aria-label={t('items.actions.moveDown', 'Move down')}
+                          >
+                            ↓
+                          </button>
                           <button
                             type="button"
                             onClick={() => onRemoveItem(category.id, item.id)}
@@ -406,8 +427,9 @@ const ProjectWorkspace = ({
                             {t('items.actions.remove', 'Remove')}
                           </button>
                         </div>
-                      ))
-                    )}
+                      </div>
+                    ))
+                  )}
                   </div>
                 </div>
               ))

@@ -253,7 +253,9 @@
     },
     "actions": {
       "add": "Add",
-      "remove": "Remove"
+      "remove": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
     },
     "empty": "No items yet. Add the first item above.",
     "suggestion": {
@@ -325,6 +327,7 @@
     "changesQueued": "Changes queued for autosave.",
     "categoryUpdated": "Category updated.",
     "categoryMoved": "Category moved.",
+    "itemMoved": "Item moved.",
     "projectDetailsUpdated": "Project details updated.",
     "projectNotesSaved": "Project notes saved for autosave.",
     "contactNameRequired": "Please provide a contact name.",

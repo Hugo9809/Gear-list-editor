@@ -1,7 +1,8 @@
 {
   "name": "Gear List Editor",
   "short_name": "GearList",
-  "start_url": "/",
+  "start_url": "/Gear-list-editor/",
+  "scope": "/Gear-list-editor/",
   "display": "standalone",
   "background_color": "#0a2a66",
   "theme_color": "#0a2a66",

@@ -151,29 +151,21 @@ export async function exportJsonAsBackup(payload: any, fileName: string): Promis
     };
   }
   const blob = new Blob([JSON.stringify(toSave, null, 2)], { type: 'application/json' });
-  // First, try the standard Save-As path (OS dialog)
-  let ok = await saveAsBlob(blob, fileName);
-  // If that path isn't available or user cancels, fall back to app-managed Save-As via legacy handler
-  if (!ok) {
-    try {
-      // @ts-ignore
-      if (typeof legacySaveHandler === 'function') {
-        ok = await legacySaveHandler(blob, fileName);
-      }
-    } catch {
-      // ignore and continue to in-app Save-As modal fallback
+  // First, prompt the user with an in-app Save-As dialog to ensure a user gesture is involved
+  let chosenName = await showInAppSaveAsDialog(fileName);
+  if (!chosenName) return false;
+  // Then try the OS Save-As path with the chosen name
+  let ok = await saveAsBlob(blob, chosenName);
+  if (ok) return true;
+  // If OS path failed, try legacy app path as a fallback
+  try {
+    // @ts-ignore
+    if (typeof legacySaveHandler === 'function') {
+      ok = await legacySaveHandler(blob, chosenName);
+      if (ok) return true;
     }
+  } catch {
+    // ignore
   }
-  // If still not OK, try an in-app Save-As modal as a last resort
-  if (!ok) {
-    try {
-      const chosenName = await showInAppSaveAsDialog(fileName);
-      if (chosenName) {
-        ok = await saveAsBlob(blob, chosenName);
-      }
-    } catch {
-      // ignore and return current state
-    }
-  }
-  return ok;
+  return false;
 }

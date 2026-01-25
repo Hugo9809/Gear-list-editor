@@ -1,4 +1,5 @@
 import { saveAsBlob } from './saveAs';
+import { exportJsonAsBackup } from './saveAs';
 
 const DEBUG_BACKUP = true;
 
@@ -37,14 +38,12 @@ export async function collectFullBackupPayload(): Promise<any> {
 }
 
 export async function saveBackup(payload: any, fileName: string): Promise<boolean> {
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  if (DEBUG_BACKUP) console.debug('[Backup] saveBackup', { fileName, payload: typeof payload });
-  return saveAsBlob(blob, fileName);
+  // Delegate to envelope-friendly path to ensure Save-As UX is triggered
+  return exportJsonAsBackup(payload, fileName);
 }
 
 export async function backupBeforeReset(): Promise<boolean> {
   const payload = await collectFullBackupPayload();
-  if (DEBUG_BACKUP) console.debug('[Backup] backupBeforeReset saving', { fileName: 'backup-before-reset-export.json' });
-  await saveBackup(payload, 'backup-before-reset-export.json');
-  return true;
+  const ok = await exportJsonAsBackup(payload, 'backup-before-reset-export.json');
+  return !!ok;
 }

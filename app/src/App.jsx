@@ -350,7 +350,7 @@ export default function App() {
   );
 
   const exportProject = useCallback(
-    (project) => {
+    async (project) => {
       try {
         if (!project) {
           setStatus(t('status.projectNeededForExport', 'Select a project before exporting.'));
@@ -362,8 +362,35 @@ export default function App() {
           throw new Error('Invalid export result');
         }
 
-        // Inline robust download - NO IMPORTS
-        // Use File constructor to embed filename metadata where supported
+        // Strategy 1: Modern File System Access API (Chrome/Edge/Opera)
+        // This is the "compliant" way that satisfies enhanced security checks
+        if ('showSaveFilePicker' in window) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: fileName,
+              types: [{
+                description: 'JSON File',
+                accept: { 'application/json': ['.json'] },
+              }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(json);
+            await writable.close();
+            setStatus(t('status.projectExported', 'Project exported: ') + fileName);
+            return;
+          } catch (err) {
+            // User cancelled or API failed, fall back if not a cancellation
+            if (err.name !== 'AbortError') {
+              console.warn('File System Access API failed, falling back to download link:', err);
+            } else {
+              // User cancelled explicitly, stop here
+              return;
+            }
+          }
+        }
+
+        // Strategy 2: Legacy Fallback (Safari/Firefox/Older)
+        // Use Blob + Anchor trigger with robust event dispatching
         let blob;
         try {
           blob = new File([json], fileName, { type: 'application/octet-stream' });
@@ -375,18 +402,24 @@ export default function App() {
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
+        link.style.display = 'none';
         document.body.appendChild(link);
 
-        console.log('Exporting:', fileName, 'Size:', blob.size);
-        link.click();
+        // Dispatch a mouse click event instead of .click() to simulate user interaction better
+        const clickEvent = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        });
+        link.dispatchEvent(clickEvent);
 
-        // Clean up
+        // Long timeout to ensure browser has time to handoff to download manager
         setTimeout(() => {
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
-        }, 100);
+        }, 60000);
 
-        // UI Feedback including the filename
+        // UI Feedback
         setStatus(t('status.projectExported', 'Project exported: ') + fileName);
 
       } catch (error) {

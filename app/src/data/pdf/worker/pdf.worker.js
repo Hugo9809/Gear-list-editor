@@ -9,26 +9,10 @@ console.log('PDF Worker Initializing...');
 console.log('Ubuntu VFS keys:', Object.keys(ubuntuVfs));
 
 // Use ONLY Ubuntu VFS
+
+// Ensure pdfMake uses the provided VFS
+// We assign it globally and inside the handler to be safe against bundling quirks
 pdfMake.vfs = ubuntuVfs;
-
-console.log('PDF vfs assigned keys:', Object.keys(pdfMake.vfs));
-
-// Register font families
-// Check available fonts in VFS
-const vfsKeys = Object.keys(pdfMake.vfs);
-const hasBold = vfsKeys.includes('Ubuntu-Bold.ttf');
-const hasItalic = vfsKeys.includes('Ubuntu-Italic.ttf');
-const hasBoldItalic = vfsKeys.includes('Ubuntu-BoldItalic.ttf');
-
-// Register font families with fallbacks
-pdfMake.fonts = {
-  Ubuntu: {
-    normal: 'Ubuntu-Regular.ttf',
-    bold: hasBold ? 'Ubuntu-Bold.ttf' : 'Ubuntu-Regular.ttf',
-    italics: hasItalic ? 'Ubuntu-Italic.ttf' : 'Ubuntu-Regular.ttf',
-    bolditalics: hasBoldItalic ? 'Ubuntu-BoldItalic.ttf' : 'Ubuntu-Regular.ttf'
-  }
-};
 
 import { getBlobFromGenerator } from '../pdfUtils.js';
 
@@ -41,6 +25,26 @@ self.onmessage = async (event) => {
   }
 
   try {
+    // Re-assign VFS/Fonts inside the request handling to prevent any state staleness
+    // and verify keys exist
+    pdfMake.vfs = ubuntuVfs;
+
+    const vfsKeys = Object.keys(pdfMake.vfs || {});
+    const boldExists = vfsKeys.includes('Ubuntu-Bold.ttf');
+
+    if (!boldExists) {
+      console.error('CRITICAL: Ubuntu-Bold.ttf missing from VFS in worker handler!', vfsKeys);
+    }
+
+    pdfMake.fonts = {
+      Ubuntu: {
+        normal: 'Ubuntu-Regular.ttf',
+        bold: 'Ubuntu-Bold.ttf',
+        italics: 'Ubuntu-Italic.ttf',
+        bolditalics: 'Ubuntu-BoldItalic.ttf'
+      }
+    };
+
     // Create a simple translation helper using the passed object
     const t = (key, fallback) => {
       return translations[key] || fallback || key;
@@ -62,6 +66,10 @@ self.onmessage = async (event) => {
     self.postMessage({ success: true, blob });
   } catch (error) {
     console.error('PDF Worker Error:', error);
+    // Log additional context if it's a VFS error
+    if (error.message && error.message.includes('not found in virtual file system')) {
+      console.error('Current VFS Keys:', Object.keys(pdfMake.vfs || {}));
+    }
     self.postMessage({ success: false, error: error.message });
   }
 };

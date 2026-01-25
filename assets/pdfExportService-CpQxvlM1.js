@@ -136,7 +136,7 @@ import{t as mt,g as ft,a as ht,_ as N}from"./index-CkYn1GFl.js";function gt(t,e)
           }
           .footer {
             position: fixed;
-            bottom: 20px;
+            bottom: 0px;
             left: 40px;
             right: 40px;
             text-align: center;

@@ -107,6 +107,52 @@ export default function App() {
     setHistory,
     setStatus
   });
+  // Factory reset modal state
+  const [showFactoryResetModal, setShowFactoryResetModal] = useState(false);
+  const [factoryResetModalStage, setFactoryResetModalStage] = useState(1);
+  // Open modal when user initiates factory reset
+  const handleFactoryReset = useCallback(() => {
+    setFactoryResetModalStage(1);
+    setShowFactoryResetModal(true);
+  }, []);
+  // Execute factory reset after user confirms in modal
+  const executeFactoryReset = useCallback(async () => {
+    downloadBackup();
+    try {
+      const result = await storageRef.current.factoryReset();
+      setProjects(result.state.projects);
+      setTemplates(result.state.templates);
+      setHistory(result.state.history);
+      setContacts(result.state.contacts);
+      // setActiveProjectId no longer exists
+      navigate('/');
+      setStatus(
+        t(
+          'status.factoryResetComplete',
+          'Factory reset complete. Your backup download is ready and the app has been reset.'
+        )
+      );
+      setTheme(result.state.theme || 'light');
+    } catch {
+      setStatus(
+        t(
+          'status.factoryResetFailed',
+          'Factory reset could not finish. Your data is still protected in backups.'
+        )
+      );
+    } finally {
+      setShowFactoryResetModal(false);
+      setFactoryResetModalStage(1);
+    }
+  }, [downloadBackup, storageRef, setProjects, setTemplates, setHistory, setContacts, navigate, setStatus, t, setTheme]);
+  // Primary button handler for modal: advance stage or execute reset
+  const onFactoryResetModalPrimary = useCallback(() => {
+    if (factoryResetModalStage === 1) {
+      setFactoryResetModalStage(2);
+    } else {
+      executeFactoryReset();
+    }
+  }, [factoryResetModalStage, executeFactoryReset]);
 
   const resolveDisplayName = useCallback(
     (value, variables, fallbackKey) => {
@@ -292,64 +338,7 @@ export default function App() {
     setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
   }, [exportBackup, setStatus, t]);
 
-  // Factory reset logic handles 'activeProjectId' in state, but we removed it.
-  // We need to just navigate to / after reset.
-  const handleFactoryReset = useCallback(async () => {
-    const confirmed = window.confirm(
-      t(
-        'settings.factoryReset.confirmPrimary',
-        'Factory reset will download a full backup, then erase all local data on this device.'
-      )
-    );
-    if (!confirmed) {
-      return;
-    }
-    const confirmedAgain = window.confirm(
-      t(
-        'settings.factoryReset.confirmSecondary',
-        'This will remove projects, templates, and local backups from this device. Continue?'
-      )
-    );
-    if (!confirmedAgain) {
-      return;
-    }
-
-    downloadBackup();
-    try {
-      const result = await storageRef.current.factoryReset();
-      setProjects(result.state.projects);
-      setTemplates(result.state.templates);
-      setHistory(result.state.history);
-      setContacts(result.state.contacts);
-      // setActiveProjectId no longer exists
-      navigate('/');
-      setStatus(
-        t(
-          'status.factoryResetComplete',
-          'Factory reset complete. Your backup download is ready and the app has been reset.'
-        )
-      );
-      setTheme(result.state.theme || 'light');
-    } catch {
-      setStatus(
-        t(
-          'status.factoryResetFailed',
-          'Factory reset could not finish. Your data is still protected in backups.'
-        )
-      );
-    }
-  }, [
-    downloadBackup,
-    setHistory,
-    setProjects,
-    setStatus,
-    setTemplates,
-    setContacts,
-    navigate,
-    setTheme,
-    storageRef,
-    t
-  ]);
+  // (Old inline factory reset dialog removed in favor of in-app modal)
 
   // Hard refresh: clear offline caches/service workers, then reload the page from scratch
   const handleHardRefresh = useCallback(async () => {
@@ -584,6 +573,42 @@ export default function App() {
           />
         </Route>
       </Routes>
+      {showFactoryResetModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" role="dialog" aria-label="Factory Reset Confirmation">
+          <div className="bg-surface-elevated rounded-xl p-6 shadow-lg max-w-md w-full mx-4">
+            <p className="text-sm text-text-secondary">
+              {factoryResetModalStage === 1
+                ? t(
+                    'settings.factoryReset.confirmPrimary',
+                    'Factory reset will download a full backup, then erase all local data on this device.'
+                  )
+                : t(
+                    'settings.factoryReset.confirmSecondary',
+                    'This will remove projects, templates, and local backups from this device. Continue?'
+                  )}
+            </p>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowFactoryResetModal(false);
+                  setFactoryResetModalStage(1);
+                }}
+                className="rounded-lg border border-surface-sunken px-4 py-2 text-sm font-semibold text-text-primary"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={onFactoryResetModalPrimary}
+                className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground"
+              >
+                {factoryResetModalStage === 1 ? 'Continue' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

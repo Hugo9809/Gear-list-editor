@@ -44,7 +44,8 @@ import{t as mt,g as ft,a as ht,_ as N}from"./index-CkYn1GFl.js";function gt(t,e)
         <title>${b(y)} - ${b(a("ui.gearList","Gear list"))}</title>
         <style>
           @page {
-            margin: 40px 40px 60px;
+            /* Increase bottom margin to provide space for the footer on all pages */
+            margin: 40px 40px 100px;
           }
           body {
             margin: 0;
@@ -53,6 +54,10 @@ import{t as mt,g as ft,a as ht,_ as N}from"./index-CkYn1GFl.js";function gt(t,e)
           }
           main {
             padding: 0;
+          }
+          /* Ensure main content never overlaps the fixed footer */
+          main {
+            padding-bottom: 60px;
           }
           h1 {
             font-size: 22px;

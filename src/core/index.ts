@@ -1,6 +1,5 @@
-export { Skill } from '../skills/skill.js'
-export { Rule } from '../rules/rule.js'
-export { RuleEngine } from '../rules/engine.js'
+export { Rule } from '../rules/rule'
+export { RuleEngine } from '../rules/engine'
 export type { Project } from './project'
 export { createProject, getProjectFormSchema, formToProjectParameters, extractProjectPdfMeta } from './project'
 export type { ProjectFormField } from './project'

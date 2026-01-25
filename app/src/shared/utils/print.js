@@ -120,7 +120,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
     typeof dictionaryOrT === 'function'
       ? dictionaryOrT
       : (key, fallback, variables) =>
-          translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
+        translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
   const emptyValue = t('ui.emptyValue', '—');
   const isPinkMode = theme === 'pink';
   const accentColor = isPinkMode ? '#E10078' : '#001589';
@@ -212,8 +212,8 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
               <strong class="camera-badge">${escapeHtml(cameraSpec.letter)}</strong>
             </td>
             ${cameraSpec.values
-              .map((value) => `<td>${escapeHtml(value)}</td>`)
-              .join('')}
+      .map((value) => `<td>${escapeHtml(value)}</td>`)
+      .join('')}
           </tr>
         </table>
       `
@@ -271,12 +271,15 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
         <title>${escapeHtml(projectName)} - ${escapeHtml(t('ui.gearList', 'Gear list'))}</title>
         <style>
           @page {
-            margin: 40px 40px 60px;
+            margin: 20mm 20mm 25mm; /* Approx 80px 80px 100px */
+            size: A4;
           }
           body {
             margin: 0;
             color: #111;
             font-family: 'Ubuntu', 'Arial', sans-serif;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
           main {
             padding: 0;
@@ -339,6 +342,10 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             border-top: 1px solid ${LINE_COLOR};
             margin: 8px 0 6px;
           }
+          .category {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
           .category h3,
           .notes h3 {
             margin: 0 0 4px;
@@ -356,6 +363,8 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
           }
           .notes {
             margin-top: 10px;
+            page-break-inside: avoid;
+            break-inside: avoid;
           }
           .notes-body {
             font-size: 10px;
@@ -363,12 +372,13 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
           }
           .footer {
             position: fixed;
-            bottom: 20px;
-            left: 40px;
-            right: 40px;
+            bottom: 0;
+            left: 0;
+            right: 0;
             text-align: center;
             font-size: 9px;
             color: #666;
+            padding-bottom: 10mm;
           }
         </style>
       </head>

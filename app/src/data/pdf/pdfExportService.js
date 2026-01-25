@@ -130,12 +130,17 @@ async function generatePdfOnMainThread(snapshot, translations, theme) {
     import('./buildDocDefinition.js')
   ]);
   pdfMake.vfs = ubuntuVfs;
+  const vfsKeys = Object.keys(pdfMake.vfs);
+  const hasBold = vfsKeys.includes('Ubuntu-Bold.ttf');
+  const hasItalic = vfsKeys.includes('Ubuntu-Italic.ttf');
+  const hasBoldItalic = vfsKeys.includes('Ubuntu-BoldItalic.ttf');
+
   pdfMake.fonts = {
     Ubuntu: {
       normal: 'Ubuntu-Regular.ttf',
-      bold: 'Ubuntu-Bold.ttf',
-      italics: 'Ubuntu-Italic.ttf',
-      bolditalics: 'Ubuntu-BoldItalic.ttf'
+      bold: hasBold ? 'Ubuntu-Bold.ttf' : 'Ubuntu-Regular.ttf',
+      italics: hasItalic ? 'Ubuntu-Italic.ttf' : 'Ubuntu-Regular.ttf',
+      bolditalics: hasBoldItalic ? 'Ubuntu-BoldItalic.ttf' : 'Ubuntu-Regular.ttf'
     }
   };
   const t = (key, fallback) => translations[key] || fallback || key;

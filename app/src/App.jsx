@@ -362,10 +362,24 @@ export default function App() {
           throw new Error('Invalid export result');
         }
 
-        import('./shared/utils/download.js').then(({ triggerDownload }) => {
-          triggerDownload(json, fileName, 'application/octet-stream');
-          setStatus(t('status.projectExported', 'Project export downloaded. Store it somewhere safe.'));
-        });
+        // Inline robust download - NO IMPORTS
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName); // Force attribute
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+
+        // UI Feedback including the filename to PROVE code is running
+        setStatus(`SUCCESS: Exporting ${fileName}`);
+
       } catch (error) {
         console.error('Project export failed:', error);
         setStatus(t('status.exportFailed', 'Export failed. Please check console for details.'));

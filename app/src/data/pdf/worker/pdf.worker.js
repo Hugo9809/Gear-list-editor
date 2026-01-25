@@ -14,12 +14,19 @@ pdfMake.vfs = ubuntuVfs;
 console.log('PDF vfs assigned keys:', Object.keys(pdfMake.vfs));
 
 // Register font families
+// Check available fonts in VFS
+const vfsKeys = Object.keys(pdfMake.vfs);
+const hasBold = vfsKeys.includes('Ubuntu-Bold.ttf');
+const hasItalic = vfsKeys.includes('Ubuntu-Italic.ttf');
+const hasBoldItalic = vfsKeys.includes('Ubuntu-BoldItalic.ttf');
+
+// Register font families with fallbacks
 pdfMake.fonts = {
   Ubuntu: {
     normal: 'Ubuntu-Regular.ttf',
-    bold: 'Ubuntu-Bold.ttf',
-    italics: 'Ubuntu-Italic.ttf',
-    bolditalics: 'Ubuntu-BoldItalic.ttf'
+    bold: hasBold ? 'Ubuntu-Bold.ttf' : 'Ubuntu-Regular.ttf',
+    italics: hasItalic ? 'Ubuntu-Italic.ttf' : 'Ubuntu-Regular.ttf',
+    bolditalics: hasBoldItalic ? 'Ubuntu-BoldItalic.ttf' : 'Ubuntu-Regular.ttf'
   }
 };
 

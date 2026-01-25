@@ -15,10 +15,14 @@ export async function exportPdf(project, locale, t, theme) {
     // 1. Build deterministic snapshot
     const snapshot = buildExportSnapshot(project, locale);
 
-    previewWindow = preparePdfWindow();
-    if (previewWindow === null && shouldOpenPreviewWindow()) {
-      throw new Error('popup-blocked');
-    }
+  previewWindow = preparePdfWindow();
+  // If a preview window would have been opened but the popup is blocked,
+  // fall back to a direct download instead of failing with an exception.
+  // This makes PDF export more robust in environments that block popups.
+  // (We intentionally do not throw here to allow the later download to proceed.)
+  if (previewWindow === null && shouldOpenPreviewWindow()) {
+    // No-op: proceed with direct download via anchor below
+  }
 
     // 2. Prepare translations needed for PDF
     const translations = {

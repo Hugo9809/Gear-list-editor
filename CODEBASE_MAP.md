@@ -1,14 +1,14 @@
 # Codebase Map
 
-> **Generated**: 2026-01-21
-> **Status**: Updated
+> Generated: 2026-01-25
+> Status: Updated
 
 ## Navigation
 
-**Start here:** `README.md` for setup and doc links.  
-**Deep index:** `.agentlens/INDEX.md` (partial coverage).
+Start here: `README.md` for setup, contribution, and project overview.
+Deep index: `app/src/` (frontend) and `src/` (core library) for quick navigation.
 
-**Related docs:**
+Related docs:
 - `docs/ARCHITECTURE.md`
 - `docs/DATA_STORAGE.md`
 - `docs/CONTRIBUTING.md`
@@ -18,60 +18,43 @@
 
 ## Architecture Overview
 
-**Stack**:
-- **Build**: Vite (ESM)
-- **Frontend**: React + React Router
-- **Styling**: Tailwind CSS + CSS variables (`app/src/index.css`)
-- **State/Storage**: Local-first (IndexedDB primary + OPFS backup) via `app/src/data/storageService.js`
-- **Testing**: Vitest
+Stack:
+- Build: Vite (ESM)
+- Frontend: React + React Router
+- Styling: Tailwind CSS + CSS variables (`app/src/index.css`)
+- State/Storage: Local-first (IndexedDB primary + OPFS backup) via `app/src/data/storageService.js`
+- Testing: Vitest
 
-**Source layout**:
-```
-app/src/
-├── app/          # Shell layout and chrome
-├── data/         # Persistence, migrations, PDF export
-├── features/     # Feature modules (projects, templates, device library, settings, help)
-├── i18n/         # Translations + helpers
-├── shared/       # Shared hooks/components/utils
-├── App.jsx       # Routes + page orchestration
-├── main.jsx      # React entry point
-├── index.css     # Tailwind layers + design tokens
-└── types.js      # JSDoc type definitions
-```
+Source layout:
+- Frontend app: `app/src/`
+- Core library: `src/`
 
-## Feature Modules
+App (frontend) modules:
+- App shell & routes: `app/src/App.jsx`, `app/src/main.jsx`, `app/src/app/Layout.jsx`
+- Feature areas: `app/src/features/projects/`, `app/src/features/templates/`, `app/src/features/device-library/`, `app/src/features/settings/`, `app/src/features/help/`
+- Shared UI & hooks: `app/src/shared/hooks/*`, `app/src/shared/components/*`
+- Internationalization: `app/src/i18n/en.json`, `app/src/i18n/de.json`
+- Data layer: `app/src/data/storageService.js`, `app/src/data/pdf/pdfExportService.js`
+- Design system & tokens: `app/src/design-system/tokens.json`, `app/src/index.css`
+- Source type definitions: `app/src/types.js`
 
-- `app/src/features/projects/` - dashboard + workspace, crew, schedule
-- `app/src/features/templates/` - template editor + apply flow
-- `app/src/features/device-library/` - device list + editor
-- `app/src/features/settings/` - backups, restore, factory reset
-- `app/src/features/help/` - help and offline guidance
+Core library (OpenCode gear-editor-skills):
+- Core entry: `src/core/index.ts`, `src/core.ts`
+- Domain model: `src/domain/`, `src/domain/README.md`
+- Application logic: `src/application/`, `src/infra/`
+- Rules & engines: `src/rules/`, `src/rules/engine.ts`
+- Skills: `src/skills/`, `src/skills/index.ts`, `src/skills/skill.ts`, `src/skills/cinePowerPlanner.ts`
+- Builder / bootstrap: `src/openCode.ts`, `src/README-ui-design.md`
+- Design tokens: `src/design-system/tokens.json`
+- Tests: `tests/domain.test.ts`
+- Build config: `vitest.config.ts`
 
-## Key Modules
+Build outputs:
+- Frontend build artifacts live under `app/dist/` (static assets, index.html, sw.js, manifest)
+- Root serves prebuilt assets via `index.html` and `assets/` (GitHub Pages)
 
-| Area | Purpose | Path |
-|---|---|---|
-| App entry | Bootstraps React + router | `app/src/main.jsx` |
-| App shell | Layout + sidebar/top chrome | `app/src/app/Layout.jsx` |
-| Routes | Page wiring + handlers | `app/src/App.jsx` |
-| Projects hook | Project CRUD + list logic | `app/src/shared/hooks/useProjects.js` |
-| Templates hook | Template state + apply flow | `app/src/shared/hooks/useTemplates.js` |
-| Storage hydration | Load/save orchestration + theme | `app/src/shared/hooks/useStorageHydration.js` |
-| Storage facade | IndexedDB/OPFS + backups | `app/src/data/storageService.js` |
-| PDF export | Build + download PDF | `app/src/data/pdf/pdfExportService.js` |
-| i18n | Dictionaries + translation helpers | `app/src/i18n/index.js` |
-
-## Build Output
-
-The repo root contains built assets for GitHub Pages (`index.html`, `assets/`, `sw.js`, `manifest.webmanifest`). Source lives under `app/`.
-
-## AgentLens Coverage
-
-AgentLens docs exist for a limited subset of modules.
-- `.agentlens/modules/root/MODULE.md`
-- `.agentlens/modules/app-src-i18n/MODULE.md`
-- `.agentlens/modules/app-src-components/MODULE.md` (legacy; components now live under `app/src/shared` and `app/src/features`)
+AgentLens coverage:
+- Coverage exists for a subset of modules; see `.agentlens/` for module docs where available. (If not present, this is an intentionally lightweight map.)
 
 ---
-
-*Map updated to reflect current feature-based structure.*
+Map updated to reflect current project structure (frontend app + core skills library). Next steps: optionally add auto-generation of this map.

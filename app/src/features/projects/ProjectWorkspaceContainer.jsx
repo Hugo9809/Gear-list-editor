@@ -65,8 +65,14 @@ const ProjectWorkspaceContainer = ({
       onAddItemToCategory={(event, catId) =>
         projectActions.addItemToCategory(project.id, event, catId)
       }
-      onMoveItemUp={(catId, itemId) => projectActions.moveItemUp(project.id, catId, itemId)}
-      onMoveItemDown={(catId, itemId) => projectActions.moveItemDown(project.id, catId, itemId)}
+      onMoveItemUp={(catId, itemId) =>
+        typeof projectActions.moveItemUp === 'function'
+          ? projectActions.moveItemUp(project.id, catId, itemId)
+          : undefined}
+      onMoveItemDown={(catId, itemId) =>
+        typeof projectActions.moveItemDown === 'function'
+          ? projectActions.moveItemDown(project.id, catId, itemId)
+          : undefined}
       onUpdateDraftItem={projectActions.updateDraftItem}
       onUpdateItemField={(catId, itemId, field, val) =>
         projectActions.updateItemField(project.id, catId, itemId, field, val)

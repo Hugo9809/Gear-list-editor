@@ -363,12 +363,21 @@ export default function App() {
         }
 
         // Inline robust download - NO IMPORTS
-        const blob = new Blob([json], { type: 'application/json' });
+        // Use File constructor to embed filename metadata where supported
+        let blob;
+        try {
+          blob = new File([json], fileName, { type: 'application/octet-stream' });
+        } catch (e) {
+          blob = new Blob([json], { type: 'application/octet-stream' });
+        }
+
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', fileName); // Force attribute
+        link.download = fileName;
         document.body.appendChild(link);
+
+        console.log('Exporting:', fileName, 'Size:', blob.size);
         link.click();
 
         // Clean up

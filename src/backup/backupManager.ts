@@ -13,13 +13,24 @@ export async function collectBackupPayload(): Promise<any> {
   };
 }
 
+// Build a full export-like envelope around the basic payload
+export async function collectFullBackupPayload(): Promise<any> {
+  const data = await collectBackupPayload();
+  return {
+    exportFormat: 'gear-list-export',
+    exportVersion: '2.0.0',
+    createdAt: new Date().toISOString(),
+    payload: data,
+  };
+}
+
 export async function saveBackup(payload: any, fileName: string): Promise<boolean> {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   return saveAsBlob(blob, fileName);
 }
 
 export async function backupBeforeReset(): Promise<boolean> {
-  const payload = await collectBackupPayload();
-  await saveBackup(payload, 'backup-before-reset.json');
+  const payload = await collectFullBackupPayload();
+  await saveBackup(payload, 'backup-before-reset-export.json');
   return true;
 }

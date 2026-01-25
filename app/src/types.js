@@ -221,7 +221,7 @@
  * @property {string} [resolution] - Draft project resolution
  * @property {string} [aspectRatio] - Draft aspect ratio
  * @property {string} [codec] - Draft codec
- * @property {number} [framerate] - Draft framerate
+ * @property {number|string} [framerate] - Draft framerate
  */
 
 /**

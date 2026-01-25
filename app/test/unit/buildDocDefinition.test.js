@@ -3,6 +3,8 @@ import { buildDocDefinition } from '../../src/data/pdf/buildDocDefinition.js';
 
 describe('buildDocDefinition', () => {
   const mockT = (key, fallback) => fallback || key; // Simple mock translator
+  const getCategoryTables = (doc) =>
+    doc.content.filter((block) => block?.table?.body?.[0]?.[0]?.style === 'categoryHeader');
 
   it('generates basic document structure', () => {
     const snapshot = {
@@ -45,17 +47,13 @@ describe('buildDocDefinition', () => {
     // Flatten content logic is hard to search directly if deep nested,
     // but our builder puts categories directly in top-level content array (spread).
 
-    // Look for category header
-    const catHeader = doc.content.find((c) => c.style === 'categoryHeader' && c.text === 'Camera');
-    expect(catHeader).toBeDefined();
-
-    // Look for table
-    const tableObj = doc.content.find((c) => c.table);
+    const categoryTables = getCategoryTables(doc);
+    const tableObj = categoryTables.find((table) => table.table.body[0][0].text === 'Camera');
     expect(tableObj).toBeDefined();
-    expect(tableObj.table.body.length).toBe(1); // Just items, no headeritems, no header
+    expect(tableObj.table.body.length).toBe(2); // Header row + 1 item
 
     // Check row data
-    const dataRow = tableObj.table.body[0];
+    const dataRow = tableObj.table.body[1];
     expect(dataRow[0].text).toBe('2x'); // Qty (with 'x')
     // Name is structured differently now: { text: [ { text: 'Body', bold: true }, item.details... ] }
     // We need to check the inner structure or just text containment if appropriate.
@@ -79,7 +77,7 @@ describe('buildDocDefinition', () => {
     const doc = buildDocDefinition(snapshot, mockT);
 
     // Should not generate table for empty category
-    const catHeader = doc.content.find((c) => c.text === 'Empty Cat');
-    expect(catHeader).toBeUndefined();
+    const categoryTables = getCategoryTables(doc);
+    expect(categoryTables).toHaveLength(0);
   });
 });

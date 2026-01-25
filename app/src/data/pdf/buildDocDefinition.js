@@ -387,6 +387,7 @@ export function buildDocDefinition(snapshot, t, theme) {
         table: {
           widths: ['auto', 'auto', '*'],
           headerRows: 1,
+          keepWithHeaderRows: 1,
           dontBreakRows: true, // Prevent splitting inside an item row (optional but good)
           body: [headerRow, ...rows]
         },
@@ -453,13 +454,13 @@ export function buildDocDefinition(snapshot, t, theme) {
 
   return {
     pageSize: 'A4',
-    pageMargins: [80, 80, 80, 50],
+    pageMargins: [80, 80, 80, 80],
     footer: (currentPage, pageCount) => ({
       text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${projectName}`,
       alignment: 'center',
       color: '#666',
       fontSize: 9,
-      margin: [80, 24, 80, 0]
+      margin: [80, 65, 80, 0]
     }),
     content: [
       {

@@ -11,7 +11,7 @@
 /** @typedef {import('../../types.js').ItemDraft} ItemDraft */
 /** @typedef {import('../../types.js').ProjectDraft} ProjectDraft */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { createId, STORAGE_MESSAGE_KEYS } from '../../data/storage.js';
 import { createEmptyShootSchedule, normalizeShootSchedule } from '../utils/shootSchedule.js';
 
@@ -42,13 +42,21 @@ const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
  * Assumes persistence is handled by a higher-level storage hook.
  */
 export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) => {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(/** @type {Project[]} */ ([]));
   // @ts-ignore - allow flexible History typing in JS + TS-checking
-  const [history, setHistory] = useState({ items: [], categories: [] });
+  const [history, setHistory] = useState(/** @type {History} */ ({ items: [], categories: [] }));
   // activeProjectId and activeProject logic removed in favor of URL state
-  const [projectDraft, setProjectDraft] = useState(createEmptyProjectDraft);
+  const [projectDraft, setProjectDraft] = useState(/** @type {ProjectDraft} */ (createEmptyProjectDraft()));
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [itemDrafts, setItemDrafts] = useState({});
+  const [itemDrafts, setItemDrafts] = useState(/** @type {Record<string, ItemDraft>} */ ({}));
+  const itemDraftsRef = useRef(/** @type {Record<string, ItemDraft>} */ ({}));
+
+  const setItemDraftsWithRef = useCallback((updater) => {
+    const prev = itemDraftsRef.current;
+    const next = typeof updater === 'function' ? updater(prev) : updater;
+    itemDraftsRef.current = next;
+    setItemDrafts(next);
+  }, []);
 
   const itemSuggestions = useMemo(() => {
     const libraryItems = deviceLibrary?.items || [];
@@ -377,7 +385,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
   const addItemToCategory = useCallback(
     (projectId, event, categoryId) => {
       event.preventDefault();
-      const draft = itemDrafts[categoryId] || emptyItemDraft;
+      const draft = itemDraftsRef.current[categoryId] || emptyItemDraft;
       const name = draft.name.trim();
       if (!name) {
         setStatus(t('status.itemNameRequired', 'Please provide an item name before adding.'));
@@ -396,13 +404,13 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         items: [...category.items, newItem]
       }));
       rememberItem(newItem, categoryName);
-      setItemDrafts((prev) => ({
+      setItemDraftsWithRef((prev) => ({
         ...prev,
         [categoryId]: { ...emptyItemDraft }
       }));
       setStatus(t('status.itemAdded', 'Item added. Autosave will secure it immediately.'));
     },
-    [getCategoryName, itemDrafts, rememberItem, setStatus, t, updateCategory]
+    [getCategoryName, rememberItem, setItemDraftsWithRef, setStatus, t, updateCategory]
   );
 
   const moveCategoryUp = useCallback(
@@ -535,26 +543,32 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     [setStatus, t, updateProject]
   );
 
-  const updateDraftItem = useCallback((categoryId, field, value) => {
-    setItemDrafts((prev) => ({
-      ...prev,
-      [categoryId]: {
-        ...(prev[categoryId] || emptyItemDraft),
-        [field]: value
-      }
-    }));
-  }, []);
+  const updateDraftItem = useCallback(
+    (categoryId, field, value) => {
+      setItemDraftsWithRef((prev) => ({
+        ...prev,
+        [categoryId]: {
+          ...(prev[categoryId] || emptyItemDraft),
+          [field]: value
+        }
+      }));
+    },
+    [setItemDraftsWithRef]
+  );
 
-  const applySuggestionToDraft = useCallback((categoryId, suggestion) => {
-    setItemDrafts((prev) => ({
-      ...prev,
-      [categoryId]: {
-        ...(prev[categoryId] || emptyItemDraft),
-        name: suggestion.name,
-        details: suggestion.details || ''
-      }
-    }));
-  }, []);
+  const applySuggestionToDraft = useCallback(
+    (categoryId, suggestion) => {
+      setItemDraftsWithRef((prev) => ({
+        ...prev,
+        [categoryId]: {
+          ...(prev[categoryId] || emptyItemDraft),
+          name: suggestion.name,
+          details: suggestion.details || ''
+        }
+      }));
+    },
+    [setItemDraftsWithRef]
+  );
 
   const applySuggestionToItem = useCallback(
     (projectId, categoryId, itemId, suggestion) => {

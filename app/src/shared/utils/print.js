@@ -272,7 +272,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
         <title>${escapeHtml(projectName)} - ${escapeHtml(t('ui.gearList', 'Gear list'))}</title>
         <style>
           @page {
-            margin: 20mm 20mm 25mm;
+            margin: 20mm 20mm 30mm;
             size: A4;
           }
           body {
@@ -283,7 +283,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             print-color-adjust: exact;
           }
           main {
-            padding: 0 0 25mm;
+            padding: 0 0 30mm;
           }
           h1 {
             font-size: 22px;
@@ -344,8 +344,8 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             margin: 8px 0 6px;
           }
           .category {
-            page-break-inside: auto;
-            break-inside: auto;
+            page-break-inside: avoid;
+            break-inside: avoid;
           }
           .category h3,
           .notes h3 {
@@ -364,8 +364,8 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
           }
           .notes {
             margin-top: 10px;
-            page-break-inside: auto;
-            break-inside: auto;
+            page-break-inside: avoid;
+            break-inside: avoid;
           }
           .notes-body {
             font-size: 10px;

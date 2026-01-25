@@ -232,12 +232,59 @@ export function buildDocDefinition(snapshot, t, theme) {
       String(project?.codec ?? ''),
       String(project?.framerate ?? '')
     ];
-    const allValues = [...cameraSpec.values, ...extValues]
-    const widths = [90, ...Array(allValues.length).fill('*')]
+    // Create header labels corresponding to values
+    const headers = [
+      t('project.print.labels.cameraSpec', 'Camera Specification'), // Main label
+      t('project.print.headers.camera', 'Camera'),
+      t('project.print.headers.media', 'Media'),
+      t('project.print.headers.mount', 'Mount'),
+      t('project.print.headers.power', 'Power'),
+      t('project.print.labels.resolution', 'Res'),
+      t('project.print.labels.aspectRatio', 'Asp'),
+      t('project.print.labels.codec', 'Codec'),
+      t('project.print.labels.framerate', 'FPS')
+    ];
+
+    const allValues = [...cameraSpec.values, ...extValues];
+
+    // Ensure we have 9 columns for values + 1 label column = 10 columns?
+    // cameraSpec.values has 5 items. extValues has 4 items. Total 9 items.
+    // The first column in the ROW is the Label/Letter.
+    // Then 9 value columns.
+
+    // We will make a 2-row table. 
+    // Row 1: Headers (small, gray)
+    // Row 2: Values (bold, black)
+
+    // Column 0: Category Label (e.g. "Camera A") - spans 2 rows or just sits there?
+    // To keep it clean, let's put the Category Label ABOVE the table or in the first cell spanning?
+
+    // Simpler: Just add the header row.
+    // Col 0: Empty or "Spec"
+    // Col 1..5: Camera Details
+    // Col 6..9: Metadata
+
+    const widths = [90, ...Array(9).fill('*')]; // 10 columns total
+
     cameraSpecRow = {
       table: {
         widths,
+        headerRows: 1,
         body: [
+          // Header Row
+          [
+            { text: '', border: [false, false, false, true] }, // Under Label
+            { text: 'Item', style: 'specHeader', alignment: 'center' },
+            { text: 'Detail 1', style: 'specHeader', alignment: 'center' },
+            { text: 'Detail 2', style: 'specHeader', alignment: 'center' },
+            { text: 'Detail 3', style: 'specHeader', alignment: 'center' },
+            { text: 'Detail 4', style: 'specHeader', alignment: 'center' },
+            { text: t('project.print.labels.resolution', 'Res'), style: 'specHeader', alignment: 'center' },
+            { text: t('project.print.labels.aspectRatio', 'Aspect'), style: 'specHeader', alignment: 'center' },
+            { text: t('project.print.labels.codec', 'Codec'), style: 'specHeader', alignment: 'center' },
+            { text: t('project.print.labels.framerate', 'FPS'), style: 'specHeader', alignment: 'center' }
+          ],
+          // Value Row
           [
             {
               text: [
@@ -254,18 +301,17 @@ export function buildDocDefinition(snapshot, t, theme) {
         ]
       },
       layout: {
-        hLineWidth: () => 0.5,
-        vLineWidth: (index, node) =>
-          index === 0 || index === node.table.widths.length ? 0 : 0.5,
+        hLineWidth: (i, node) => (i === 0 || i === node.table.body.length ? 0 : 0.5),
+        vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length ? 0 : 0.5),
         hLineColor: () => LINE_COLOR,
         vLineColor: () => LINE_COLOR,
-        paddingLeft: (index) => (index === 0 ? 0 : 6),
-        paddingRight: () => 6,
+        paddingLeft: (i) => (i === 0 ? 0 : 4),
+        paddingRight: () => 4,
         paddingTop: () => 4,
         paddingBottom: () => 4
       },
       margin: [0, 6, 0, 10]
-    }
+    };
   }
 
   const categoryContent = categories.flatMap((category, idx) => {
@@ -452,7 +498,8 @@ export function buildDocDefinition(snapshot, t, theme) {
       metaLabel: { bold: true },
       metaValue: { color: '#222' },
       metaAside: { fontSize: 9.5, color: '#444' },
-      categoryHeader: { fontSize: 10.5, bold: true }
+      categoryHeader: { fontSize: 10.5, bold: true },
+      specHeader: { fontSize: 7, color: '#666', bold: true }
     },
     defaultStyle: {
       font: 'Ubuntu',

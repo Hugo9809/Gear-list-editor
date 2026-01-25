@@ -394,6 +394,12 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage full backups, imports, and device resets without leaving offline mode.",
+    "hardRefresh": {
+      "title": "Hard refresh",
+      "description": "Clear offline caches and reload the app from scratch while preserving your local data.",
+      "action": "Hard refresh",
+      "helper": "This will clear offline caches and re-load assets from the network. Your on-device data remains intact."
+    },
     "autoBackups": {
       "title": "Dashboard auto backups",
       "description": "Control whether device auto backups appear in the project dashboard.",

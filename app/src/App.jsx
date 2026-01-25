@@ -37,7 +37,6 @@ export default function App() {
     projectDraft,
     updateProjectDraftField,
     addProject,
-    addProject,
     // deleteProject removed
     archiveProject, // New soft delete
     restoreProject, // New restore
@@ -352,6 +351,32 @@ export default function App() {
     t
   ]);
 
+  // Hard refresh: clear offline caches/service workers, then reload the page from scratch
+  const handleHardRefresh = useCallback(async () => {
+    // Optional: notify user
+    try {
+      // Clear CacheStorage caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      }
+    } catch (e) {
+      // Ignore cache clearing errors to ensure refresh still proceeds
+      console.error('Hard refresh: failed to clear caches', e);
+    }
+    try {
+      // Unregister all service workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((reg) => reg.unregister()));
+      }
+    } catch (e) {
+      console.error('Hard refresh: failed to unregister service workers', e);
+    }
+    // Reload the page from scratch
+    window.location.reload();
+  }, []);
+
   const handleLocaleChange = useCallback(
     (value) => {
       setLocale(value);
@@ -520,6 +545,7 @@ export default function App() {
                 onImportBackup={() => fileInputRef.current?.click()}
                 onRestoreFromDeviceBackup={restoreFromDeviceBackup}
                 onFactoryReset={handleFactoryReset}
+                onHardRefresh={handleHardRefresh}
               />
             }
           />

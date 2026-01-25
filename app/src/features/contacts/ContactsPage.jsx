@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import ContactEditor from './ContactEditor.jsx';
 import { useContacts } from './useContacts.js';
+import ConfirmDialog from '../../shared/components/ConfirmDialog.jsx';
 
 export default function ContactsPage({ t, contacts, setContacts, setStatus }) {
   const {
@@ -12,6 +13,7 @@ export default function ContactsPage({ t, contacts, setContacts, setStatus }) {
   } = useContacts({ contacts, setContacts, t, setStatus });
 
   const [editingContact, setEditingContact] = useState(null);
+  const [contactToDelete, setContactToDelete] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
 
   const emptyValue = t('ui.emptyValue', '—');
@@ -32,10 +34,14 @@ export default function ContactsPage({ t, contacts, setContacts, setStatus }) {
   };
 
   const handleDelete = (contactId) => {
-    if (!window.confirm(t('contacts.confirmDelete', 'Are you sure you want to delete this contact?'))) {
-      return;
+    setContactToDelete(contactId);
+  };
+
+  const handleConfirmDelete = () => {
+    if (contactToDelete) {
+      deleteContact(contactToDelete);
+      setContactToDelete(null);
     }
-    deleteContact(contactId);
   };
 
   return (
@@ -136,6 +142,18 @@ export default function ContactsPage({ t, contacts, setContacts, setStatus }) {
           onCancel={handleCancel}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={!!contactToDelete}
+        title={t('contacts.deleteTitle', 'Delete Contact')}
+        message={t('contacts.confirmDelete', 'Are you sure you want to delete this contact?')}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setContactToDelete(null)}
+        confirmText={t('contacts.actions.delete', 'Delete')}
+        cancelText={t('general.cancel', 'Cancel')}
+        isDestructive={true}
+        t={t}
+      />
     </section>
   );
 }

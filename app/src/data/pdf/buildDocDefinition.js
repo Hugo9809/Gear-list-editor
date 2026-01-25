@@ -71,7 +71,6 @@ const extractCameraLetter = (name) => {
 
 const buildCameraSpec = (categories, project) => {
   // Note: project may be used by callers to embed extra camera-related data.
-  const _project = project
   const category = categories.find(
     (candidate) => isPrimaryCameraCategory(candidate.name) && (candidate.items || []).length > 0
   );
@@ -261,7 +260,7 @@ export function buildDocDefinition(snapshot, t, theme) {
           ...(details ? [{ text: ` - ${details}` }] : [])
         ]
       };
-      return [ { text: `${quantity}x`, bold: true }, { text: '' }, nameCell ];
+      return [{ text: `${quantity}x`, bold: true }, { text: '' }, nameCell];
     });
     return [
       {
@@ -298,7 +297,8 @@ export function buildDocDefinition(snapshot, t, theme) {
         ],
         margin: [0, 0, 0, 6]
       },
-      { table: { widths: ['auto', 'auto', '*'], body: rows }, layout: {
+      {
+        table: { widths: ['auto', 'auto', '*'], body: rows }, layout: {
           hLineWidth: () => 0.5,
           vLineWidth: (index, node) => index === 0 || index === node.table.widths.length ? 0 : 0.5,
           hLineColor: () => LINE_COLOR,
@@ -307,49 +307,50 @@ export function buildDocDefinition(snapshot, t, theme) {
           paddingRight: () => 6,
           paddingTop: () => 4,
           paddingBottom: () => 4
-        }, margin: [0, 0, 0, 6] }
+        }, margin: [0, 0, 0, 6]
+      }
     ];
   });
 
   const projectNotes = normalizeText(project.notes);
   const notesSection = projectNotes
     ? [
-        {
-          canvas: [
-            {
-              type: 'line',
-              x1: 0,
-              y1: 0,
-              x2: PAGE_LINE_WIDTH,
-              y2: 0,
-              lineWidth: 0.5,
-              lineColor: LINE_COLOR
-            }
-          ],
-          margin: [0, 10, 0, 4]
-        },
-        {
-          text: t('project.print.notes.title', 'Project notes'),
-          style: 'categoryHeader',
-          color: themeColor,
-          margin: [0, 0, 0, 4]
-        },
-        {
-          canvas: [
-            {
-              type: 'line',
-              x1: 0,
-              y1: 0,
-              x2: PAGE_LINE_WIDTH,
-              y2: 0,
-              lineWidth: 0.5,
-              lineColor: LINE_COLOR
-            }
-          ],
-          margin: [0, 0, 0, 6]
-        },
-        { text: projectNotes, fontSize: 9.5 }
-      ]
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0,
+            y1: 0,
+            x2: PAGE_LINE_WIDTH,
+            y2: 0,
+            lineWidth: 0.5,
+            lineColor: LINE_COLOR
+          }
+        ],
+        margin: [0, 10, 0, 4]
+      },
+      {
+        text: t('project.print.notes.title', 'Project notes'),
+        style: 'categoryHeader',
+        color: themeColor,
+        margin: [0, 0, 0, 4]
+      },
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0,
+            y1: 0,
+            x2: PAGE_LINE_WIDTH,
+            y2: 0,
+            lineWidth: 0.5,
+            lineColor: LINE_COLOR
+          }
+        ],
+        margin: [0, 0, 0, 6]
+      },
+      { text: projectNotes, fontSize: 9.5 }
+    ]
     : [];
 
   const locale = snapshot.locale || 'en';
@@ -377,13 +378,13 @@ export function buildDocDefinition(snapshot, t, theme) {
       },
       ...(subtitle
         ? [
-            {
-              text: subtitle,
-              style: 'subtitle',
-              color: subtitleColor,
-              margin: [0, 0, 0, 16]
-            }
-          ]
+          {
+            text: subtitle,
+            style: 'subtitle',
+            color: subtitleColor,
+            margin: [0, 0, 0, 16]
+          }
+        ]
         : []),
       {
         table: {
@@ -403,21 +404,21 @@ export function buildDocDefinition(snapshot, t, theme) {
       ...(cameraSpecRow
         ? [cameraSpecRow]
         : [
-            {
-              canvas: [
-                {
-                  type: 'line',
-                  x1: 0,
-                  y1: 0,
-                  x2: PAGE_LINE_WIDTH,
-                  y2: 0,
-                  lineWidth: 0.5,
-                  lineColor: LINE_COLOR
-                }
-              ],
-              margin: [0, 6, 0, 10]
-            }
-          ]),
+          {
+            canvas: [
+              {
+                type: 'line',
+                x1: 0,
+                y1: 0,
+                x2: PAGE_LINE_WIDTH,
+                y2: 0,
+                lineWidth: 0.5,
+                lineColor: LINE_COLOR
+              }
+            ],
+            margin: [0, 6, 0, 10]
+          }
+        ]),
       ...categoryContent,
       ...notesSection
     ],

@@ -1,16 +1,1 @@
-{
-  "name": "Gear List Editor",
-  "short_name": "GearList",
-  "start_url": "/Gear-list-editor/",
-  "scope": "/Gear-list-editor/",
-  "display": "standalone",
-  "background_color": "#0a2a66",
-  "theme_color": "#0a2a66",
-  "icons": [
-    {
-      "src": "/Gear-list-editor/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
-  ]
-}
+{"name":"Gear List Editor","short_name":"Gear List","description":"Offline-first gear list management for film and photo shoots","start_url":"/Gear-list-editor/","display":"standalone","background_color":"#0f172a","theme_color":"#1e293b","lang":"en","scope":"/Gear-list-editor/","orientation":"any","categories":["productivity","utilities"],"icons":[{"src":"pwa-192x192.png","sizes":"192x192","type":"image/png"},{"src":"pwa-512x512.png","sizes":"512x512","type":"image/png"},{"src":"pwa-512x512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}

@@ -3,7 +3,7 @@ import { getShootScheduleDates } from '../../shared/utils/shootSchedule.js';
 
 const CAMERA_BADGE_COLOR = '#E10078';
 const LINE_COLOR = '#9CA3AF';
-const PAGE_LINE_WIDTH = 515;
+const PAGE_LINE_WIDTH = 475;
 
 const normalizeText = (value) => (value != null && value !== '' ? String(value).trim() : '');
 
@@ -317,7 +317,22 @@ export function buildDocDefinition(snapshot, t, theme) {
   const categoryContent = categories.flatMap((category, idx) => {
     const items = category.items || [];
     if (items.length === 0) return [];
+
     const categoryName = resolveCategoryName(category.name, idx);
+
+    // Header Row mimicking the previous independent header style
+    const headerRow = [
+      {
+        text: categoryName,
+        style: 'categoryHeader',
+        color: themeColor,
+        colSpan: 3,
+        border: [false, false, false, false]
+      },
+      {}, // Empty cells for colspan
+      {}
+    ];
+
     // Build a table per category: one row per item
     const rows = items.map((item, itemIndex) => {
       const quantity = normalizeText(item.quantity) || '1';
@@ -331,52 +346,26 @@ export function buildDocDefinition(snapshot, t, theme) {
       };
       return [{ text: `${quantity}x`, bold: true }, { text: '' }, nameCell];
     });
+
     return [
       {
-        canvas: [
-          {
-            type: 'line',
-            x1: 0,
-            y1: 0,
-            x2: PAGE_LINE_WIDTH,
-            y2: 0,
-            lineWidth: 0.5,
-            lineColor: LINE_COLOR
-          }
-        ],
-        margin: [0, 6, 0, 4]
-      },
-      {
-        text: categoryName,
-        style: 'categoryHeader',
-        color: themeColor,
-        margin: [0, 0, 0, 4]
-      },
-      {
-        canvas: [
-          {
-            type: 'line',
-            x1: 0,
-            y1: 0,
-            x2: PAGE_LINE_WIDTH,
-            y2: 0,
-            lineWidth: 0.5,
-            lineColor: LINE_COLOR
-          }
-        ],
-        margin: [0, 0, 0, 6]
-      },
-      {
-        table: { widths: ['auto', 'auto', '*'], body: rows }, layout: {
-          hLineWidth: () => 0.5,
-          vLineWidth: (index, node) => index === 0 || index === node.table.widths.length ? 0 : 0.5,
+        table: {
+          widths: ['auto', 'auto', '*'],
+          headerRows: 1,
+          dontBreakRows: true, // Prevent splitting inside an item row (optional but good)
+          body: [headerRow, ...rows]
+        },
+        layout: {
+          hLineWidth: (i, node) => 0.5, // Draw all horizontal lines (Top, Middle, Bottom)
+          vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length ? 0 : 0.5),
           hLineColor: () => LINE_COLOR,
           vLineColor: () => LINE_COLOR,
-          paddingLeft: (index) => (index === 0 ? 0 : 6),
+          paddingLeft: (i) => (i === 0 ? 0 : 6),
           paddingRight: () => 6,
           paddingTop: () => 4,
           paddingBottom: () => 4
-        }, margin: [0, 0, 0, 6]
+        },
+        margin: [0, 6, 0, 6]
       }
     ];
   });
@@ -429,13 +418,13 @@ export function buildDocDefinition(snapshot, t, theme) {
 
   return {
     pageSize: 'A4',
-    pageMargins: [40, 40, 40, 60],
+    pageMargins: [60, 60, 60, 80],
     footer: (currentPage, pageCount) => ({
       text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${projectName}`,
       alignment: 'center',
       color: '#666',
       fontSize: 9,
-      margin: [40, 20, 40, 0]
+      margin: [60, 20, 60, 0]
     }),
     content: [
       {

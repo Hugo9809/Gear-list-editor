@@ -156,10 +156,10 @@ const buildAutoBackupSummary = (payload, source) => {
   };
 };
 
-export const exportState = (state) => {
+export const exportState = (state, customFileName) => {
   const payload = preparePayload(state, 'export');
   const json = JSON.stringify(payload, null, 2);
-  const fileName = `gear-list-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  const fileName = customFileName || `gear-list-backup-${new Date().toISOString().slice(0, 10)}.json`;
   return { json, fileName, payload };
 };
 
@@ -173,7 +173,8 @@ export const exportProjectBackup = (state, projectId) => {
     history: { items: [], categories: [] },
     activeProjectId: project?.id || null
   };
-  return exportState(filteredState);
+  const fileName = project ? `${project.name || 'Untitled Project'}.json` : undefined;
+  return exportState(filteredState, fileName);
 };
 
 export const createStorageService = (options = {}) => {

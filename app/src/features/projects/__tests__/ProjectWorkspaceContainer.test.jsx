@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import ProjectWorkspaceContainer from '../ProjectWorkspaceContainer.jsx';
@@ -75,7 +75,8 @@ const resolveDisplayName = (value, variables, fallbackKey) => {
 const renderWorkspace = ({
   initialEntry = '/project/project-1',
   projects = [createProject()],
-  isHydrated = true
+  isHydrated = true,
+  onSaveTemplate = vi.fn()
 } = {}) =>
   render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -92,7 +93,7 @@ const renderWorkspace = ({
               onBackToDashboard={vi.fn()}
               onExportPdf={vi.fn()}
               onExportProject={vi.fn()}
-              onSaveTemplate={vi.fn()}
+              onSaveTemplate={onSaveTemplate}
               newCategoryName=""
               onNewCategoryNameChange={vi.fn()}
               itemSuggestions={[]}
@@ -123,5 +124,28 @@ describe('ProjectWorkspaceContainer', () => {
     renderWorkspace();
 
     expect(screen.getByText('2 categories · 3 items')).toBeInTheDocument();
+  });
+
+  it('prompts and saves template with name', () => {
+    const onSaveTemplate = vi.fn();
+    renderWorkspace({ onSaveTemplate });
+
+    // Open logic
+    fireEvent.click(screen.getByText('Save as template'));
+
+    // Modal appears
+    const input = screen.getByPlaceholderText('My Template');
+    expect(input).toBeInTheDocument();
+
+    // Type name
+    fireEvent.change(input, { target: { value: 'My custom template' } });
+
+    // Save
+    fireEvent.click(screen.getByText('Save Template'));
+
+    expect(onSaveTemplate).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Test Project' }),
+      'My custom template'
+    );
   });
 });

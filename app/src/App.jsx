@@ -59,7 +59,9 @@ export default function App() {
     applySuggestionToDraft,
     applySuggestionToItem,
     updateProject,
-    rememberItem
+    rememberItem,
+    moveItemUp,
+    moveItemDown
   } = useProjects({ t, setStatus, deviceLibrary, setDeviceLibrary });
 
   const {
@@ -455,7 +457,9 @@ export default function App() {
     removeCategory,
     removeItem,
     applySuggestionToDraft,
-    applySuggestionToItem
+    applySuggestionToItem,
+    moveItemUp,
+    moveItemDown
   };
 
   return (

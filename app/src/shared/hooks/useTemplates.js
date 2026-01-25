@@ -35,14 +35,14 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
    * @param {import('../../types.js').Project} activeProject - The project to templatize.
    */
   const saveTemplateFromProject = useCallback(
-    (activeProject) => {
+    (activeProject, customName) => {
       if (!activeProject) {
         setStatus(
           t('status.projectNeededForTemplate', 'Create a project before saving a template.')
         );
         return;
       }
-      const name = templateDraft.name.trim();
+      const name = (customName || templateDraft.name).trim();
       if (!name) {
         setStatus(t('status.templateNameRequired', 'Please name the template.'));
         return;

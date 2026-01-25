@@ -57,11 +57,15 @@ const normalizeItemDetails = (details) => {
 const isPrimaryCameraCategory = (name) => {
   const normalized = normalizeText(name).toLowerCase();
   if (!normalized) return false;
-  if (normalized === 'camera' || normalized === 'kamera') return true;
-  if (normalized.startsWith('camera ') || normalized.startsWith('kamera ')) {
-    return !normalized.includes('support') && !normalized.includes('zubehoer');
+
+  // Exclude common non-primary strings
+  const exclusions = ['support', 'zubehoer', 'zubehör', 'access', 'assistent', 'assistant', 'tripod', 'cart'];
+  if (exclusions.some((ex) => normalized.includes(ex))) {
+    return false;
   }
-  return false;
+
+  // Match "camera", "kamera", "cameras", "kameras" as whole words
+  return /\b(camera|kamera|cameras|kameras)\b/.test(normalized);
 };
 
 const extractCameraLetter = (name) => {

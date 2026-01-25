@@ -42,8 +42,8 @@ const ProjectWorkspaceContainer = ({
     return <Navigate to="/" replace />;
   }
 
-    return (
-      <ProjectWorkspace
+  return (
+    <ProjectWorkspace
       t={t}
       tPlural={tPlural}
       activeProject={project}
@@ -54,7 +54,7 @@ const ProjectWorkspaceContainer = ({
       onBackToDashboard={onBackToDashboard}
       onExportPdf={() => onExportPdf(project, projectIndex)}
       onExportProject={() => onExportProject(project)}
-      onSaveTemplate={() => onSaveTemplate(project)}
+      onSaveTemplate={(name) => onSaveTemplate(project, name)}
       newCategoryName={newCategoryName}
       onNewCategoryNameChange={onNewCategoryNameChange}
       itemSuggestions={itemSuggestions}

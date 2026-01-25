@@ -263,11 +263,23 @@ const ProjectDashboard = ({
             <h2 className="text-xl font-semibold ui-heading">
               {isArchivedView ? t('project.archived.title', 'Archived Projects') : t('project.list.title', 'Projects')}
             </h2>
-            <p className="text-sm text-text-secondary">
-              {tPlural('project.count', projects.length, '{count} project stored locally.', {
-                count: projects.length
-              })}
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-sm text-text-secondary">
+                {tPlural('project.count', projects.length, '{count} project stored locally.', {
+                  count: projects.length
+                })}
+              </p>
+              {!isArchivedView && (
+                <Link to="/archived" className="text-xs font-medium text-brand hover:underline">
+                  {t('project.actions.viewArchived', 'View Archived')} &rarr;
+                </Link>
+              )}
+              {isArchivedView && (
+                <Link to="/" className="text-xs font-medium text-brand hover:underline">
+                  &larr; {t('project.actions.viewActive', 'Back to Projects')}
+                </Link>
+              )}
+            </div>
           </div>
           <div className="text-xs text-text-muted">
             {t('project.lastSaved.label', 'Last saved: {time}', {

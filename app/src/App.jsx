@@ -534,8 +534,6 @@ export default function App() {
               />
             }
           />
-            }
-          />
           <Route
             path="/archived"
             element={

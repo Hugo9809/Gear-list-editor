@@ -150,63 +150,39 @@ export async function exportJsonAsBackup(payload: any, fileName: string): Promis
       payload,
     };
   }
+  // Prepare the JSON blob up-front
   const blob = new Blob([JSON.stringify(toSave, null, 2)], { type: 'application/json' });
 
-  // 1) Try OS Save As path directly (must be invoked from a user gesture) first
-  if ('showSaveFilePicker' in window) {
-    console.debug('[SaveAs][DBG] Attempting OS Save-As with', { fileName });
-  } else {
-    console.debug('[SaveAs][DBG] OS Save-As not available in this environment', {});
-  }
-  if ('showSaveFilePicker' in window) {
-    try {
-      const pickerOpts: any = {
-        suggestedName: fileName,
-        types: [
-          {
-            description: 'Gear List Backup',
-            accept: { 'application/json': ['.json'] },
-          },
-        ],
-      };
-      // @ts-ignore
-      const handle = await (window as any).showSaveFilePicker(pickerOpts);
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      return true;
-    } catch {
-      // User canceled or not available; fall through to in-app fallback
-    }
-  }
-
-  console.debug('[SaveAs][DBG] OS Save-As failed or unavailable; attempting in-app Save-As flow', { fileName });
-
-  // 2) Fallback: in-app Save-As dialog to gather a name, then trigger a download as last resort
+  // 1) Force in-app Save-As prompt to ensure a user gesture is involved
   const chosenName = await showInAppSaveAsDialog(fileName);
-  if (chosenName) {
+  if (!chosenName) return false;
+
+  // 2) Try OS Save-As with the chosen name
+  let ok = await saveAsBlob(blob, chosenName);
+  if (ok) return true;
+
+  // 3) Fallback: trigger a browser download as last resort
+  try {
     const url = URL.createObjectURL(blob);
-    try {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = chosenName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } finally {
-      URL.revokeObjectURL(url);
-    }
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = chosenName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
     return true;
+  } catch {
+    // ignore
   }
 
-  // 3) If everything else fails, try legacy path (if configured)
+  // 4) Final fallback: legacy save path if configured
   try {
     // @ts-ignore
     if (typeof legacySaveHandler === 'function') {
-      const blobSaved = await legacySaveHandler(blob, fileName);
+      const blobSaved = await legacySaveHandler(blob, chosenName);
       if (blobSaved) return true;
     }
   } catch { }
-
   return false;
 }

@@ -459,7 +459,7 @@ export function buildDocDefinition(snapshot, t, theme) {
       alignment: 'center',
       color: '#666',
       fontSize: 9,
-      margin: [80, 10, 80, 0]
+      margin: [80, 24, 80, 0]
     }),
     content: [
       {

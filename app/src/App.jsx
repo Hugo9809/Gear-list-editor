@@ -13,6 +13,7 @@ import { useProjects } from './shared/hooks/useProjects.js';
 import { createId } from './data/storage.js';
 import { useStorageHydration } from './shared/hooks/useStorageHydration.js';
 import { useTemplates } from './shared/hooks/useTemplates.js';
+import { saveJsonWithPicker } from './shared/utils/saveAs.js';
 
 const isDefaultLabelKey = (value) => typeof value === 'string' && value.startsWith('defaults.');
 
@@ -109,21 +110,17 @@ export default function App() {
     setHistory,
     setStatus
   });
-  const downloadBackup = useCallback(() => {
+  const downloadBackup = useCallback(async () => {
     const { json, fileName } = exportBackup();
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    // Delay revocation to ensure download starts/completes
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 10000);
-    setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
+    if (!json || !fileName) {
+      setStatus(t('status.exportFailed', 'Export failed. Please check console for details.'));
+      return { status: 'failed' };
+    }
+    const result = await saveJsonWithPicker(json, fileName, { description: 'Gear List Backup' });
+    if (result.status === 'saved') {
+      setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
+    }
+    return result;
   }, [exportBackup, setStatus, t]);
 
   // Factory reset modal state
@@ -136,7 +133,15 @@ export default function App() {
   }, []);
   // Execute factory reset after user confirms in modal
   const executeFactoryReset = useCallback(async () => {
-    downloadBackup();
+    const backupResult = await downloadBackup();
+    if (backupResult?.status === 'cancelled') {
+      setStatus(t('status.factoryResetCancelled', 'Factory reset cancelled. Backup was not saved.'));
+      return;
+    }
+    if (backupResult?.status === 'failed') {
+      setStatus(t('status.factoryResetFailed', 'Factory reset could not finish. Your data is still protected in backups.'));
+      return;
+    }
     try {
       const result = await storageRef.current.factoryReset();
       setProjects(result.state.projects);
@@ -362,65 +367,12 @@ export default function App() {
           throw new Error('Invalid export result');
         }
 
-        // Strategy 1: Modern File System Access API (Chrome/Edge/Opera)
-        // This is the "compliant" way that satisfies enhanced security checks
-        if ('showSaveFilePicker' in window) {
-          try {
-            const handle = await window.showSaveFilePicker({
-              suggestedName: fileName,
-              types: [{
-                description: 'JSON File',
-                accept: { 'application/json': ['.json'] },
-              }],
-            });
-            const writable = await handle.createWritable();
-            await writable.write(json);
-            await writable.close();
-            setStatus(t('status.projectExported', 'Project exported: ') + fileName);
-            return;
-          } catch (err) {
-            // User cancelled or API failed, fall back if not a cancellation
-            if (err.name !== 'AbortError') {
-              console.warn('File System Access API failed, falling back to download link:', err);
-            } else {
-              // User cancelled explicitly, stop here
-              return;
-            }
-          }
+        const result = await saveJsonWithPicker(json, fileName, { description: 'JSON File' });
+        if (result.status === 'saved') {
+          setStatus(t('status.projectExported', 'Project exported: ') + fileName);
+        } else if (result.status === 'cancelled') {
+          return;
         }
-
-        // Strategy 2: Legacy Fallback (Safari/Firefox/Older)
-        // Use Blob + Anchor trigger with robust event dispatching
-        let blob;
-        try {
-          blob = new File([json], fileName, { type: 'application/octet-stream' });
-        } catch (e) {
-          blob = new Blob([json], { type: 'application/octet-stream' });
-        }
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-
-        // Dispatch a mouse click event instead of .click() to simulate user interaction better
-        const clickEvent = new MouseEvent('click', {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-        });
-        link.dispatchEvent(clickEvent);
-
-        // Long timeout to ensure browser has time to handoff to download manager
-        setTimeout(() => {
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-        }, 60000);
-
-        // UI Feedback
-        setStatus(t('status.projectExported', 'Project exported: ') + fileName);
 
       } catch (error) {
         console.error('Project export failed:', error);

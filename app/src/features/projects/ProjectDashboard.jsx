@@ -292,12 +292,12 @@ const ProjectDashboard = ({
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {projects.length === 0 ? (
             <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
-              {t(
-                'project.list.empty',
-                isArchivedView
-                  ? 'No archived projects.'
-                  : 'No projects yet. Create your first project to begin building a gear list.'
-              )}
+              {isArchivedView
+                ? t('project.archived.empty', 'No archived projects.')
+                : t(
+                  'project.list.empty',
+                  'No projects yet. Create your first project to begin building a gear list.'
+                )}
             </div>
           ) : (
             projects.map((project, projectIndex) => {

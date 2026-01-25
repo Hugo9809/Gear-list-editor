@@ -196,7 +196,7 @@ export const useStorageHydration = ({
       lastSaved,
       showAutoBackups
     });
-  }, [projects, templates, deviceLibrary, contacts, history, isHydrated, theme, showAutoBackups, lastSaved, storageService]);
+  }, [projects, templates, deviceLibrary, contacts, history, isHydrated, theme, showAutoBackups, storageService]);
 
   useEffect(() => {
     if (!isHydrated || !showAutoBackups) {

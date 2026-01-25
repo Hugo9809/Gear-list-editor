@@ -8,13 +8,32 @@
     "helper": "Saved locally for offline use.",
     "status": "Language updated and saved locally."
   },
+  "general": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "edit": "Edit"
+  },
   "navigation": {
     "sidebar": {
       "dashboard": "All Projects",
+      "archived": "Archived Projects",
       "templates": "Templates",
+      "deviceLibrary": "Device Library",
       "contacts": "Contacts",
       "settings": "Settings",
-      "help": "Help"
+      "help": "Help",
+      "sections": {
+        "projects": "Projects",
+        "tools": "Tools",
+        "support": "Support"
+      },
+      "actions": {
+        "open": "Open navigation",
+        "close": "Close navigation"
+      },
+      "label": "Primary navigation"
     },
     "topbar": {
       "newProject": "New project",
@@ -39,7 +58,7 @@
     "gearList": "Gear list",
     "emptyValue": "—",
     "sidebar": {
-      "title": "Safe offline workspace",
+      "subtitle": "Safe offline workspace",
       "description": "Your All Projects view keeps projects close while autosave runs in the background."
     }
   },
@@ -78,6 +97,10 @@
       "label": "Active project",
       "helper": "Export the current list or save it as a reusable template.",
       "badge": "Selected"
+    },
+    "archived": {
+      "title": "Archived Projects",
+      "empty": "No archived projects."
     },
     "untitled": "Untitled project",
     "dashboard": {
@@ -118,7 +141,9 @@
       "backToDashboard": "Back to All Projects",
       "archive": "Archive",
       "addCrewMember": "Add crew member",
-      "removeCrewMember": "Remove crew member"
+      "removeCrewMember": "Remove crew member",
+      "viewArchived": "View Archived",
+      "viewActive": "Back to Projects"
     },
     "list": {
       "title": "Projects",
@@ -369,6 +394,7 @@
     "description": "Manage your global crew contacts so phone and email details are ready in every project.",
     "helper": "Contacts sync into crew entry suggestions and keep role, phone, and email details consistent.",
     "add": "Add contact",
+    "deleteTitle": "Delete Contact",
     "empty": "No contacts yet. Add crew contacts to reuse them in projects.",
     "confirmDelete": "Are you sure you want to delete this contact?",
     "roleEmpty": "Role not set",

@@ -8,13 +8,32 @@
     "helper": "Lokal gespeichert für die Offline-Nutzung.",
     "status": "Sprache aktualisiert und lokal gespeichert."
   },
+  "general": {
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "confirm": "Bestätigen",
+    "edit": "Bearbeiten"
+  },
   "navigation": {
     "sidebar": {
       "dashboard": "Alle Projekte",
+      "archived": "Archivierte Projekte",
       "templates": "Vorlagen",
+      "deviceLibrary": "Gerätebibliothek",
       "contacts": "Kontakte",
       "settings": "Einstellungen",
-      "help": "Hilfe"
+      "help": "Hilfe",
+      "sections": {
+        "projects": "Projekte",
+        "tools": "Werkzeuge",
+        "support": "Support"
+      },
+      "actions": {
+        "open": "Navigation öffnen",
+        "close": "Navigation schließen"
+      },
+      "label": "Hauptnavigation"
     },
     "topbar": {
       "newProject": "Neues Projekt",
@@ -39,7 +58,7 @@
     "gearList": "Equipmentliste",
     "emptyValue": "—",
     "sidebar": {
-      "title": "Sicherer Offline-Arbeitsbereich",
+      "subtitle": "Sicherer Offline-Arbeitsbereich",
       "description": "Deine Alle-Projekte-Übersicht hält Projekte griffbereit, während Autosave im Hintergrund läuft."
     },
     "hero": {
@@ -89,6 +108,10 @@
       "helper": "Exportiere die aktuelle Liste oder speichere sie als wiederverwendbare Vorlage.",
       "badge": "Ausgewählt"
     },
+    "archived": {
+      "title": "Archivierte Projekte",
+      "empty": "Keine archivierten Projekte."
+    },
     "untitled": "Unbenanntes Projekt",
     "dashboard": {
       "title": "Projekt-Dashboard",
@@ -128,7 +151,11 @@
       "backToDashboard": "Zurück zu Alle Projekte",
       "archive": "Archivieren",
       "addCrewMember": "Crewmitglied hinzufügen",
-      "removeCrewMember": "Crewmitglied entfernen"
+      "removeCrewMember": "Crewmitglied entfernen",
+      "confirmDelete": "Löschen bestätigen?",
+      "delete": "Löschen",
+      "viewArchived": "Archiv ansehen",
+      "viewActive": "Zurück zu Projekten"
     },
     "list": {
       "title": "Projekte",
@@ -376,6 +403,7 @@
     "description": "Verwalte globale Crew-Kontakte, damit Telefon- und E-Mail-Daten in jedem Projekt bereitstehen.",
     "helper": "Kontakte erscheinen als Vorschläge im Crew-Bereich und halten Rolle, Telefon und E-Mail konsistent.",
     "add": "Kontakt hinzufügen",
+    "deleteTitle": "Kontakt löschen",
     "empty": "Noch keine Kontakte. Füge Crew-Kontakte hinzu, um sie in Projekten wiederzuverwenden.",
     "confirmDelete": "Möchtest du diesen Kontakt wirklich löschen?",
     "roleEmpty": "Rolle nicht gesetzt",
@@ -430,7 +458,14 @@
       "action": "Werksreset starten",
       "helper": "Bewahre das heruntergeladene Backup sicher auf, bevor du fortfährst.",
       "confirmPrimary": "Der Werksreset lädt ein vollständiges Backup herunter und löscht danach alle lokalen Daten auf diesem Gerät.",
-      "confirmSecondary": "Dadurch werden Projekte, Vorlagen und lokale Backups von diesem Gerät entfernt. Fortfahren?"
+      "confirmSecondary": "Dadurch werden Projekte, Vorlagen und lokale Backups von diesem Gerät entfernt. Fortfahren?",
+      "action": "Werksreset ausführen"
+    },
+    "hardRefresh": {
+      "title": "Hard Refresh",
+      "description": "Löscht den Offline-Cache und lädt die App neu, während deine lokalen Daten erhalten bleiben.",
+      "action": "Hard Refresh",
+      "helper": "Dies löscht den Offline-Cache und lädt Assets neu aus dem Netzwerk. Deine Daten auf dem Gerät bleiben erhalten."
     }
   },
   "help": {

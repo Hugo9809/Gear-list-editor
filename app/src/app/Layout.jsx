@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function Layout({ t, status, theme, setTheme, locale, setLocale, locales, onHardRefresh }) {
   // Mobile hamburger-driven drawer state
@@ -58,13 +58,13 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
     )
   };
 
-  const themeOptions = [
+  const themeOptions = useMemo(() => [
     { id: 'light', label: t('theme.options.light', 'Light'), icon: themeIcons.light },
     { id: 'dark', label: t('theme.options.dark', 'Dark'), icon: themeIcons.dark },
     { id: 'pink', label: t('theme.options.pink', 'Pink'), icon: themeIcons.pink }
-  ];
+  ], [t, themeIcons.light, themeIcons.dark, themeIcons.pink]);
 
-  const navigationSections = [
+  const navigationSections = useMemo(() => [
     {
       id: 'projects',
       title: t('navigation.sidebar.sections.projects', 'Projects'),
@@ -198,7 +198,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
         }
       ]
     }
-  ];
+  ], [t]);
 
   return (
     <>
@@ -207,7 +207,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
         <div className="flex items-center justify-between h-14 px-4 text-white">
           <button
             type="button"
-            aria-label="Open navigation"
+            aria-label={t('navigation.sidebar.actions.open', 'Open navigation')}
             onClick={() => setDrawerOpen(true)}
             className="p-2 -ml-2 rounded-md hover:bg-brand-hover transition-colors"
           >
@@ -247,7 +247,7 @@ export default function Layout({ t, status, theme, setTheme, locale, setLocale, 
                   type="button"
                   className="lg:hidden absolute top-2 right-2 p-2 text-text-muted hover:text-text-primary"
                   onClick={() => setDrawerOpen(false)}
-                  aria-label="Close navigation"
+                  aria-label={t('navigation.sidebar.actions.close', 'Close navigation')}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />

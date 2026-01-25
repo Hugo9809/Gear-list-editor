@@ -117,7 +117,10 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    // Delay revocation to ensure download starts/completes
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 10000);
     setStatus(t('status.backupDownloaded', 'Backup downloaded. Store it somewhere safe.'));
   }, [exportBackup, setStatus, t]);
 
@@ -195,23 +198,37 @@ export default function App() {
   // Enhanced: deduplicate by email when possible; fallback to name; update fields safely
   const syncCrewToContacts = useCallback((crewMember) => {
     if (!crewMember || typeof crewMember.name !== 'string' || !crewMember.name.trim()) {
-      return;
+      return null;
     }
+
+    // Determine the ID to use
+    let targetId = crewMember.contactId;
+
+    // If no ID provided, try to find a match in the CURRENT known contacts
+    if (!targetId) {
+      if (typeof crewMember.email === 'string' && crewMember.email.trim()) {
+        const match = contacts.find((c) => c.email === crewMember.email);
+        if (match) targetId = match.id;
+      }
+      if (!targetId && typeof crewMember.name === 'string' && crewMember.name.trim()) {
+        const match = contacts.find((c) => c.name === crewMember.name);
+        if (match) targetId = match.id;
+      }
+    }
+
+    // If still no ID, generate a new one
+    if (!targetId) {
+      targetId = createId();
+    }
+
     setContacts((prev) => {
       const safePrev = Array.isArray(prev) ? prev : [];
-      // Prefer matching by email when available; fall back to name
-      let target = null;
-      if (typeof crewMember.email === 'string' && crewMember.email.trim()) {
-        target = safePrev.find((c) => c.email === crewMember.email);
-      }
-      if (!target && typeof crewMember.name === 'string' && crewMember.name.trim()) {
-        target = safePrev.find((c) => c.name === crewMember.name);
-      }
+      const existing = safePrev.find((c) => c.id === targetId);
 
-      if (target) {
-        // Update existing contact with any provided details
+      if (existing) {
+        // Update existing contact
         return safePrev.map((c) =>
-          c.id === target.id
+          c.id === targetId
             ? {
               ...c,
               name: crewMember.name,
@@ -222,9 +239,10 @@ export default function App() {
             : c
         );
       }
-      // Create a new contact from the crew member details
+
+      // Create new contact with the predetermined ID
       const newContact = {
-        id: createId(),
+        id: targetId,
         name: crewMember.name,
         role: crewMember.role || '',
         phone: crewMember.phone || '',
@@ -232,7 +250,9 @@ export default function App() {
       };
       return [newContact, ...safePrev];
     });
-  }, [setContacts]);
+
+    return targetId;
+  }, [contacts, setContacts]);
 
   const handleOpenProject = useCallback(
     (projectId) => {
@@ -342,7 +362,10 @@ export default function App() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(url);
+      // Delay revocation to ensure download starts/completes
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 10000);
       setStatus(t('status.projectExported', 'Project export downloaded. Store it somewhere safe.'));
     },
     [exportProjectBackup, setStatus, t]
@@ -585,7 +608,7 @@ export default function App() {
         </Route>
       </Routes>
       {showFactoryResetModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" role="dialog" aria-label="Factory Reset Confirmation">
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" role="dialog" aria-label={t('settings.factoryReset.modalTitle', 'Factory Reset Confirmation')}>
           <div className="bg-surface-elevated rounded-xl p-6 shadow-lg max-w-md w-full mx-4">
             <p className="text-sm text-text-secondary">
               {factoryResetModalStage === 1

@@ -43,7 +43,7 @@ const CrewFieldList = ({ t, crew, roles, contacts, onChange, onSyncCrewToContact
   const handleUpdate = (entryId, field, value) => {
     // Build updated entries so we can also sync to Contacts when a meaningful change happens
     let updatedEntry = null;
-    const updatedEntries = entries.map((entry) => {
+    const intermediateEntries = entries.map((entry) => {
       if (entry.id !== entryId) {
         return entry;
       }
@@ -53,11 +53,22 @@ const CrewFieldList = ({ t, crew, roles, contacts, onChange, onSyncCrewToContact
       };
       return updatedEntry;
     });
-    onChange(updatedEntries);
+
     // If a name was changed to a non-empty value, try to sync with global contacts
     if (onSyncCrewToContacts && updatedEntry && typeof updatedEntry.name === 'string' && updatedEntry.name.trim()) {
-      onSyncCrewToContacts(updatedEntry);
+      const syncedContactId = onSyncCrewToContacts(updatedEntry);
+
+      // If the sync identified/created a contact ID we didn't have, or if it changed, update the entry
+      if (syncedContactId && updatedEntry.contactId !== syncedContactId) {
+        updatedEntry.contactId = syncedContactId;
+        // Re-map with the fully updated entry (now including contactId)
+        const finalEntries = intermediateEntries.map((e) => (e.id === entryId ? updatedEntry : e));
+        onChange(finalEntries);
+        return;
+      }
     }
+
+    onChange(intermediateEntries);
   };
 
   const handleSelectContact = (entryId, contact) => {
@@ -68,6 +79,7 @@ const CrewFieldList = ({ t, crew, roles, contacts, onChange, onSyncCrewToContact
         }
         const updated = {
           ...entry,
+          contactId: contact.id,
           name: contact.name || entry.name,
           role: contact.role || entry.role,
           phone: contact.phone || entry.phone,
@@ -76,6 +88,7 @@ const CrewFieldList = ({ t, crew, roles, contacts, onChange, onSyncCrewToContact
         // Also attempt to sync the newly selected contact to global Contacts
         if (onSyncCrewToContacts && contact?.name?.trim()) {
           onSyncCrewToContacts({
+            contactId: contact.id,
             name: contact.name,
             role: contact.role,
             phone: contact.phone,

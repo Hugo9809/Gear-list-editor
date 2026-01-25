@@ -156,10 +156,18 @@ const buildAutoBackupSummary = (payload, source) => {
   };
 };
 
+// Helper to sanitize filenames
+const sanitizeFileName = (name) => {
+  return name.replace(/[^a-z0-9 \-_]/gi, '_').replace(/_{2,}/g, '_').trim();
+};
+
 export const exportState = (state, customFileName) => {
   const payload = preparePayload(state, 'export');
   const json = JSON.stringify(payload, null, 2);
-  const fileName = customFileName || `gear-list-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  let fileName = customFileName;
+  if (!fileName) {
+    fileName = `gear-list-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  }
   return { json, fileName, payload };
 };
 
@@ -173,7 +181,8 @@ export const exportProjectBackup = (state, projectId) => {
     history: { items: [], categories: [] },
     activeProjectId: project?.id || null
   };
-  const fileName = project ? `${project.name || 'Untitled Project'}.json` : undefined;
+  const safeName = project ? sanitizeFileName(project.name || 'Untitled Project') : 'Untitled_Project';
+  const fileName = `${safeName}.json`;
   return exportState(filteredState, fileName);
 };
 

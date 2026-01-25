@@ -357,6 +357,11 @@ export default function App() {
           return;
         }
         const { json, fileName } = exportProjectBackup(project.id);
+
+        if (!json || !fileName) {
+          throw new Error('Invalid export result');
+        }
+
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');

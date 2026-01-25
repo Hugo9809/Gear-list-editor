@@ -143,6 +143,7 @@ export function buildDocDefinition(snapshot, t, theme) {
   const isPinkMode = theme === 'pink';
   const themeColor = isPinkMode ? '#E10078' : '#001589';
   const subtitleColor = isPinkMode ? '#F06292' : '#5C6BC0';
+  const lineColor = isPinkMode ? '#F06292' : '#9CA3AF';
 
   const subtitle = shootSchedule.shootingPeriods.length
     ? formatDateList(shootSchedule.shootingPeriods, emptyValue)
@@ -303,8 +304,8 @@ export function buildDocDefinition(snapshot, t, theme) {
       layout: {
         hLineWidth: (i, node) => (i === 0 || i === node.table.body.length ? 0 : 0.5),
         vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length ? 0 : 0.5),
-        hLineColor: () => LINE_COLOR,
-        vLineColor: () => LINE_COLOR,
+        hLineColor: () => lineColor,
+        vLineColor: () => lineColor,
         paddingLeft: (i) => (i === 0 ? 0 : 4),
         paddingRight: () => 4,
         paddingTop: () => 4,
@@ -358,8 +359,8 @@ export function buildDocDefinition(snapshot, t, theme) {
         layout: {
           hLineWidth: (i, node) => 0.5, // Draw all horizontal lines (Top, Middle, Bottom)
           vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length ? 0 : 0.5),
-          hLineColor: () => LINE_COLOR,
-          vLineColor: () => LINE_COLOR,
+          hLineColor: () => lineColor,
+          vLineColor: () => lineColor,
           paddingLeft: (i) => (i === 0 ? 0 : 6),
           paddingRight: () => 6,
           paddingTop: () => 4,
@@ -382,7 +383,7 @@ export function buildDocDefinition(snapshot, t, theme) {
             x2: PAGE_LINE_WIDTH,
             y2: 0,
             lineWidth: 0.5,
-            lineColor: LINE_COLOR
+            lineColor: lineColor
           }
         ],
         margin: [0, 10, 0, 4]
@@ -402,7 +403,7 @@ export function buildDocDefinition(snapshot, t, theme) {
             x2: PAGE_LINE_WIDTH,
             y2: 0,
             lineWidth: 0.5,
-            lineColor: LINE_COLOR
+            lineColor: lineColor
           }
         ],
         margin: [0, 0, 0, 6]
@@ -418,13 +419,13 @@ export function buildDocDefinition(snapshot, t, theme) {
 
   return {
     pageSize: 'A4',
-    pageMargins: [80, 80, 80, 100],
+    pageMargins: [80, 80, 80, 50],
     footer: (currentPage, pageCount) => ({
       text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${projectName}`,
       alignment: 'center',
       color: '#666',
       fontSize: 9,
-      margin: [80, 20, 80, 0]
+      margin: [80, 10, 80, 0]
     }),
     content: [
       {
@@ -471,7 +472,7 @@ export function buildDocDefinition(snapshot, t, theme) {
                 x2: PAGE_LINE_WIDTH,
                 y2: 0,
                 lineWidth: 0.5,
-                lineColor: LINE_COLOR
+                lineColor: lineColor
               }
             ],
             margin: [0, 6, 0, 10]

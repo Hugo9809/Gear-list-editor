@@ -377,8 +377,8 @@ export default function App() {
           window.URL.revokeObjectURL(url);
         }, 100);
 
-        // UI Feedback including the filename to PROVE code is running
-        setStatus(`SUCCESS: Exporting ${fileName}`);
+        // UI Feedback including the filename
+        setStatus(t('status.projectExported', 'Project exported: ') + fileName);
 
       } catch (error) {
         console.error('Project export failed:', error);

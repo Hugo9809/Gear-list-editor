@@ -17,11 +17,26 @@ describe('buildDocDefinition', () => {
     }
   };
 
-  it('should use pink accent in pink mode', () => {
-    const docDef = buildDocDefinition(mockSnapshot, mockT, 'pink');
-    // Check for specific pink color #E10078
-    const pinkColorFound = JSON.stringify(docDef).includes('#E10078');
-    expect(pinkColorFound).toBe(true);
+  it('should use pink accent and lines in pink mode', () => {
+    // Add notes to trigger canvas line elements which expose the color in JSON
+    const snapshotWithNotes = {
+      ...mockSnapshot,
+      data: {
+        ...mockSnapshot.data,
+        project: {
+          ...mockSnapshot.data.project,
+          notes: 'Test Notes'
+        }
+      }
+    };
+    const docDef = buildDocDefinition(snapshotWithNotes, mockT, 'pink');
+
+    // Check for specific pink color #E10078 (Header/Theme)
+    const pinkThemeColorFound = JSON.stringify(docDef).includes('#E10078');
+    expect(pinkThemeColorFound).toBe(true);
+    // Check for specific pink line color #F06292
+    const pinkLineColorFound = JSON.stringify(docDef).includes('#F06292');
+    expect(pinkLineColorFound).toBe(true);
   });
 
   it('should use blue accent in light mode', () => {

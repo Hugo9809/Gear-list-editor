@@ -125,6 +125,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
   const isPinkMode = theme === 'pink';
   const accentColor = isPinkMode ? '#E10078' : '#001589';
   const subtitleColor = isPinkMode ? '#F06292' : '#5C6BC0';
+  const lineColor = isPinkMode ? '#F06292' : '#9CA3AF';
   const resolveLabel = (value, variables) =>
     typeof value === 'string' && value.startsWith('defaults.')
       ? t(value, undefined, variables)
@@ -271,7 +272,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
         <title>${escapeHtml(projectName)} - ${escapeHtml(t('ui.gearList', 'Gear list'))}</title>
         <style>
           @page {
-            margin: 20mm 20mm 25mm; /* Approx 80px 80px 100px */
+            margin: 20mm 20mm 15mm;
             size: A4;
           }
           body {
@@ -322,8 +323,8 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
           .camera-spec {
             width: 100%;
             border-collapse: collapse;
-            border-top: 1px solid ${LINE_COLOR};
-            border-bottom: 1px solid ${LINE_COLOR};
+            border-top: 1px solid ${lineColor};
+            border-bottom: 1px solid ${lineColor};
             margin: 8px 0 12px;
             font-size: 10px;
           }
@@ -331,7 +332,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             padding: 4px 6px;
           }
           .camera-spec td + td {
-            border-left: 1px solid ${LINE_COLOR};
+            border-left: 1px solid ${lineColor};
             text-align: center;
           }
           .camera-badge {
@@ -339,7 +340,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             margin-left: 4px;
           }
           .divider {
-            border-top: 1px solid ${LINE_COLOR};
+            border-top: 1px solid ${lineColor};
             margin: 8px 0 6px;
           }
           .category {

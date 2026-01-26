@@ -20,7 +20,7 @@ const ProjectDashboardContainer = ({
   } = dashboardData;
   const {
     onTemplateSelect,
-    onLoadTemplate,
+    onCreateProjectFromTemplate,
     onImportProject,
     onProjectDraftChange,
     onCreateProject,
@@ -38,7 +38,7 @@ const ProjectDashboardContainer = ({
       templates={templates}
       selectedTemplateId={selectedTemplateId}
       onTemplateSelect={onTemplateSelect}
-      onLoadTemplate={onLoadTemplate}
+      onCreateProjectFromTemplate={onCreateProjectFromTemplate}
       onImportProject={onImportProject}
       projectDraft={projectDraft}
       contacts={contacts}

@@ -320,6 +320,61 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     [normalizeCrewDraft, projectDraft, setStatus, t]
   );
 
+  /**
+   * Creates a new project from a template.
+   * @param {import('../../types.js').Template} template - Template to convert into a project.
+   * @param {{ name?: string }} [overrides] - Optional name override.
+   * @returns {string|null} New project ID, or null when unavailable.
+   */
+  const createProjectFromTemplate = useCallback(
+    (template, overrides = {}) => {
+      if (!template) {
+        return null;
+      }
+      const baseDraft = createEmptyProjectDraft();
+      const candidateName = normalizeText(overrides?.name ?? template.name);
+      const resolvedName =
+        candidateName && !DEFAULT_NAME_KEYS.has(candidateName)
+          ? candidateName
+          : STORAGE_MESSAGE_KEYS.defaults.project;
+      const categories = Array.isArray(template.categories)
+        ? template.categories.map((category) => ({
+          ...category,
+          id: createId(),
+          items: Array.isArray(category.items)
+            ? category.items.map((item) => ({
+              ...item,
+              id: createId()
+            }))
+            : []
+        }))
+        : [];
+      const newProject = {
+        id: createId(),
+        name: resolvedName,
+        client: baseDraft.client,
+        shootSchedule: baseDraft.shootSchedule,
+        location: baseDraft.location,
+        contact: baseDraft.contact,
+        crew: baseDraft.crew,
+        resolution: baseDraft.resolution,
+        aspectRatio: baseDraft.aspectRatio,
+        codec: baseDraft.codec,
+        framerate: baseDraft.framerate ? Number(baseDraft.framerate) : undefined,
+        notes: typeof template.notes === 'string' ? template.notes : '',
+        archived: false,
+        categories
+      };
+      setProjects((prev) => [newProject, ...prev]);
+      categories.forEach((category) => {
+        rememberCategory(category.name);
+        category.items.forEach((item) => rememberItem(item, category.name));
+      });
+      return newProject.id;
+    },
+    [normalizeText, rememberCategory, rememberItem, setProjects]
+  );
+
   const archiveProject = useCallback(
     (projectId) => {
       updateProject(projectId, (project) => ({
@@ -595,6 +650,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     projectDraft,
     updateProjectDraftField,
     addProject,
+    createProjectFromTemplate,
     archiveProject,
     restoreProject,
     deleteProjectPermanently,

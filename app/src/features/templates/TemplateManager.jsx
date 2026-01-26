@@ -13,7 +13,7 @@ const TemplateManager = ({
   templates,
   resolveDisplayName,
   onUpdateTemplateField,
-  onApplyTemplate,
+  onCreateProjectFromTemplate,
   onRemoveTemplate
 }) => {
   const [deleteConfirmationId, setDeleteConfirmationId] = useState(null);
@@ -40,7 +40,7 @@ const TemplateManager = ({
         <p className="text-sm text-text-secondary">
           {t(
             'template.management.description',
-            'Save reusable setups for recurring shoots. Templates can be applied to any project without overwriting existing data.'
+            'Save reusable setups for recurring shoots. Templates create new projects without altering existing data.'
           )}
         </p>
       </div>
@@ -122,10 +122,10 @@ const TemplateManager = ({
               <div className="mt-auto flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => onApplyTemplate(template.id)}
+                  onClick={() => onCreateProjectFromTemplate(template.id)}
                   className="ui-button ui-button-primary px-3 py-2 text-xs"
                 >
-                  {t('template.actions.apply', 'Apply to active project')}
+                  {t('template.actions.apply', 'Create project from template')}
                 </button>
                 <button
                   type="button"

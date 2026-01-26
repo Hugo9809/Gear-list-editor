@@ -48,7 +48,7 @@
     "helper": {
       "dashboard": "In Alle Projekte starten: Projekt-Kachel öffnen oder erstellen, Importe verwalten und Backups offline schützen.",
       "project": "Projekt-Kachel öffnen, um die Equipmentliste mit Autosave und Exporten zu bearbeiten.",
-      "templates": "Kits sicher wiederverwenden. Vorlagen sind hier und ergänzen ohne Überschreiben.",
+      "templates": "Kits sicher wiederverwenden. Vorlagen sind hier und erstellen neue Projekte, ohne bestehende zu verändern.",
       "settings": "Vollständige Backups, Importe, Geräte-Wiederherstellungen und Werksreset sicher verwalten.",
       "help": "Offline-fokussierte Hilfe zu Autosave, Backups, Wiederherstellung und Exporten."
     }
@@ -84,7 +84,7 @@
   "dashboard": {
     "quickActions": {
       "title": "Alle-Projekte-Schnellaktionen",
-      "description": "Vertrauenswürdige Vorlagen laden oder ein Projekt-Backup in deine lokale Bibliothek zurückholen."
+      "description": "Starte ein neues Projekt aus einer Vorlage oder hole ein Projekt-Backup in deine lokale Bibliothek zurück."
     },
     "autoBackups": {
       "title": "Automatische Backups",
@@ -229,7 +229,7 @@
   "template": {
     "management": {
       "title": "Vorlagenverwaltung",
-      "description": "Speichere wiederverwendbare Setups für wiederkehrende Drehs. Vorlagen lassen sich auf jedes Projekt anwenden, ohne bestehende Daten zu überschreiben."
+      "description": "Speichere wiederverwendbare Setups für wiederkehrende Drehs. Vorlagen erstellen neue Projekte, ohne bestehende Daten zu verändern."
     },
     "fields": {
       "name": "Vorlagenname",
@@ -243,14 +243,14 @@
     "actions": {
       "saveCurrent": "Aktuelles Projekt als Vorlage speichern",
       "saveFromProject": "Als Vorlage speichern",
-      "loadIntoProject": "Aus Vorlage laden",
-      "apply": "Auf aktives Projekt anwenden",
+      "loadIntoProject": "Projekt aus Vorlage erstellen",
+      "apply": "Projekt aus Vorlage erstellen",
       "remove": "Entfernen"
     },
     "library": {
       "label": "Vorlagenbibliothek",
       "emptyOption": "Keine Vorlagen gespeichert",
-      "helper": "Vorlagen ergänzen Equipment im ausgewählten Projekt, ohne vorhandene Einträge zu überschreiben."
+      "helper": "Vorlagen erstellen neue Projekte, ohne vorhandene Einträge zu verändern."
     },
     "list": {
       "empty": "Noch keine Vorlagen. Speichere das aktive Projekt, um deine Bibliothek aufzubauen."
@@ -265,7 +265,7 @@
   "categories": {
     "title": "Kategorien",
     "label": "Kategorien",
-    "helper": "Nutze Vorlagen für schnellere Setups.",
+    "helper": "Starte neue Projekte aus Vorlagen für schnellere Setups.",
     "placeholder": "Kategorie hinzufügen (z. B. Kamera, Licht)",
     "actions": {
       "add": "Kategorie hinzufügen",
@@ -273,7 +273,7 @@
       "moveUp": "Nach oben",
       "moveDown": "Nach unten"
     },
-    "empty": "Noch keine Kategorien. Füge oben eine hinzu oder wende eine Vorlage an.",
+    "empty": "Noch keine Kategorien. Füge oben eine hinzu, um loszulegen.",
     "notes": {
       "placeholder": "Kategorie-Notizen oder Rental-Referenzen"
     },
@@ -372,9 +372,9 @@
     "projectNeededForTemplate": "Erstelle ein Projekt, bevor du eine Vorlage speicherst.",
     "templateNameRequired": "Bitte benenne die Vorlage.",
     "templateSaved": "Vorlage aus dem aktuellen Projekt gespeichert.",
-    "projectNeededForApplyTemplate": "Wähle ein Projekt, bevor du eine Vorlage anwendest.",
-    "templateApplied": "Vorlage angewendet. Autosave sichert die aktualisierte Liste.",
-    "templateSelectionRequired": "Wähle eine Vorlage, die in das aktive Projekt geladen werden soll.",
+    "projectNeededForApplyTemplate": "Vorlagen erstellen neue Projekte. Wähle eine Vorlage, um zu starten.",
+    "templateApplied": "Projekt aus Vorlage erstellt. Autosave sichert es.",
+    "templateSelectionRequired": "Wähle eine Vorlage, um ein neues Projekt zu starten.",
     "templateUpdated": "Vorlage aktualisiert.",
     "templateRemoved": "Vorlage entfernt.",
     "projectNeededForExport": "Wähle ein Projekt, bevor du exportierst.",
@@ -480,7 +480,7 @@
           "Projekt auswählen, um ohne Datenverlust weiterzuarbeiten.",
           "Alle-Projekte-Aktionen kümmern sich um Importe, Wiederherstellung und Geräte-Backups.",
           "Im Projekt-Arbeitsbereich oben exportieren oder PDF erstellen.",
-          "Vorlagen liegen im Vorlagen-Tab und ergänzen Equipment ohne Überschreiben.",
+          "Vorlagen liegen im Vorlagen-Tab und erstellen schnell neue Projekte.",
           "Aktiviere „Auto-Backups anzeigen“ in den Einstellungen, um Geräte-Backups im Dashboard zu sehen.",
           "In den Einstellungen findest du vollständige Backups, Importe und den Werksreset."
         ]
@@ -497,10 +497,10 @@
       },
       {
         "title": "Vorlagen und Exporte sicher nutzen",
-        "description": "Vorlagen ergänzen Equipment, ohne bestehende Listen zu ersetzen.",
+        "description": "Vorlagen erstellen neue Projekte, ohne bestehende zu verändern.",
         "items": [
           "Aktives Projekt als Vorlage speichern, wenn ein Kit wiederkehrt.",
-          "Vorlagen aus dem Vorlagen-Tab hinzufügen, ohne Einträge zu verlieren.",
+          "Neue Projekte aus Vorlagen im Vorlagen-Tab erstellen.",
           "Projekt-Export und PDF-Export findest du im Projekt-Arbeitsbereich."
         ]
       }
@@ -552,7 +552,7 @@
           "Einstellungen bieten vollständige Backups, Importe, Wiederherstellungen und Werksreset-Steuerungen.",
           "Dashboard-Auto-Backups in den Einstellungen aktivieren, um aktuelle Geräte-Backups zu prüfen.",
           "Alle-Projekte-Aktionen halten Importe und Wiederherstellung nah an deinen Projekten.",
-          "Vorlagen werden im Vorlagen-Tab verwaltet und überschreiben keine Daten."
+          "Vorlagen werden im Vorlagen-Tab verwaltet und erstellen neue Projekte, ohne bestehende Daten zu verändern."
         ]
       }
     ]

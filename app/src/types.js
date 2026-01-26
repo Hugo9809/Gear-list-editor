@@ -241,6 +241,7 @@
  * @property {ProjectDraft} projectDraft - Current new-project draft
  * @property {(field: string, value: string | ShootSchedule) => void} updateProjectDraftField - Update draft field
  * @property {(event: Event) => string|null} addProject - Create new project, returns ID or null
+ * @property {(template: Template, overrides?: { name?: string }) => string|null} createProjectFromTemplate - Create a project from a template
  * @property {(projectId: string) => void} deleteProject - Delete a project
  * @property {string} newCategoryName - Current new-category name
  * @property {(name: string) => void} setNewCategoryName - Set new category name

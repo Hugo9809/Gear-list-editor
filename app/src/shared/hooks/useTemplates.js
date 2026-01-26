@@ -8,9 +8,9 @@ const emptyTemplateDraft = {
 
 /**
  * Manage template library state and template workflows.
- * Assumes project state is provided by the caller.
+ * Assumes project creation is handled by the caller.
  */
-export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
+export const useTemplates = ({ t, setStatus, addProjectFromTemplate }) => {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [templateDraft, setTemplateDraft] = useState(emptyTemplateDraft);
@@ -78,65 +78,47 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
   );
 
   /**
-   * Applies the selected template to the active project, appending categories and items.
-   * @param {string} templateId - ID of the template to apply.
-   * @param {import('../../types.js').Project} activeProject - The target project.
+   * Creates a new project from the selected template.
+   * @param {string} templateId - ID of the template to use.
+   * @returns {string|null} New project ID, or null when unavailable.
    */
-  const applyTemplateToProject = useCallback(
-    (templateId, activeProject) => {
-      if (!activeProject) {
-        setStatus(
-          t('status.projectNeededForApplyTemplate', 'Select a project before applying a template.')
-        );
-        return;
-      }
+  const createProjectFromTemplate = useCallback(
+    (templateId) => {
       const template = templates.find((item) => item.id === templateId);
       if (!template) {
-        return;
+        return null;
       }
-      template.categories.forEach((category) => {
-        category.items.forEach((item) => rememberItem(item, category.name));
-      });
-      updateProject(activeProject.id, (project) => ({
-        ...project,
-        categories: [
-          ...project.categories,
-          ...template.categories.map((category) => ({
-            ...category,
-            id: createId(),
-            items: category.items.map((item) => ({
-              ...item,
-              id: createId()
-            }))
-          }))
-        ]
-      }));
+      const projectId = addProjectFromTemplate(template);
+      if (!projectId) {
+        return null;
+      }
       setTemplates((prev) =>
         prev.map((item) =>
           item.id === templateId ? { ...item, lastUsed: new Date().toISOString() } : item
         )
       );
       setStatus(
-        t('status.templateApplied', 'Template applied. Autosave will secure the updated list.')
+        t('status.templateApplied', 'Project created from template. Autosave will secure it.')
       );
+      return projectId;
     },
-    [rememberItem, setStatus, t, templates, updateProject]
+    [addProjectFromTemplate, setStatus, t, templates]
   );
 
-  const handleLoadTemplate = useCallback(
-    (activeProject) => {
+  const handleCreateProjectFromTemplate = useCallback(
+    () => {
       if (!selectedTemplateId) {
         setStatus(
           t(
             'status.templateSelectionRequired',
-            'Select a template to load into the active project.'
+            'Select a template to start a new project.'
           )
         );
-        return;
+        return null;
       }
-      applyTemplateToProject(selectedTemplateId, activeProject);
+      return createProjectFromTemplate(selectedTemplateId);
     },
-    [applyTemplateToProject, selectedTemplateId, setStatus, t]
+    [createProjectFromTemplate, selectedTemplateId, setStatus, t]
   );
 
   const updateTemplateField = useCallback(
@@ -173,8 +155,8 @@ export const useTemplates = ({ t, setStatus, updateProject, rememberItem }) => {
     updateTemplateDraftField,
     saveTemplateFromProject,
     handleTemplateSubmit,
-    applyTemplateToProject,
-    handleLoadTemplate,
+    createProjectFromTemplate,
+    handleCreateProjectFromTemplate,
     updateTemplateField,
     removeTemplate
   };

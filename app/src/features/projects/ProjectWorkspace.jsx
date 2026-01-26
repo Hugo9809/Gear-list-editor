@@ -236,7 +236,7 @@ const ProjectWorkspace = ({
                   {t('categories.title', 'Categories')}
                 </h3>
                 <span className="text-xs text-text-muted">
-                  {t('categories.helper', 'Use templates for faster setups.')}
+                  {t('categories.helper', 'Start new projects from templates for faster setups.')}
                 </span>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -255,7 +255,7 @@ const ProjectWorkspace = ({
             <div className="flex flex-col gap-4">
               {activeProject.categories.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted">
-                  {t('categories.empty', 'No categories yet. Add one above or apply a template.')}
+                  {t('categories.empty', 'No categories yet. Add one above to start building the list.')}
                 </div>
               ) : (
                 activeProject.categories.map((category, categoryIndex) => (

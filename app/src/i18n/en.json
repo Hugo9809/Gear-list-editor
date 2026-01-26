@@ -48,7 +48,7 @@
     "helper": {
       "dashboard": "Start in All Projects: create or open a project tile, manage imports, and protect backups while offline.",
       "project": "Open a project tile to edit the gear list with autosave and exports.",
-      "templates": "Reuse kits safely. Templates live here and add gear without overwriting your list.",
+      "templates": "Reuse kits safely. Templates live here and create new projects without touching existing ones.",
       "settings": "Manage full backups, imports, device restores, and factory reset safely.",
       "help": "Offline-first guidance for autosave, backups, restores, and safe exports."
     }
@@ -74,7 +74,7 @@
   "dashboard": {
     "quickActions": {
       "title": "All Projects quick actions",
-      "description": "Load trusted templates or bring a project backup back into your local library."
+      "description": "Start a new project from a template or bring a project backup back into your local library."
     },
     "autoBackups": {
       "title": "Auto backups",
@@ -217,7 +217,7 @@
   "template": {
     "management": {
       "title": "Template management",
-      "description": "Save reusable setups for recurring shoots. Templates can be applied to any project without overwriting existing data."
+      "description": "Save reusable setups for recurring shoots. Templates create new projects without altering existing data."
     },
     "fields": {
       "name": "Template name",
@@ -231,14 +231,14 @@
     "actions": {
       "saveCurrent": "Save current project as template",
       "saveFromProject": "Save as template",
-      "loadIntoProject": "Load from template",
-      "apply": "Apply to active project",
+      "loadIntoProject": "Create project from template",
+      "apply": "Create project from template",
       "remove": "Remove"
     },
     "library": {
       "label": "Template library",
       "emptyOption": "No templates saved",
-      "helper": "Templates add gear to the selected project without overwriting existing entries."
+      "helper": "Templates create new projects without altering existing entries."
     },
     "list": {
       "empty": "No templates yet. Save the active project to build your library."
@@ -253,7 +253,7 @@
   "categories": {
     "title": "Categories",
     "label": "Categories",
-    "helper": "Use templates for faster setups.",
+    "helper": "Start new projects from templates for faster setups.",
     "placeholder": "Add a category (e.g. Camera, Lighting)",
     "actions": {
       "add": "Add category",
@@ -261,7 +261,7 @@
       "moveUp": "Move up",
       "moveDown": "Move down"
     },
-    "empty": "No categories yet. Add one above or apply a template.",
+    "empty": "No categories yet. Add one above to start building the list.",
     "notes": {
       "placeholder": "Category notes or rental references"
     },
@@ -363,9 +363,9 @@
     "projectNeededForTemplate": "Create a project before saving a template.",
     "templateNameRequired": "Please name the template.",
     "templateSaved": "Template saved from the current project.",
-    "projectNeededForApplyTemplate": "Select a project before applying a template.",
-    "templateApplied": "Template applied. Autosave will secure the updated list.",
-    "templateSelectionRequired": "Select a template to load into the active project.",
+    "projectNeededForApplyTemplate": "Templates create new projects. Select a template to get started.",
+    "templateApplied": "Project created from template. Autosave will secure it.",
+    "templateSelectionRequired": "Select a template to start a new project.",
     "templateUpdated": "Template updated.",
     "templateRemoved": "Template removed.",
     "projectNeededForExport": "Select a project before exporting.",
@@ -466,7 +466,7 @@
           "Select a project to continue editing without losing data.",
           "All Projects actions handle imports, restores, and device backups.",
           "Use the project workspace header for export and PDF actions.",
-          "Templates live in the Templates tab and can be added without overwriting gear.",
+          "Templates live in the Templates tab and can create new projects quickly.",
           "Enable “Show auto backups” in Settings to reveal device backups on the dashboard.",
           "Settings contains full backups, imports, and the factory reset option."
         ]
@@ -483,10 +483,10 @@
       },
       {
         "title": "Use templates and exports safely",
-        "description": "Templates add gear without replacing what you already have.",
+        "description": "Templates create new projects without changing existing ones.",
         "items": [
           "Save the active project as a template for repeat kits.",
-          "Apply templates from the Templates tab to extend your list safely.",
+          "Create new projects from templates in the Templates tab.",
           "Project export and PDF export live in the project workspace header."
         ]
       }
@@ -538,7 +538,7 @@
           "Settings provides full backups, imports, restores, and factory reset controls.",
           "Turn on dashboard auto backups in Settings to review recent device backups.",
           "All Projects quick actions keep imports and restores close to your projects.",
-          "Templates are managed in the Templates tab and never overwrite your data."
+          "Templates are managed in the Templates tab and create new projects without touching existing data."
         ]
       }
     ]

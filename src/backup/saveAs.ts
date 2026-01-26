@@ -82,7 +82,11 @@ const DEBUG_SAVE_AS = true;
 export type SaveOptions = {
   defaultName?: string;
   onError?: (err: any) => void;
+  onCancel?: () => void;
 };
+
+const isAbortError = (error: any): boolean =>
+  Boolean(error && typeof error === 'object' && (error as any).name === 'AbortError');
 
 // Legacy (in-app) Save-As bridge
 export type LegacySaveHandler = (blob: Blob, suggestedName: string) => Promise<boolean>;
@@ -96,7 +100,7 @@ export function registerLegacySaveHandler(handler: LegacySaveHandler): void {
 export async function saveAsBlob(blob: Blob, name: string, options?: SaveOptions): Promise<boolean> {
   if (DEBUG_SAVE_AS) console.debug('[SaveAs] saveAsBlob invoked', { name });
   // File System Access API path
-  if ('showSaveFilePicker' in window) {
+  if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
     try {
       if (DEBUG_SAVE_AS) console.debug('[SaveAs] FS API path available, attempting write', { name });
       const pickerOpts: any = {
@@ -116,6 +120,11 @@ export async function saveAsBlob(blob: Blob, name: string, options?: SaveOptions
       if (DEBUG_SAVE_AS) console.debug('[SaveAs] FS API write succeeded', { name });
       return true;
     } catch (e) {
+      if (isAbortError(e)) {
+        if (DEBUG_SAVE_AS) console.debug('[SaveAs] FS API save cancelled', { name });
+        options?.onCancel?.();
+        return false;
+      }
       if (DEBUG_SAVE_AS) console.debug('[SaveAs] FS API write failed', { name, error: e });
       if (options?.onError) options.onError(e);
     }
@@ -127,6 +136,9 @@ export async function saveAsBlob(blob: Blob, name: string, options?: SaveOptions
       if (DEBUG_SAVE_AS) console.debug('[SaveAs] Legacy Save-As path provided, delegating', { name });
       const ok = await legacySaveHandler(blob, name);
       if (ok) return true;
+      if (DEBUG_SAVE_AS) console.debug('[SaveAs] Legacy Save-As cancelled', { name });
+      options?.onCancel?.();
+      return false;
     } catch (e) {
       if (DEBUG_SAVE_AS) console.debug('[SaveAs] Legacy Save-As failed', { name, error: e });
       if (options?.onError) options.onError(e);
@@ -158,8 +170,10 @@ export async function exportJsonAsBackup(payload: any, fileName: string): Promis
   if (!chosenName) return false;
 
   // 2) Try OS Save-As with the chosen name
-  let ok = await saveAsBlob(blob, chosenName);
+  let cancelled = false;
+  let ok = await saveAsBlob(blob, chosenName, { onCancel: () => { cancelled = true; } });
   if (ok) return true;
+  if (cancelled) return false;
 
   // 3) Fallback: trigger a browser download as last resort
   try {
@@ -170,7 +184,7 @@ export async function exportJsonAsBackup(payload: any, fileName: string): Promis
     document.body.appendChild(a);
     a.click();
     a.remove();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
     return true;
   } catch {
     // ignore

@@ -38,6 +38,7 @@ export default function App() {
     projectDraft,
     updateProjectDraftField,
     addProject,
+    createProjectFromTemplate: addProjectFromTemplate,
     // deleteProject removed
     archiveProject, // New soft delete
     restoreProject, // New restore
@@ -59,8 +60,6 @@ export default function App() {
     updateProjectNotes,
     applySuggestionToDraft,
     applySuggestionToItem,
-    updateProject,
-    rememberItem,
     moveItemUp,
     moveItemDown
   } = useProjects({ t, setStatus, deviceLibrary, setDeviceLibrary });
@@ -74,11 +73,11 @@ export default function App() {
     updateTemplateDraftField,
     saveTemplateFromProject,
     handleTemplateSubmit,
-    applyTemplateToProject,
-    handleLoadTemplate,
+    createProjectFromTemplate,
+    handleCreateProjectFromTemplate: createProjectFromSelectedTemplate,
     updateTemplateField,
     removeTemplate
-  } = useTemplates({ t, setStatus, updateProject, rememberItem });
+  } = useTemplates({ t, setStatus, addProjectFromTemplate });
 
   const {
     storageRef,
@@ -298,6 +297,26 @@ export default function App() {
     [setSelectedTemplateId]
   );
 
+  const handleCreateProjectFromTemplate = useCallback(
+    (templateId) => {
+      const projectId = createProjectFromTemplate(templateId);
+      if (projectId) {
+        navigate(`/project/${projectId}`);
+      }
+    },
+    [createProjectFromTemplate, navigate]
+  );
+
+  const handleCreateProjectFromSelection = useCallback(
+    () => {
+      const projectId = createProjectFromSelectedTemplate();
+      if (projectId) {
+        navigate(`/project/${projectId}`);
+      }
+    },
+    [createProjectFromSelectedTemplate, navigate]
+  );
+
   const handleImport = useCallback(
     async (event) => {
       const file = event.target.files?.[0];
@@ -445,7 +464,7 @@ export default function App() {
 
   const dashboardActions = {
     onTemplateSelect: handleTemplateSelect,
-    onLoadTemplate: handleLoadTemplate,
+    onCreateProjectFromTemplate: handleCreateProjectFromSelection,
     onImportProject: () => fileInputRef.current?.click(),
     onProjectDraftChange: updateProjectDraftField,
     onCreateProject: handleCreateProject,
@@ -544,7 +563,7 @@ export default function App() {
                 templates={templates}
                 resolveDisplayName={resolveDisplayName}
                 onUpdateTemplateField={updateTemplateField}
-                onApplyTemplate={(id) => applyTemplateToProject(id, null)} // Templates tab has no active project
+                onCreateProjectFromTemplate={handleCreateProjectFromTemplate}
                 onRemoveTemplate={removeTemplate}
               />
             }

@@ -17,7 +17,7 @@ const ProjectDashboard = ({
   templates,
   selectedTemplateId,
   onTemplateSelect,
-  onLoadTemplate,
+  onCreateProjectFromTemplate,
   onImportProject,
   projectDraft,
   onProjectDraftChange,
@@ -103,7 +103,7 @@ const ProjectDashboard = ({
               <p className="text-sm text-text-secondary">
                 {t(
                   'dashboard.quickActions.description',
-                  'Load trusted templates or bring a project backup back into your local library.'
+                  'Start a new project from a template or bring a project backup back into your local library.'
                 )}
               </p>
             </div>
@@ -134,14 +134,14 @@ const ProjectDashboard = ({
               </label>
               <button
                 type="button"
-                onClick={onLoadTemplate}
+                onClick={onCreateProjectFromTemplate}
                 disabled={!selectedTemplateId}
                 className={`ui-button ${selectedTemplateId
                   ? 'ui-button-primary'
                   : 'cursor-not-allowed bg-surface-sunken text-text-muted'
                   }`}
               >
-                {t('template.actions.loadIntoProject', 'Load from template')}
+                {t('template.actions.loadIntoProject', 'Create project from template')}
               </button>
               <button type="button" onClick={onImportProject} className="ui-button ui-button-outline">
                 {t('project.actions.importProject', 'Import project')}
@@ -151,7 +151,7 @@ const ProjectDashboard = ({
           <p className="mt-3 text-xs text-text-muted">
             {t(
               'template.library.helper',
-              'Templates add gear to the selected project without overwriting existing entries.'
+              'Templates create new projects without altering existing entries.'
             )}
           </p>
         </div>

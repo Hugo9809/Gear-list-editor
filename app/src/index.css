@@ -762,57 +762,23 @@ h6 {
 @layer components {
   .project-dashboard {
     position: relative;
-    isolation: isolate;
     display: flex;
     flex-direction: column;
     gap: var(--v2-space-xl);
     font-family: 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Avenir Next', 'Segoe UI', sans-serif;
   }
 
-  .project-dashboard::before {
-    content: '';
-    position: absolute;
-    top: -120px;
-    right: -90px;
-    width: 260px;
-    height: 260px;
-    background: radial-gradient(circle at 30% 30%, rgb(var(--v2-brand-primary) / 0.2), transparent 70%);
-    opacity: 0.6;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .project-dashboard::after {
-    content: '';
-    position: absolute;
-    bottom: -140px;
-    left: -80px;
-    width: 280px;
-    height: 280px;
-    background: radial-gradient(circle at 30% 30%, rgb(var(--v2-surface-muted) / 0.6), transparent 70%);
-    opacity: 0.7;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .project-dashboard > * {
-    position: relative;
-    z-index: 1;
-  }
-
   .dashboard-card {
     position: relative;
     border-radius: 24px;
     border: 1px solid rgb(var(--v2-border-default) / 0.7);
-    background: linear-gradient(180deg, rgb(var(--v2-surface-base) / 0.96), rgb(var(--v2-surface-elevated) / 0.86));
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-    backdrop-filter: saturate(140%) blur(14px);
-    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    background: rgb(var(--v2-surface-base) / 1);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08);
     animation: pd-fade 0.6s ease both;
   }
 
   .dashboard-card--hero {
-    background: linear-gradient(140deg, rgb(var(--v2-surface-base) / 0.98), rgb(var(--v2-surface-muted) / 0.75));
+    background: rgb(var(--v2-surface-base) / 1);
   }
 
   .dashboard-hero {
@@ -883,24 +849,11 @@ h6 {
 
   .dashboard-quickactions {
     position: relative;
-    overflow: hidden;
     border-radius: 20px;
     border: 1px solid rgb(var(--v2-border-muted) / 0.9);
-    background: linear-gradient(135deg, rgb(var(--v2-surface-base) / 0.92), rgb(var(--v2-surface-muted) / 0.7));
+    background: rgb(var(--v2-surface-base) / 1);
     padding: var(--v2-space-md);
-    box-shadow: var(--v2-shadow-sm);
-  }
-
-  .dashboard-quickactions::before {
-    content: '';
-    position: absolute;
-    top: -60px;
-    right: -40px;
-    width: 160px;
-    height: 160px;
-    background: radial-gradient(circle, rgb(var(--v2-brand-primary) / 0.18), transparent 70%);
-    opacity: 0.6;
-    pointer-events: none;
+    box-shadow: var(--v2-shadow-xs);
   }
 
   .dashboard-form-grid {
@@ -918,7 +871,7 @@ h6 {
   .project-dashboard .ui-select {
     border-radius: 14px;
     border: 1px solid rgb(var(--v2-border-default) / 0.7);
-    background: rgb(var(--v2-surface-base) / 0.92);
+    background: rgb(var(--v2-surface-base) / 1);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 8px 18px rgba(15, 23, 42, 0.05);
     transition: border-color var(--v2-transition-normal), box-shadow var(--v2-transition-normal), background-color var(--v2-transition-normal);
   }
@@ -935,7 +888,7 @@ h6 {
   .dashboard-dropdown {
     border-radius: 16px;
     border: 1px solid rgb(var(--v2-border-default) / 0.7);
-    background: rgb(var(--v2-surface-base) / 0.98);
+    background: rgb(var(--v2-surface-base) / 1);
     box-shadow: 0 18px 30px rgba(0, 0, 0, 0.12);
   }
 
@@ -962,17 +915,17 @@ h6 {
   }
 
   .dashboard-button-primary {
-    background: linear-gradient(180deg, rgb(var(--v2-brand-primary) / 1), rgb(var(--v2-brand-primary-active) / 1));
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: rgb(var(--v2-brand-primary) / 1);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
   }
 
   .dashboard-button.ui-button-outline {
-    background: rgb(var(--v2-surface-base) / 0.85);
+    background: rgb(var(--v2-surface-base) / 1);
     border-color: rgb(var(--v2-border-default) / 0.8);
   }
 
   .dashboard-button-danger {
-    background: rgb(var(--v2-status-error-bg) / 0.5);
+    background: rgb(var(--v2-status-error-bg) / 1);
     border-color: rgb(var(--v2-status-error) / 0.35);
     color: rgb(var(--v2-status-error) / 0.95);
   }
@@ -1009,7 +962,7 @@ h6 {
     padding: 6px 12px;
     border-radius: 999px;
     border: 1px solid rgb(var(--v2-border-default) / 0.6);
-    background: rgb(var(--v2-surface-base) / 0.75);
+    background: rgb(var(--v2-surface-base) / 1);
     font-size: 0.72rem;
     font-weight: var(--v2-font-weight-semibold);
     color: rgb(var(--v2-text-primary) / 1);
@@ -1017,7 +970,7 @@ h6 {
   }
 
   .dashboard-pill-muted {
-    background: rgb(var(--v2-surface-muted) / 0.6);
+    background: rgb(var(--v2-surface-muted) / 1);
     color: rgb(var(--v2-text-muted) / 1);
     font-weight: var(--v2-font-weight-medium);
   }
@@ -1042,40 +995,24 @@ h6 {
   .dashboard-project-card {
     --pd-accent: var(--v2-brand-primary);
     position: relative;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: var(--v2-space-md);
     padding: var(--v2-space-md);
     border-radius: 20px;
     border: 1px solid rgb(var(--v2-border-default) / 0.6);
-    background: linear-gradient(160deg, rgb(var(--v2-surface-base) / 0.9), rgb(var(--v2-surface-muted) / 0.65));
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border-top: 3px solid rgb(var(--pd-accent) / 0.55);
+    background: rgb(var(--v2-surface-base) / 1);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
     transition: transform var(--v2-transition-normal), box-shadow var(--v2-transition-normal), border-color var(--v2-transition-normal);
     animation: pd-card 0.55s ease both;
     animation-delay: calc(var(--pd-index, 0) * 60ms);
   }
 
-  .dashboard-project-card::before {
-    content: '';
-    position: absolute;
-    inset: -40% auto auto -35%;
-    width: 220px;
-    height: 220px;
-    background: radial-gradient(circle, rgb(var(--pd-accent) / 0.2), transparent 70%);
-    opacity: 0.75;
-    pointer-events: none;
-  }
-
-  .dashboard-project-card > * {
-    position: relative;
-    z-index: 1;
-  }
-
   .dashboard-project-card:hover {
     transform: translateY(-3px);
     border-color: rgb(var(--v2-border-strong) / 0.7);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.12);
   }
 
   .dashboard-project-title {
@@ -1100,7 +1037,7 @@ h6 {
   .dashboard-stat {
     border-radius: 14px;
     border: 1px solid rgb(var(--v2-border-muted) / 0.9);
-    background: rgb(var(--v2-surface-base) / 0.7);
+    background: rgb(var(--v2-surface-muted) / 1);
     padding: 8px 12px;
     font-size: 0.78rem;
     font-weight: var(--v2-font-weight-semibold);
@@ -1117,7 +1054,7 @@ h6 {
   .dashboard-empty {
     border-radius: 18px;
     border: 1px dashed rgb(var(--v2-border-default) / 0.7);
-    background: rgb(var(--v2-surface-muted) / 0.6);
+    background: rgb(var(--v2-surface-muted) / 1);
     padding: var(--v2-space-lg);
     text-align: center;
     color: rgb(var(--v2-text-muted) / 1);
@@ -1137,20 +1074,20 @@ h6 {
     padding: var(--v2-space-md);
     border-radius: 18px;
     border: 1px solid rgb(var(--v2-border-default) / 0.6);
-    background: rgb(var(--v2-surface-base) / 0.8);
+    background: rgb(var(--v2-surface-base) / 1);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
     animation: pd-card 0.55s ease both;
     animation-delay: calc(var(--pd-index, 0) * 60ms);
   }
 
   :root[data-theme='dark'] .dashboard-card {
-    background: linear-gradient(180deg, rgb(var(--v2-surface-base) / 0.9), rgb(var(--v2-surface-elevated) / 0.82));
+    background: rgb(var(--v2-surface-base) / 1);
     border-color: rgb(var(--v2-border-default) / 0.9);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
   }
 
   :root[data-theme='dark'] .dashboard-project-card {
-    background: linear-gradient(160deg, rgb(var(--v2-surface-base) / 0.85), rgb(var(--v2-surface-muted) / 0.65));
+    background: rgb(var(--v2-surface-base) / 1);
     box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35);
   }
 

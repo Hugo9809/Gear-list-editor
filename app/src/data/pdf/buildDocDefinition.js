@@ -169,10 +169,12 @@ export function buildDocDefinition(snapshot, t, theme) {
     ? rawProjectName
     : t('project.untitled', 'Untitled Project');
 
-  const isPinkMode = theme === 'pink';
+  const resolvedTheme = theme === 'dark' || !theme ? 'light' : theme;
+  const isPinkMode = resolvedTheme === 'pink';
+  const isLightMode = resolvedTheme === 'light';
   const themeColor = isPinkMode ? '#E10078' : '#001589';
   const subtitleColor = isPinkMode ? '#F06292' : '#5C6BC0';
-  const lineColor = isPinkMode ? '#F06292' : '#9CA3AF';
+  const lineColor = isPinkMode ? '#F06292' : isLightMode ? '#001589' : '#9CA3AF';
 
   const subtitle = shootSchedule.shootingPeriods.length
     ? formatDateList(shootSchedule.shootingPeriods, emptyValue)
@@ -267,13 +269,6 @@ export function buildDocDefinition(snapshot, t, theme) {
       .slice(1, 5)
       .map((value) => normalizeText(value))
       .filter((value) => value !== '');
-    const detailHeaders = [
-      t('project.print.headers.detail1', 'Detail 1'),
-      t('project.print.headers.detail2', 'Detail 2'),
-      t('project.print.headers.detail3', 'Detail 3'),
-      t('project.print.headers.detail4', 'Detail 4')
-    ].slice(0, detailValues.length);
-
     const allValues = [itemValue, ...detailValues, ...extValues];
 
     const widths = [90, ...Array(allValues.length).fill('*')];
@@ -281,23 +276,7 @@ export function buildDocDefinition(snapshot, t, theme) {
     cameraSpecRow = {
       table: {
         widths,
-        headerRows: 1,
         body: [
-          // Header Row
-          [
-            { text: '', border: [false, false, false, true] }, // Under Label
-            { text: t('items.print.headers.item', 'Item'), style: 'specHeader', alignment: 'center' },
-            ...detailHeaders.map((header) => ({
-              text: header,
-              style: 'specHeader',
-              alignment: 'center'
-            })),
-            { text: t('project.print.labels.resolution', 'Res'), style: 'specHeader', alignment: 'center' },
-            { text: t('project.print.labels.aspectRatio', 'Aspect'), style: 'specHeader', alignment: 'center' },
-            { text: t('project.print.labels.codec', 'Codec'), style: 'specHeader', alignment: 'center' },
-            { text: t('project.print.labels.framerate', 'FPS'), style: 'specHeader', alignment: 'center' }
-          ],
-          // Value Row
           [
             {
               text: [

@@ -106,18 +106,21 @@ export const CategoryList = ({
         if (!over) return;
 
         if (type === 'category') {
-            if (active.id !== over.id) {
-                const oldIndex = categories.findIndex((c) => c.id === active.id);
-                const newIndex = categories.findIndex((c) => c.id === over.id);
-
-                if (oldIndex < 0 || newIndex < 0) {
-                    return;
-                }
-
-                // Reconstruct order array
-                const reordered = arrayMove(categories, oldIndex, newIndex);
-                reorderCategories(projectId, reordered.map(c => c.id));
+            const overCategoryId = findContainer(over.id);
+            if (!overCategoryId || active.id === overCategoryId) {
+                return;
             }
+
+            const oldIndex = categories.findIndex((c) => c.id === active.id);
+            const newIndex = categories.findIndex((c) => c.id === overCategoryId);
+
+            if (oldIndex < 0 || newIndex < 0) {
+                return;
+            }
+
+            // Reconstruct order array
+            const reordered = arrayMove(categories, oldIndex, newIndex);
+            reorderCategories(projectId, reordered.map(c => c.id));
             return;
         }
 

@@ -138,12 +138,16 @@
       "importProject": "Import project",
       "active": "Active",
       "open": "Open project",
+      "duplicate": "Duplicate",
       "backToDashboard": "Back to All Projects",
       "archive": "Archive",
       "addCrewMember": "Add crew member",
       "removeCrewMember": "Remove crew member",
       "viewArchived": "View Archived",
       "viewActive": "Back to Projects"
+    },
+    "duplicate": {
+      "suffix": "Copy"
     },
     "list": {
       "title": "Projects",
@@ -341,6 +345,7 @@
     "loadedFromSource": "Loaded safely from {source}.",
     "projectNameRequired": "Please name the project before creating it.",
     "projectCreated": "New project created and protected by autosave.",
+    "projectDuplicated": "Project duplicated. Edit the copy to continue.",
     "projectArchived": "Project archived. Backups remain intact.",
     "projectNeededForCategories": "Create a project before adding categories.",
     "categoryNameRequired": "Please name the category before adding it.",

@@ -26,6 +26,7 @@ const ProjectDashboardContainer = ({
     onCreateProject,
     onOpenProject,
     onDeleteProject,
+    onDuplicateProject,
     onRestoreProject
   } = dashboardActions;
 
@@ -47,6 +48,7 @@ const ProjectDashboardContainer = ({
       projects={projects}
       onOpenProject={onOpenProject}
       onDeleteProject={onDeleteProject}
+      onDuplicateProject={onDuplicateProject}
       resolveDisplayName={resolveDisplayName}
       lastSaved={lastSaved}
       showAutoBackups={showAutoBackups}

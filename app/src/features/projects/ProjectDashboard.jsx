@@ -24,6 +24,7 @@ const ProjectDashboard = ({
   onCreateProject,
   projects,
   contacts,
+  onDuplicateProject,
   onDeleteProject,
   resolveDisplayName,
   lastSaved,
@@ -351,6 +352,15 @@ const ProjectDashboard = ({
                     >
                       {t('project.actions.open', 'Open')}
                     </Link>
+                    {!isArchivedView && (
+                      <button
+                        type="button"
+                        onClick={() => onDuplicateProject(project.id)}
+                        className="ui-button ui-button-outline px-3 py-1 text-xs"
+                      >
+                        {t('project.actions.duplicate', 'Duplicate')}
+                      </button>
+                    )}
                     {isArchivedView && (
                       <button
                         type="button"

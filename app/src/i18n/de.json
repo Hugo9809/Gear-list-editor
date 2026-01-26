@@ -148,6 +148,7 @@
       "importProject": "Projekt importieren",
       "active": "Aktiv",
       "open": "Projekt öffnen",
+      "duplicate": "Duplizieren",
       "backToDashboard": "Zurück zu Alle Projekte",
       "archive": "Archivieren",
       "addCrewMember": "Crewmitglied hinzufügen",
@@ -156,6 +157,9 @@
       "delete": "Löschen",
       "viewArchived": "Archiv ansehen",
       "viewActive": "Zurück zu Projekten"
+    },
+    "duplicate": {
+      "suffix": "Kopie"
     },
     "list": {
       "title": "Projekte",
@@ -351,6 +355,7 @@
     "loadedFromSource": "Sicher aus {source} geladen.",
     "projectNameRequired": "Bitte benenne das Projekt, bevor du es erstellst.",
     "projectCreated": "Neues Projekt erstellt und durch Autosave geschützt.",
+    "projectDuplicated": "Projekt dupliziert. Passe die Kopie an, um fortzufahren.",
     "projectArchived": "Projekt archiviert. Backups bleiben erhalten.",
     "projectNeededForCategories": "Erstelle ein Projekt, bevor du Kategorien hinzufügst.",
     "categoryNameRequired": "Bitte benenne die Kategorie, bevor du sie hinzufügst.",

@@ -127,6 +127,34 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     [normalizeText]
   );
 
+  const buildDuplicateName = useCallback(
+    (projectName, existingProjects = []) => {
+      const baseName = normalizeText(projectName);
+      const resolvedBaseName =
+        baseName && !DEFAULT_NAME_KEYS.has(baseName)
+          ? baseName
+          : t('project.untitled', 'Untitled project');
+      const suffix = t('project.duplicate.suffix', 'Copy');
+      const existingNames = new Set(
+        existingProjects
+          .map((project) => normalizeText(project?.name))
+          .filter(Boolean)
+      );
+      const formatName = (index) =>
+        index === 1
+          ? `${resolvedBaseName} (${suffix})`
+          : `${resolvedBaseName} (${suffix} ${index})`;
+      let index = 1;
+      let candidate = formatName(index);
+      while (existingNames.has(candidate)) {
+        index += 1;
+        candidate = formatName(index);
+      }
+      return candidate;
+    },
+    [normalizeText, t]
+  );
+
   const rememberItem = useCallback(
     (item, categoryName = '') => {
       const name = normalizeText(item?.name);
@@ -416,6 +444,62 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
       setStatus(t('status.projectDeleted', 'Project permanently deleted.'));
     },
     [setStatus, t]
+  );
+
+  const duplicateProject = useCallback(
+    (projectId) => {
+      const project = projects.find((entry) => entry.id === projectId);
+      if (!project) {
+        return null;
+      }
+      const newProjectId = createId();
+      const duplicateName = buildDuplicateName(project.name, projects);
+      const clonedSchedule =
+        project.shootSchedule && typeof project.shootSchedule === 'object'
+          ? {
+              prepPeriods: Array.isArray(project.shootSchedule.prepPeriods)
+                ? project.shootSchedule.prepPeriods.map((entry) => ({ ...entry }))
+                : [],
+              shootingPeriods: Array.isArray(project.shootSchedule.shootingPeriods)
+                ? project.shootSchedule.shootingPeriods.map((entry) => ({ ...entry }))
+                : [],
+              returnDays: Array.isArray(project.shootSchedule.returnDays)
+                ? project.shootSchedule.returnDays.map((entry) => ({ ...entry }))
+                : []
+            }
+          : project.shootSchedule;
+      const clonedCrew = Array.isArray(project.crew)
+        ? project.crew.map((member) => ({
+            ...member,
+            id: createId()
+          }))
+        : [];
+      const clonedCategories = Array.isArray(project.categories)
+        ? project.categories.map((category) => ({
+            ...category,
+            id: createId(),
+            items: Array.isArray(category.items)
+              ? category.items.map((item) => ({
+                  ...item,
+                  id: createId()
+                }))
+              : []
+          }))
+        : [];
+      const duplicatedProject = {
+        ...project,
+        id: newProjectId,
+        name: duplicateName,
+        archived: false,
+        shootSchedule: clonedSchedule,
+        crew: clonedCrew,
+        categories: clonedCategories
+      };
+      setProjects((prev) => [duplicatedProject, ...prev]);
+      setStatus(t('status.projectDuplicated', 'Project duplicated. Edit the copy to continue.'));
+      return newProjectId;
+    },
+    [buildDuplicateName, projects, setProjects, setStatus, t]
   );
 
   const addCategory = useCallback(
@@ -748,6 +832,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     archiveProject,
     restoreProject,
     deleteProjectPermanently,
+    duplicateProject,
     newCategoryName,
     setNewCategoryName,
     addCategory,

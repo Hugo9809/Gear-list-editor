@@ -15,6 +15,7 @@ export async function exportPdf(project, locale, t, theme) {
   try {
     // 1. Build deterministic snapshot
     const snapshot = buildExportSnapshot(project, locale);
+    const pdfTheme = theme === 'dark' || !theme ? 'light' : theme;
 
     previewWindow = preparePdfWindow();
     // If a preview window would have been opened but the popup is blocked,
@@ -50,14 +51,14 @@ export async function exportPdf(project, locale, t, theme) {
     // Pass primitive data only to avoid DataCloneError (functions in docDefinition)
     let blob;
     try {
-      blob = await generatePdfInWorker(snapshot, translations, theme);
+      blob = await generatePdfInWorker(snapshot, translations, pdfTheme);
     } catch (error) {
       console.warn('PDF export worker failed, retrying on main thread.', error);
       try {
-        blob = await generatePdfOnMainThread(snapshot, translations, theme);
+        blob = await generatePdfOnMainThread(snapshot, translations, pdfTheme);
       } catch (mainError) {
         console.error('PDF export failed on main thread, falling back to print.', mainError);
-        await printHtmlFallback(snapshot, translations, theme, previewWindow);
+        await printHtmlFallback(snapshot, translations, pdfTheme, previewWindow);
         return 'print';
       }
     }

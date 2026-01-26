@@ -43,6 +43,7 @@ export default function App() {
     archiveProject, // New soft delete
     restoreProject, // New restore
     deleteProjectPermanently, // New hard delete
+    duplicateProject,
     newCategoryName,
     setNewCategoryName,
     addCategory,
@@ -280,6 +281,13 @@ export default function App() {
     [archiveProject]
   );
 
+  const handleDuplicateProject = useCallback(
+    (projectId) => {
+      duplicateProject(projectId);
+    },
+    [duplicateProject]
+  );
+
   const handleRestoreProject = useCallback(
     (projectId) => {
       restoreProject(projectId);
@@ -475,7 +483,8 @@ export default function App() {
     onProjectDraftChange: updateProjectDraftField,
     onCreateProject: handleCreateProject,
     onOpenProject: handleOpenProject,
-    onDeleteProject: handleDeleteProject
+    onDeleteProject: handleDeleteProject,
+    onDuplicateProject: handleDuplicateProject
   };
 
   const projectActions = {

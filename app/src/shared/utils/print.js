@@ -141,10 +141,12 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
       : (key, fallback, variables) =>
         translate(dictionaryOrT || getDictionary('en'), key, fallback, variables);
   const emptyValue = t('ui.emptyValue', '—');
-  const isPinkMode = theme === 'pink';
+  const resolvedTheme = theme === 'dark' || !theme ? 'light' : theme;
+  const isPinkMode = resolvedTheme === 'pink';
+  const isLightMode = resolvedTheme === 'light';
   const accentColor = isPinkMode ? '#E10078' : '#001589';
   const subtitleColor = isPinkMode ? '#F06292' : '#5C6BC0';
-  const lineColor = isPinkMode ? '#F06292' : '#9CA3AF';
+  const lineColor = isPinkMode ? '#F06292' : isLightMode ? '#001589' : '#9CA3AF';
   const resolveLabel = (value, variables) =>
     typeof value === 'string' && value.startsWith('defaults.')
       ? t(value, undefined, variables)

@@ -262,39 +262,21 @@ export function buildDocDefinition(snapshot, t, theme) {
       String(project?.codec ?? ''),
       String(project?.framerate ?? '')
     ];
-    // Create header labels corresponding to values
-    const headers = [
-      t('project.print.labels.cameraSpec', 'Camera Specification'), // Main label
-      t('project.print.headers.camera', 'Camera'),
-      t('project.print.headers.media', 'Media'),
-      t('project.print.headers.mount', 'Mount'),
-      t('project.print.headers.power', 'Power'),
-      t('project.print.labels.resolution', 'Res'),
-      t('project.print.labels.aspectRatio', 'Asp'),
-      t('project.print.labels.codec', 'Codec'),
-      t('project.print.labels.framerate', 'FPS')
-    ];
+    const itemValue = normalizeText(cameraSpec.values[0]);
+    const detailValues = cameraSpec.values
+      .slice(1, 5)
+      .map((value) => normalizeText(value))
+      .filter((value) => value !== '');
+    const detailHeaders = [
+      t('project.print.headers.detail1', 'Detail 1'),
+      t('project.print.headers.detail2', 'Detail 2'),
+      t('project.print.headers.detail3', 'Detail 3'),
+      t('project.print.headers.detail4', 'Detail 4')
+    ].slice(0, detailValues.length);
 
-    const allValues = [...cameraSpec.values, ...extValues];
+    const allValues = [itemValue, ...detailValues, ...extValues];
 
-    // Ensure we have 9 columns for values + 1 label column = 10 columns?
-    // cameraSpec.values has 5 items. extValues has 4 items. Total 9 items.
-    // The first column in the ROW is the Label/Letter.
-    // Then 9 value columns.
-
-    // We will make a 2-row table. 
-    // Row 1: Headers (small, gray)
-    // Row 2: Values (bold, black)
-
-    // Column 0: Category Label (e.g. "Camera A") - spans 2 rows or just sits there?
-    // To keep it clean, let's put the Category Label ABOVE the table or in the first cell spanning?
-
-    // Simpler: Just add the header row.
-    // Col 0: Empty or "Spec"
-    // Col 1..5: Camera Details
-    // Col 6..9: Metadata
-
-    const widths = [90, ...Array(9).fill('*')]; // 10 columns total
+    const widths = [90, ...Array(allValues.length).fill('*')];
 
     cameraSpecRow = {
       table: {
@@ -304,11 +286,12 @@ export function buildDocDefinition(snapshot, t, theme) {
           // Header Row
           [
             { text: '', border: [false, false, false, true] }, // Under Label
-            { text: 'Item', style: 'specHeader', alignment: 'center' },
-            { text: 'Detail 1', style: 'specHeader', alignment: 'center' },
-            { text: 'Detail 2', style: 'specHeader', alignment: 'center' },
-            { text: 'Detail 3', style: 'specHeader', alignment: 'center' },
-            { text: 'Detail 4', style: 'specHeader', alignment: 'center' },
+            { text: t('items.print.headers.item', 'Item'), style: 'specHeader', alignment: 'center' },
+            ...detailHeaders.map((header) => ({
+              text: header,
+              style: 'specHeader',
+              alignment: 'center'
+            })),
             { text: t('project.print.labels.resolution', 'Res'), style: 'specHeader', alignment: 'center' },
             { text: t('project.print.labels.aspectRatio', 'Aspect'), style: 'specHeader', alignment: 'center' },
             { text: t('project.print.labels.codec', 'Codec'), style: 'specHeader', alignment: 'center' },
@@ -384,6 +367,7 @@ export function buildDocDefinition(snapshot, t, theme) {
 
     return [
       {
+        unbreakable: true,
         table: {
           widths: ['auto', 'auto', '*'],
           headerRows: 1,
@@ -454,13 +438,13 @@ export function buildDocDefinition(snapshot, t, theme) {
 
   return {
     pageSize: 'A4',
-    pageMargins: [80, 80, 80, 80],
+    pageMargins: [80, 80, 80, 110],
     footer: (currentPage, pageCount) => ({
       text: `${pageLabel} ${currentPage} ${ofLabel} ${pageCount} | ${listLabel} | ${projectName}`,
       alignment: 'center',
       color: '#666',
       fontSize: 9,
-      margin: [80, 65, 80, 0]
+      margin: [80, 90, 80, 0]
     }),
     content: [
       {

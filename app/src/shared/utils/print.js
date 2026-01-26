@@ -245,18 +245,25 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
     normalizeText(project.codec),
     normalizeText(project.framerate)
   ];
-  const cameraSpecValues = cameraSpec
-    ? [...cameraSpec.values, ...cameraMetadataValues]
+  const itemValue = cameraSpec ? normalizeText(cameraSpec.values[0]) : '';
+  const detailValues = cameraSpec
+    ? cameraSpec.values
+      .slice(1, 5)
+      .map((value) => normalizeText(value))
+      .filter((value) => value !== '')
     : [];
-  while (cameraSpecValues.length > 0 && cameraSpecValues.length < 9) {
-    cameraSpecValues.push('');
-  }
-  const cameraSpecHeaders = [
-    t('items.print.headers.item', 'Item'),
+  const cameraSpecValues = cameraSpec
+    ? [itemValue, ...detailValues, ...cameraMetadataValues]
+    : [];
+  const detailHeaders = [
     t('project.print.headers.detail1', 'Detail 1'),
     t('project.print.headers.detail2', 'Detail 2'),
     t('project.print.headers.detail3', 'Detail 3'),
-    t('project.print.headers.detail4', 'Detail 4'),
+    t('project.print.headers.detail4', 'Detail 4')
+  ].slice(0, detailValues.length);
+  const cameraSpecHeaders = [
+    t('items.print.headers.item', 'Item'),
+    ...detailHeaders,
     t('project.print.labels.resolution', 'Res'),
     t('project.print.labels.aspectRatio', 'Aspect'),
     t('project.print.labels.codec', 'Codec'),
@@ -336,7 +343,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
         <title>${escapeHtml(projectName)} - ${escapeHtml(t('ui.gearList', 'Gear list'))}</title>
         <style>
           @page {
-            margin: 20mm 20mm 30mm;
+            margin: 20mm 20mm 10mm;
             size: A4;
           }
           body {
@@ -347,7 +354,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             print-color-adjust: exact;
           }
           main {
-            padding: 0 0 30mm;
+            padding: 0 0 35mm;
           }
           h1 {
             font-size: 22px;
@@ -420,6 +427,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
           .category {
             page-break-inside: avoid;
             break-inside: avoid;
+            break-inside: avoid-page;
           }
           .category h3,
           .notes h3 {
@@ -440,6 +448,7 @@ export const buildPrintableHtml = (project, dictionaryOrT, projectIndex = 0, the
             margin-top: 10px;
             page-break-inside: avoid;
             break-inside: avoid;
+            break-inside: avoid-page;
           }
           .notes-body {
             font-size: 10px;

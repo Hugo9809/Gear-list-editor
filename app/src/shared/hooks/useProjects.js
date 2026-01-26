@@ -14,6 +14,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { createId, STORAGE_MESSAGE_KEYS } from '../../data/storage.js';
 import { createEmptyShootSchedule, normalizeShootSchedule } from '../utils/shootSchedule.js';
+import { useUndo } from './useUndo.js';
 
 const emptyItemDraft = {
   name: '',
@@ -42,14 +43,21 @@ const DEFAULT_NAME_KEYS = new Set(Object.values(STORAGE_MESSAGE_KEYS.defaults));
  * Assumes persistence is handled by a higher-level storage hook.
  */
 export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) => {
-  const [projects, setProjects] = useState(/** @type {Project[]} */ ([]));
+  const {
+    state: projects,
+    setState: setProjects,
+    undo,
+    redo,
+    canUndo,
+    canRedo
+  } = useUndo(/** @type {Project[]} */([]));
   // @ts-ignore - allow flexible History typing in JS + TS-checking
-  const [history, setHistory] = useState(/** @type {History} */ ({ items: [], categories: [] }));
+  const [history, setHistory] = useState(/** @type {History} */({ items: [], categories: [] }));
   // activeProjectId and activeProject logic removed in favor of URL state
-  const [projectDraft, setProjectDraft] = useState(/** @type {ProjectDraft} */ (createEmptyProjectDraft()));
+  const [projectDraft, setProjectDraft] = useState(/** @type {ProjectDraft} */(createEmptyProjectDraft()));
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [itemDrafts, setItemDrafts] = useState(/** @type {Record<string, ItemDraft>} */ ({}));
-  const itemDraftsRef = useRef(/** @type {Record<string, ItemDraft>} */ ({}));
+  const [itemDrafts, setItemDrafts] = useState(/** @type {Record<string, ItemDraft>} */({}));
+  const itemDraftsRef = useRef(/** @type {Record<string, ItemDraft>} */({}));
 
   const setItemDraftsWithRef = useCallback((updater) => {
     const prev = itemDraftsRef.current;
@@ -496,6 +504,89 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     [setStatus, t, updateProject]
   );
 
+  /**
+   * Reorders categories within a project using Drag and Drop.
+   * @param {string} projectId
+   * @param {string[]} newOrderIds - Array of category IDs in the new order.
+   */
+  const reorderCategories = useCallback(
+    (projectId, newOrderIds) => {
+      updateProject(projectId, (project) => {
+        const categoryMap = new Map(project.categories.map((c) => [c.id, c]));
+        const newCategories = newOrderIds
+          .map((id) => categoryMap.get(id))
+          .filter(Boolean);
+
+        // Ensure no categories created during the drag are lost (edge case safety)
+        if (newCategories.length !== project.categories.length) {
+          return project;
+        }
+
+        return {
+          ...project,
+          categories: newCategories
+        };
+      });
+      // No toast needed for drag operations usually, or minimal one
+    },
+    [updateProject]
+  );
+
+  /**
+   * Moves an item between categories or reorders within the same category.
+   * @param {string} projectId
+   * @param {string} activeId - ID of the item being dragged.
+   * @param {string} activeCategoryId - Source category ID.
+   * @param {string} overCategoryId - Destination category ID (can be same).
+   * @param {number} newIndex - New index in the destination category.
+   */
+  const moveItem = useCallback(
+    (projectId, activeId, activeCategoryId, overCategoryId, newIndex) => {
+      updateProject(projectId, (project) => {
+        const sourceCategory = project.categories.find((c) => c.id === activeCategoryId);
+        const destCategory = project.categories.find((c) => c.id === overCategoryId);
+
+        if (!sourceCategory || !destCategory) return project;
+
+        const itemToMove = sourceCategory.items.find((i) => i.id === activeId);
+        if (!itemToMove) return project;
+
+        // If same category, just reorder
+        if (activeCategoryId === overCategoryId) {
+          const newItems = [...sourceCategory.items];
+          const oldIndex = newItems.findIndex((i) => i.id === activeId);
+          newItems.splice(oldIndex, 1);
+          newItems.splice(newIndex, 0, itemToMove);
+
+          return {
+            ...project,
+            categories: project.categories.map((c) =>
+              c.id === activeCategoryId ? { ...c, items: newItems } : c
+            )
+          };
+        }
+
+        // Moving to different category
+        // Remove from source
+        const newSourceItems = sourceCategory.items.filter((i) => i.id !== activeId);
+
+        // Add to destination
+        const newDestItems = [...destCategory.items];
+        newDestItems.splice(newIndex, 0, itemToMove);
+
+        return {
+          ...project,
+          categories: project.categories.map((c) => {
+            if (c.id === activeCategoryId) return { ...c, items: newSourceItems };
+            if (c.id === overCategoryId) return { ...c, items: newDestItems };
+            return c;
+          })
+        };
+      });
+    },
+    [updateProject]
+  );
+
   const moveItemUp = useCallback(
     (projectId, categoryId, itemId) => {
       updateCategory(projectId, categoryId, (category) => {
@@ -505,9 +596,9 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         [items[index - 1], items[index]] = [items[index], items[index - 1]];
         return { ...category, items };
       });
-      setStatus(t('status.itemMoved', 'Item moved.'));
+      // setStatus(t('status.itemMoved', 'Item moved.')); // Less noise
     },
-    [setStatus, t, updateCategory]
+    [t, updateCategory]
   );
 
   const moveItemDown = useCallback(
@@ -519,9 +610,9 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
         [items[index], items[index + 1]] = [items[index + 1], items[index]];
         return { ...category, items };
       });
-      setStatus(t('status.itemMoved', 'Item moved.'));
+      // setStatus(t('status.itemMoved', 'Item moved.'));
     },
-    [setStatus, t, updateCategory]
+    [t, updateCategory]
   );
 
   const removeCategory = useCallback(
@@ -676,6 +767,12 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
     updateProject,
     rememberItem,
     itemSuggestions,
-    deleteProject: deleteProjectPermanently
+    deleteProject: deleteProjectPermanently,
+    reorderCategories,
+    moveItem,
+    undo,
+    redo,
+    canUndo,
+    canRedo
   };
 };

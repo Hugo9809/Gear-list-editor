@@ -130,6 +130,9 @@ async function generatePdfOnMainThread(snapshot, translations, theme) {
     import('./buildDocDefinition.js')
   ]);
   pdfMake.vfs = ubuntuVfs;
+  if (pdfMake.virtualfs) {
+    pdfMake.virtualfs.storage = ubuntuVfs;
+  }
   const vfsKeys = Object.keys(pdfMake.vfs);
   const hasBold = vfsKeys.includes('Ubuntu-Bold.ttf');
   const hasItalic = vfsKeys.includes('Ubuntu-Italic.ttf');

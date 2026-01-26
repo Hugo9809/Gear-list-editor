@@ -13,6 +13,9 @@ console.log('Ubuntu VFS keys:', Object.keys(ubuntuVfs));
 // Ensure pdfMake uses the provided VFS
 // We assign it globally and inside the handler to be safe against bundling quirks
 pdfMake.vfs = ubuntuVfs;
+if (pdfMake.virtualfs) {
+  pdfMake.virtualfs.storage = ubuntuVfs;
+}
 
 import { getBlobFromGenerator } from '../pdfUtils.js';
 
@@ -28,6 +31,9 @@ self.onmessage = async (event) => {
     // Re-assign VFS/Fonts inside the request handling to prevent any state staleness
     // and verify keys exist
     pdfMake.vfs = ubuntuVfs;
+    if (pdfMake.virtualfs) {
+      pdfMake.virtualfs.storage = ubuntuVfs;
+    }
 
     const vfsKeys = Object.keys(pdfMake.vfs || {});
     const boldExists = vfsKeys.includes('Ubuntu-Bold.ttf');

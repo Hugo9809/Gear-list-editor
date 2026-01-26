@@ -92,6 +92,12 @@ const ProjectWorkspaceContainer = ({
       }
       onSyncCrewToContacts={typeof onSyncCrewToContacts === 'function' ? onSyncCrewToContacts : undefined}
       onDeleteProject={() => onDeleteProject(project.id)}
+      reorderCategories={projectActions.reorderCategories}
+      moveItem={projectActions.moveItem}
+      undo={projectActions.undo}
+      redo={projectActions.redo}
+      canUndo={projectActions.canUndo}
+      canRedo={projectActions.canRedo}
     />
   );
 };

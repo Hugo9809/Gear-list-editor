@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
  * @param {T} initialState - The initial state value.
  * @returns {{
  *   state: T,
- *   setState: (newState: T | ((prev: T) => T)) => void,
+ *   setState: (newState: T | ((prev: T) => T), options?: { skipHistory?: boolean, forceHistory?: boolean }) => void,
  *   undo: () => void,
  *   redo: () => void,
  *   canUndo: boolean,
@@ -16,11 +16,11 @@ import { useCallback, useState } from 'react';
  * }}
  */
 export const useUndo = (initialState) => {
-    const [history, setHistory] = useState({
-        past: [],
+    const [history, setHistory] = useState(() => ({
+        past: /** @type {T[]} */ ([]),
         present: initialState,
-        future: []
-    });
+        future: /** @type {T[]} */ ([])
+    }));
 
     const { past, present, future } = history;
 
@@ -55,14 +55,23 @@ export const useUndo = (initialState) => {
         });
     }, [canRedo]);
 
-    const setState = useCallback((newStateOrUpdater) => {
+    const setState = useCallback((newStateOrUpdater, options = {}) => {
+        const { skipHistory = false, forceHistory = false } = options;
+
         setHistory((curr) => {
             const newState = typeof newStateOrUpdater === 'function'
                 ? newStateOrUpdater(curr.present)
                 : newStateOrUpdater;
 
-            if (newState === curr.present) {
+            if (newState === curr.present && !forceHistory) {
                 return curr;
+            }
+
+            if (skipHistory) {
+                return {
+                    ...curr,
+                    present: newState
+                };
             }
 
             return {

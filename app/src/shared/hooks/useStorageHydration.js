@@ -133,7 +133,7 @@ export const useStorageHydration = ({
       if (!mounted) {
         return;
       }
-      setProjects(result.state.projects);
+      setProjects(result.state.projects, { skipHistory: true });
       setTemplates(result.state.templates);
       setDeviceLibrary(result.state.deviceLibrary);
       setContacts(result.state.contacts);
@@ -264,7 +264,7 @@ export const useStorageHydration = ({
             activeProjectId: null,
             lastSaved
           });
-          setProjects(state.projects);
+          setProjects(state.projects, { skipHistory: true });
           setTemplates(state.templates);
           setDeviceLibrary(state.deviceLibrary);
           setContacts(state.contacts);
@@ -293,7 +293,7 @@ export const useStorageHydration = ({
 
   const restoreFromDeviceBackup = useCallback(async () => {
     const result = await storageService.restoreFromBackup();
-    setProjects(result.state.projects);
+    setProjects(result.state.projects, { skipHistory: true });
     setTemplates(result.state.templates);
     setDeviceLibrary(result.state.deviceLibrary);
     setContacts(result.state.contacts);

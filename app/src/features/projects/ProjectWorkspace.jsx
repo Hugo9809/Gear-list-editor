@@ -2,8 +2,10 @@ import { useState } from 'react';
 import TypeaheadInput from '../../shared/components/TypeaheadInput.jsx';
 import { crewRoles } from '../../data/crewRoles.js';
 import { rentalHouseSuggestions, formatRentalHouseValue } from '../../data/rentalHouses.js';
+import { ArrowUturnLeftIcon, ArrowUturnRightIcon } from '@heroicons/react/24/outline';
 import CrewFieldList from './CrewFieldList.jsx';
 import ShootScheduleFields from './ShootScheduleFields.jsx';
+import { CategoryList } from './components/CategoryList.jsx';
 
 /**
  * Render the active project workspace with categories, items, and notes.
@@ -39,10 +41,15 @@ const ProjectWorkspace = ({
   onMoveItemDown,
   onRemoveItem,
   onApplySuggestionToDraft,
-  onApplySuggestionToItem
-  ,
+  onApplySuggestionToItem,
   onSyncCrewToContacts,
-  onDeleteProject
+  onDeleteProject,
+  reorderCategories,
+  moveItem,
+  undo,
+  redo,
+  canUndo,
+  canRedo
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSavingTemplate, setIsSavingTemplate] = useState(false);
@@ -99,6 +106,26 @@ const ProjectWorkspace = ({
             <button type="button" onClick={onBackToDashboard} className="ui-button ui-button-outline">
               {t('project.actions.backToDashboard', 'Back to dashboard')}
             </button>
+            <div className="flex items-center gap-1 border-l border-surface-sunken pl-3 ml-1">
+              <button
+                type="button"
+                onClick={undo}
+                disabled={!canUndo}
+                className="ui-button p-2 text-text-secondary hover:text-text-primary disabled:opacity-30"
+                title={t('common.undo', 'Undo')}
+              >
+                <ArrowUturnLeftIcon className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={redo}
+                disabled={!canRedo}
+                className="ui-button p-2 text-text-secondary hover:text-text-primary disabled:opacity-30"
+                title={t('common.redo', 'Redo')}
+              >
+                <ArrowUturnRightIcon className="h-5 w-5" />
+              </button>
+            </div>
             {activeProject && (
               <>
                 <button type="button" onClick={onExportProject} className="ui-button ui-button-outline">
@@ -253,203 +280,24 @@ const ProjectWorkspace = ({
             </form>
 
             <div className="flex flex-col gap-4">
-              {activeProject.categories.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted">
-                  {t('categories.empty', 'No categories yet. Add one above to start building the list.')}
-                </div>
-              ) : (
-                activeProject.categories.map((category, categoryIndex) => (
-                  <div
-                    key={category.id}
-                    className="ui-tile flex flex-col gap-4 border-l-4 border-l-brand bg-surface-elevated/80 p-4"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="flex flex-1 flex-col gap-3">
-                        <input
-                          value={resolveDisplayName(
-                            category.name,
-                            { index: categoryIndex + 1 },
-                            'defaults.untitled_category'
-                          )}
-                          onChange={(event) =>
-                            onUpdateCategoryField(category.id, 'name', event.target.value)
-                          }
-                          className="ui-input px-3 py-2 text-lg font-semibold"
-                        />
-                        <textarea
-                          value={category.notes}
-                          onChange={(event) =>
-                            onUpdateCategoryField(category.id, 'notes', event.target.value)
-                          }
-                          placeholder={t(
-                            'categories.notes.placeholder',
-                            'Category notes or rental references'
-                          )}
-                          rows={2}
-                          className="ui-textarea px-3 py-2"
-                        />
-                      </div>
-                      <div className="flex flex-wrap items-start gap-2">
-                        <button
-                          type="button"
-                          onClick={() => onMoveCategoryUp(category.id)}
-                          disabled={categoryIndex === 0}
-                          className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
-                          aria-label={t('categories.actions.moveUp', 'Move up')}
-                        >
-                          ↑
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onMoveCategoryDown(category.id)}
-                          disabled={categoryIndex === activeProject.categories.length - 1}
-                          className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
-                          aria-label={t('categories.actions.moveDown', 'Move down')}
-                        >
-                          ↓
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onRemoveCategory(category.id)}
-                          className="ui-button ui-button-danger px-3 py-2 text-xs uppercase tracking-wide"
-                        >
-                          {t('categories.actions.remove', 'Remove category')}
-                        </button>
-                      </div>
-                    </div>
-
-                    <form
-                      onSubmit={(event) => onAddItemToCategory(event, category.id)}
-                      className="ui-panel grid gap-3 bg-surface-base/90 p-3 md:grid-cols-[3fr_2fr_auto]"
-                    >
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="1"
-                          value={getItemDraft(category.id).quantity}
-                          onChange={(event) =>
-                            onUpdateDraftItem(category.id, 'quantity', event.target.value)
-                          }
-                          className="ui-input w-20"
-                        />
-                        <span className="text-sm font-semibold text-text-muted">×</span>
-                        <div className="min-w-0 flex-1">
-                          <TypeaheadInput
-                            value={getItemDraft(category.id).name}
-                            onChange={(value) => onUpdateDraftItem(category.id, 'name', value)}
-                            onSelectSuggestion={(suggestion) =>
-                              onApplySuggestionToDraft(category.id, suggestion)
-                            }
-                            suggestions={itemSuggestions}
-                            placeholder={t('items.fields.name', 'Item name')}
-                            label={t('items.fields.name', 'Item name')}
-                            detailsFallback={t('items.suggestion.detailsFallback')}
-                            inputClassName="ui-input px-3 py-2"
-                          />
-                        </div>
-                      </div>
-                      <input
-                        value={getItemDraft(category.id).details}
-                        onChange={(event) =>
-                          onUpdateDraftItem(category.id, 'details', event.target.value)
-                        }
-                        placeholder={t('items.fields.details', 'Details / notes')}
-                        className="ui-input px-3 py-2"
-                      />
-                      <button type="submit" className="ui-button ui-button-primary text-xs">
-                        {t('items.actions.add', 'Add')}
-                      </button>
-                    </form>
-
-                    <div className="flex flex-col gap-3">
-                      {category.items.length === 0 ? (
-                        <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-4 text-center text-xs text-text-muted">
-                          {t('items.empty', 'No items yet. Add the first item above.')}
-                        </div>
-                      ) : (
-                        category.items.map((item, itemIndex) => (
-                          <div
-                            key={item.id}
-                            className="ui-panel grid gap-3 bg-surface-muted/70 p-3 md:grid-cols-[3fr_2fr_auto]"
-                          >
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(event) =>
-                                  onUpdateItemField(
-                                    category.id,
-                                    item.id,
-                                    'quantity',
-                                    event.target.value
-                                  )
-                                }
-                                className="ui-input w-20"
-                              />
-                              <span className="text-sm font-semibold text-text-muted">×</span>
-                              <div className="min-w-0 flex-1">
-                                <TypeaheadInput
-                                  value={resolveDisplayName(
-                                    item.name,
-                                    { index: itemIndex + 1 },
-                                    'defaults.untitled_item'
-                                  )}
-                                  onChange={(value) =>
-                                    onUpdateItemField(category.id, item.id, 'name', value)
-                                  }
-                                  onSelectSuggestion={(suggestion) =>
-                                    onApplySuggestionToItem(category.id, item.id, suggestion)
-                                  }
-                                  suggestions={itemSuggestions}
-                                  placeholder={t('items.fields.name', 'Item name')}
-                                  label={t('items.fields.name', 'Item name')}
-                                  detailsFallback={t('items.suggestion.detailsFallback')}
-                                  inputClassName="ui-input px-3 py-2"
-                                />
-                              </div>
-                            </div>
-                            <input
-                              value={item.details}
-                              onChange={(event) =>
-                                onUpdateItemField(category.id, item.id, 'details', event.target.value)
-                              }
-                              className="ui-input px-3 py-2"
-                            />
-                            <div className="flex flex-col items-end gap-2">
-                              <button
-                                type="button"
-                                onClick={() => onMoveItemUp(category.id, item.id)}
-                                disabled={itemIndex === 0}
-                                className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
-                                aria-label={t('items.actions.moveUp', 'Move up')}
-                              >
-                                ↑
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => onMoveItemDown(category.id, item.id)}
-                                disabled={itemIndex === category.items.length - 1}
-                                className="ui-button ui-button-outline px-2 py-1 text-sm disabled:opacity-40"
-                                aria-label={t('items.actions.moveDown', 'Move down')}
-                              >
-                                ↓
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => onRemoveItem(category.id, item.id)}
-                                className="ui-button ui-button-danger px-3 py-2 text-xs uppercase tracking-wide"
-                              >
-                                {t('items.actions.remove', 'Remove')}
-                              </button>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+              <CategoryList
+                projectId={activeProject.id}
+                categories={activeProject.categories}
+                t={t}
+                resolveDisplayName={resolveDisplayName}
+                onUpdateCategoryField={onUpdateCategoryField}
+                onRemoveCategory={onRemoveCategory}
+                onAddItemToCategory={onAddItemToCategory}
+                getItemDraft={getItemDraft}
+                onUpdateDraftItem={onUpdateDraftItem}
+                onApplySuggestionToDraft={onApplySuggestionToDraft}
+                itemSuggestions={itemSuggestions}
+                onUpdateItemField={onUpdateItemField}
+                onApplySuggestionToItem={onApplySuggestionToItem}
+                onRemoveItem={onRemoveItem}
+                reorderCategories={reorderCategories}
+                moveItem={moveItem}
+              />
             </div>
 
             <div className="ui-tile bg-surface-elevated/60 p-4">

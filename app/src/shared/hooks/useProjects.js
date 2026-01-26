@@ -240,12 +240,14 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
    * Helper to update a project by ID.
    * @param {string} projectId - Target project ID.
    * @param {(project: Project) => Project} updater - Update function.
+   * @param {{ skipHistory?: boolean }} [options] - Options.
    */
-  const updateProject = useCallback((projectId, updater) => {
+  const updateProject = useCallback((projectId, updater, options = {}) => {
     setProjects((prev) =>
-      prev.map((project) => (project.id === projectId ? updater(project) : project))
+      prev.map((project) => (project.id === projectId ? updater(project) : project)),
+      options
     );
-  }, []);
+  }, [setProjects]);
 
   /**
    * Helper to update a category within a project.
@@ -539,9 +541,10 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
    * @param {string} activeCategoryId - Source category ID.
    * @param {string} overCategoryId - Destination category ID (can be same).
    * @param {number} newIndex - New index in the destination category.
+   * @param {{ skipHistory?: boolean, forceHistory?: boolean }} [options] - History options.
    */
   const moveItem = useCallback(
-    (projectId, activeId, activeCategoryId, overCategoryId, newIndex) => {
+    (projectId, activeId, activeCategoryId, overCategoryId, newIndex, options = {}) => {
       updateProject(projectId, (project) => {
         const sourceCategory = project.categories.find((c) => c.id === activeCategoryId);
         const destCategory = project.categories.find((c) => c.id === overCategoryId);
@@ -582,7 +585,7 @@ export const useProjects = ({ t, setStatus, deviceLibrary, setDeviceLibrary }) =
             return c;
           })
         };
-      });
+      }, options);
     },
     [updateProject]
   );

@@ -61,7 +61,13 @@ export default function App() {
     applySuggestionToDraft,
     applySuggestionToItem,
     moveItemUp,
-    moveItemDown
+    moveItemDown,
+    reorderCategories,
+    moveItem,
+    undo,
+    redo,
+    canUndo,
+    canRedo
   } = useProjects({ t, setStatus, deviceLibrary, setDeviceLibrary });
 
   const {
@@ -143,7 +149,7 @@ export default function App() {
     }
     try {
       const result = await storageRef.current.factoryReset();
-      setProjects(result.state.projects);
+      setProjects(result.state.projects, { skipHistory: true });
       setTemplates(result.state.templates);
       setHistory(result.state.history);
       setContacts(result.state.contacts);
@@ -487,7 +493,13 @@ export default function App() {
     applySuggestionToDraft,
     applySuggestionToItem,
     moveItemUp,
-    moveItemDown
+    moveItemDown,
+    reorderCategories,
+    moveItem,
+    undo,
+    redo,
+    canUndo,
+    canRedo
   };
 
   return (

@@ -78,30 +78,43 @@ const ProjectDashboard = ({
       : t('project.shootSchedule.empty', 'Dates not set');
   };
 
+  const projectAccentPalette = [
+    'var(--v2-project-blue)',
+    'var(--v2-project-indigo)',
+    'var(--v2-project-teal)',
+    'var(--v2-project-green)',
+    'var(--v2-project-orange)'
+  ];
+
   return (
-    <>
+    <div className="project-dashboard">
       <form
         onSubmit={onCreateProject}
-        className={`ui-tile flex flex-col gap-4 bg-surface-elevated/60 p-6 ${isArchivedView ? 'hidden' : ''}`}
+        className={`dashboard-card dashboard-card--hero flex flex-col gap-6 p-6 lg:p-8 ${isArchivedView ? 'hidden' : ''}`}
       >
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-semibold ui-heading">
-            {t('project.dashboard.title', 'Project dashboard')}
-          </h2>
-          <p className="text-sm text-text-secondary">
-            {t(
-              'project.dashboard.description',
-              'Track multiple productions and open a project to start editing the gear list. New projects are autosaved the moment they are created.'
-            )}
-          </p>
+        <div className="dashboard-hero">
+          <div className="flex flex-col gap-2">
+            <p className="dashboard-eyebrow">
+              {t('project.dashboard.eyebrow', 'All projects')}
+            </p>
+            <h2 className="dashboard-title">
+              {t('project.dashboard.title', 'Project dashboard')}
+            </h2>
+            <p className="dashboard-subtitle">
+              {t(
+                'project.dashboard.description',
+                'Track multiple productions and open a project to start editing the gear list. New projects are autosaved the moment they are created.'
+              )}
+            </p>
+          </div>
         </div>
-        <div className="rounded-xl border border-surface-sunken bg-surface-muted/60 p-4">
+        <div className="dashboard-quickactions">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h3 className="text-lg font-semibold ui-heading">
+            <div className="flex flex-col gap-2">
+              <h3 className="dashboard-section-title">
                 {t('dashboard.quickActions.title', 'Dashboard quick actions')}
               </h3>
-              <p className="text-sm text-text-secondary">
+              <p className="dashboard-subtitle">
                 {t(
                   'dashboard.quickActions.description',
                   'Start a new project from a template or bring a project backup back into your local library.'
@@ -109,12 +122,12 @@ const ProjectDashboard = ({
               </p>
             </div>
             <div className="flex flex-wrap items-end gap-3">
-              <label className="flex min-w-[200px] flex-col gap-2 text-xs uppercase tracking-wide text-text-secondary">
+              <label className="dashboard-label flex min-w-[200px] flex-col gap-2">
                 {t('template.library.label', 'Template library')}
                 <select
                   value={selectedTemplateId}
                   onChange={(event) => onTemplateSelect(event.target.value)}
-                  className="ui-select"
+                  className="ui-select dashboard-select"
                 >
                   {templates.length === 0 ? (
                     <option value="">
@@ -137,33 +150,37 @@ const ProjectDashboard = ({
                 type="button"
                 onClick={onCreateProjectFromTemplate}
                 disabled={!selectedTemplateId}
-                className={`ui-button ${selectedTemplateId
-                  ? 'ui-button-primary'
-                  : 'cursor-not-allowed bg-surface-sunken text-text-muted'
+                className={`ui-button dashboard-button ${selectedTemplateId
+                  ? 'ui-button-primary dashboard-button-primary'
+                  : 'dashboard-button-disabled cursor-not-allowed bg-surface-sunken text-text-muted'
                   }`}
               >
                 {t('template.actions.loadIntoProject', 'Create project from template')}
               </button>
-              <button type="button" onClick={onImportProject} className="ui-button ui-button-outline">
+              <button
+                type="button"
+                onClick={onImportProject}
+                className="ui-button ui-button-outline dashboard-button"
+              >
                 {t('project.actions.importProject', 'Import project')}
               </button>
             </div>
           </div>
-          <p className="mt-3 text-xs text-text-muted">
+          <p className="dashboard-help">
             {t(
               'template.library.helper',
               'Templates create new projects without altering existing entries.'
             )}
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="dashboard-form-grid grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
             {t('project.fields.name', 'Project name')}
             <input
               value={projectDraft.name}
               onChange={(event) => onProjectDraftChange('name', event.target.value)}
               placeholder={t('project.placeholders.name', 'e.g. October studio shoot')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -172,7 +189,7 @@ const ProjectDashboard = ({
               value={projectDraft.resolution}
               onChange={(event) => onProjectDraftChange('resolution', event.target.value)}
               placeholder={t('project.placeholders.resolution', 'e.g. 1920x1080')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -181,7 +198,7 @@ const ProjectDashboard = ({
               value={projectDraft.aspectRatio}
               onChange={(event) => onProjectDraftChange('aspectRatio', event.target.value)}
               placeholder={t('project.placeholders.aspectRatio', 'e.g. 16:9')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -190,7 +207,7 @@ const ProjectDashboard = ({
               value={projectDraft.codec}
               onChange={(event) => onProjectDraftChange('codec', event.target.value)}
               placeholder={t('project.placeholders.codec', 'e.g. H.264')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
@@ -201,7 +218,7 @@ const ProjectDashboard = ({
               value={projectDraft.framerate}
               onChange={(event) => onProjectDraftChange('framerate', event.target.value)}
               placeholder={t('project.placeholders.framerate', 'e.g. 30')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary">
@@ -210,7 +227,7 @@ const ProjectDashboard = ({
               value={projectDraft.client}
               onChange={(event) => onProjectDraftChange('client', event.target.value)}
               placeholder={t('project.placeholders.client', 'Client, agency, or show')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <ShootScheduleFields
@@ -225,7 +242,7 @@ const ProjectDashboard = ({
               value={projectDraft.location}
               onChange={(event) => onProjectDraftChange('location', event.target.value)}
               placeholder={t('project.placeholders.location', 'Studio, city, or venue')}
-              className="ui-input ui-input-lg"
+              className="ui-input ui-input-lg dashboard-input"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
@@ -240,7 +257,8 @@ const ProjectDashboard = ({
                 'Rental house name, address, phone'
               )}
               label={t('project.fields.contact', 'Rental house')}
-              inputClassName="ui-input ui-input-lg"
+              inputClassName="ui-input ui-input-lg dashboard-input"
+              listClassName="dashboard-dropdown"
             />
           </label>
           <div className="flex flex-col gap-2 text-sm text-text-secondary md:col-span-2">
@@ -253,46 +271,56 @@ const ProjectDashboard = ({
             />
           </div>
         </div>
-        <button type="submit" className="ui-button ui-button-primary w-fit px-5">
+        <button
+          type="submit"
+          className="ui-button ui-button-primary dashboard-button dashboard-button-primary w-fit px-5"
+        >
           {t('project.actions.create', 'Create project')}
         </button>
       </form>
 
-      <div className="ui-tile bg-surface-elevated/60 p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold ui-heading">
+      <div className="dashboard-card flex flex-col gap-6 p-6 lg:p-8">
+        <div className="dashboard-list-header">
+          <div className="flex flex-col gap-2">
+            <p className="dashboard-eyebrow">
+              {isArchivedView
+                ? t('project.archived.eyebrow', 'Archive')
+                : t('project.list.eyebrow', 'Library')}
+            </p>
+            <h2 className="dashboard-title">
               {isArchivedView ? t('project.archived.title', 'Archived Projects') : t('project.list.title', 'Projects')}
             </h2>
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="text-sm text-text-secondary">
+            <div className="dashboard-meta-row">
+              <span className="dashboard-pill">
                 {tPlural('project.count', projects.length, '{count} project stored locally.', {
                   count: projects.length
                 })}
-              </p>
+              </span>
               {!isArchivedView && (
-                <Link to="/archived" className="text-xs font-medium text-brand hover:underline">
+                <Link to="/archived" className="dashboard-link">
                   {t('project.actions.viewArchived', 'View Archived')} &rarr;
                 </Link>
               )}
               {isArchivedView && (
-                <Link to="/" className="text-xs font-medium text-brand hover:underline">
+                <Link to="/" className="dashboard-link">
                   &larr; {t('project.actions.viewActive', 'Back to Projects')}
                 </Link>
               )}
             </div>
           </div>
-          <div className="text-xs text-text-muted">
-            {t('project.lastSaved.label', 'Last saved: {time}', {
-              time: lastSaved
-                ? new Date(lastSaved).toLocaleString()
-                : t('project.lastSaved.empty', 'Not saved yet')
-            })}
+          <div className="dashboard-meta-row">
+            <span className="dashboard-pill dashboard-pill-muted">
+              {t('project.lastSaved.label', 'Last saved: {time}', {
+                time: lastSaved
+                  ? new Date(lastSaved).toLocaleString()
+                  : t('project.lastSaved.empty', 'Not saved yet')
+              })}
+            </span>
           </div>
         </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="dashboard-project-grid">
           {projects.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
+            <div className="dashboard-empty">
               {isArchivedView
                 ? t('project.archived.empty', 'No archived projects.')
                 : t(
@@ -306,29 +334,31 @@ const ProjectDashboard = ({
                 (sum, category) => sum + category.items.length,
                 0
               );
+              const accent = projectAccentPalette[projectIndex % projectAccentPalette.length] || 'var(--v2-brand-primary)';
               return (
                 <div
                   key={project.id}
-                  className="ui-panel flex h-full flex-col gap-4 bg-surface-muted/60 p-4 transition"
+                  className="dashboard-project-card"
+                  style={{ '--pd-index': projectIndex, '--pd-accent': accent }}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-lg font-semibold ui-heading">
+                      <h3 className="dashboard-project-title">
                         {resolveDisplayName(
                           project.name,
                           { index: projectIndex + 1 },
                           'defaults.untitled_project'
                         )}
                       </h3>
-                      <p className="text-xs text-text-secondary">
+                      <p className="dashboard-project-meta">
                         {project.client || t('project.client.empty', 'Client not set')} ·{' '}
                         {formatScheduleSummary(project.shootSchedule ?? project.shootDate)}
                       </p>
                     </div>
                   </div>
-                  <div className="grid gap-2 text-xs text-text-secondary md:grid-cols-2">
-                    <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
-                      <span className="font-semibold text-text-primary">
+                  <div className="dashboard-stat-grid">
+                    <div className="dashboard-stat">
+                      <span>
                         {tPlural(
                           'categories.count',
                           project.categories.length,
@@ -339,16 +369,16 @@ const ProjectDashboard = ({
                         )}
                       </span>
                     </div>
-                    <div className="rounded-lg border border-surface-sunken bg-surface-input/40 px-3 py-2">
-                      <span className="font-semibold text-text-primary">
+                    <div className="dashboard-stat">
+                      <span>
                         {tPlural('items.count', itemTotal, '{count} items', { count: itemTotal })}
                       </span>
                     </div>
                   </div>
-                  <div className="mt-auto flex flex-wrap gap-2">
+                  <div className="dashboard-actions">
                     <Link
                       to={`/project/${project.id}`}
-                      className={`ui-button ui-button-primary px-3 py-1 text-xs no-underline ${isArchivedView ? 'hidden' : ''}`}
+                      className={`ui-button ui-button-primary dashboard-button dashboard-button-primary px-3 py-1 text-xs no-underline ${isArchivedView ? 'hidden' : ''}`}
                     >
                       {t('project.actions.open', 'Open')}
                     </Link>
@@ -356,7 +386,7 @@ const ProjectDashboard = ({
                       <button
                         type="button"
                         onClick={() => onDuplicateProject(project.id)}
-                        className="ui-button ui-button-outline px-3 py-1 text-xs"
+                        className="ui-button ui-button-outline dashboard-button px-3 py-1 text-xs"
                       >
                         {t('project.actions.duplicate', 'Duplicate')}
                       </button>
@@ -365,9 +395,9 @@ const ProjectDashboard = ({
                       <button
                         type="button"
                         onClick={() => initDelete(project.id)}
-                        className={`ui-button px-3 py-1 text-xs transition-colors ${deleteConfirmationId === project.id
+                        className={`ui-button dashboard-button px-3 py-1 text-xs transition-colors ${deleteConfirmationId === project.id
                           ? 'bg-red-600 text-white hover:bg-red-700'
-                          : 'ui-button-danger'
+                          : 'ui-button-danger dashboard-button-danger'
                           }`}
                       >
                         {deleteConfirmationId === project.id
@@ -378,9 +408,9 @@ const ProjectDashboard = ({
                     <button
                       type="button"
                       onClick={() => initDelete(project.id)}
-                      className={`ui-button px-3 py-1 text-xs transition-colors ${deleteConfirmationId === project.id
+                      className={`ui-button dashboard-button px-3 py-1 text-xs transition-colors ${deleteConfirmationId === project.id
                         ? 'bg-red-600 text-white hover:bg-red-700'
-                        : 'ui-button-danger'
+                        : 'ui-button-danger dashboard-button-danger'
                         }`}
                     >
                       {deleteConfirmationId === project.id
@@ -396,49 +426,55 @@ const ProjectDashboard = ({
       </div>
 
       {showAutoBackups ? (
-        <div className="rounded-2xl border border-surface-sunken bg-surface-elevated/60 p-6">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold ui-heading">
+        <div className="dashboard-card flex flex-col gap-6 p-6 lg:p-8">
+          <div className="dashboard-list-header">
+            <div className="flex flex-col gap-2">
+              <p className="dashboard-eyebrow">
+                {t('dashboard.autoBackups.eyebrow', 'Safety copies')}
+              </p>
+              <h2 className="dashboard-title">
                 {t('dashboard.autoBackups.title', 'Auto backups')}
               </h2>
-              <p className="text-sm text-text-secondary">
+              <p className="dashboard-subtitle">
                 {t(
                   'dashboard.autoBackups.description',
                   'Review the on-device auto backups created by autosave.'
                 )}
               </p>
             </div>
-            <div className="text-xs text-text-muted">
-              {tPlural(
-                'dashboard.autoBackups.count',
-                autoBackups.length,
-                '{count} auto backup available.',
-                {
-                  count: autoBackups.length
-                }
-              )}
+            <div className="dashboard-meta-row">
+              <span className="dashboard-pill">
+                {tPlural(
+                  'dashboard.autoBackups.count',
+                  autoBackups.length,
+                  '{count} auto backup available.',
+                  {
+                    count: autoBackups.length
+                  }
+                )}
+              </span>
             </div>
           </div>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="dashboard-backup-grid">
             {autoBackups.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-surface-sunken bg-surface-muted/70 px-4 py-6 text-center text-sm text-text-muted md:col-span-2">
+              <div className="dashboard-empty">
                 {t(
                   'dashboard.autoBackups.empty',
                   'No auto backups yet. Create or edit a project and autosave will create them.'
                 )}
               </div>
             ) : (
-              autoBackups.map((backup) => (
+              autoBackups.map((backup, backupIndex) => (
                 <div
                   key={backup.id}
-                  className="flex h-full flex-col gap-3 rounded-xl border border-surface-sunken bg-surface-muted/60 p-4"
+                  className="dashboard-backup-card"
+                  style={{ '--pd-index': backupIndex }}
                 >
                   <div>
-                    <h3 className="text-sm font-semibold ui-heading">
+                    <h3 className="dashboard-card-title">
                       {resolveStorageSource(backup.source)}
                     </h3>
-                    <p className="text-xs text-text-secondary">
+                    <p className="dashboard-subtitle">
                       {t('dashboard.autoBackups.lastSaved', 'Last saved: {time}', {
                         time: backup.lastSaved
                           ? new Date(backup.lastSaved).toLocaleString()
@@ -446,15 +482,17 @@ const ProjectDashboard = ({
                       })}
                     </p>
                   </div>
-                  <div className="text-xs text-text-muted">
-                    {tPlural(
-                      'dashboard.autoBackups.projects',
-                      backup.projectCount,
-                      '{count} project in this backup.',
-                      {
-                        count: backup.projectCount
-                      }
-                    )}
+                  <div className="dashboard-meta-row">
+                    <span className="dashboard-pill dashboard-pill-muted">
+                      {tPlural(
+                        'dashboard.autoBackups.projects',
+                        backup.projectCount,
+                        '{count} project in this backup.',
+                        {
+                          count: backup.projectCount
+                        }
+                      )}
+                    </span>
                   </div>
                 </div>
               ))
@@ -462,7 +500,7 @@ const ProjectDashboard = ({
           </div>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

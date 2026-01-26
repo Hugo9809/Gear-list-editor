@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useCallback } from 'react';
 import {
     DndContext,
     closestCorners,
+    closestCenter,
     KeyboardSensor,
     PointerSensor,
     useSensor,
@@ -42,6 +43,28 @@ export const CategoryList = ({
     const activeTypeRef = useRef(null);
     const activeContainerRef = useRef(null);
     const activeIndexRef = useRef(null);
+
+    const categoryIds = useMemo(() => new Set(categories.map((category) => category.id)), [categories]);
+
+    const collisionDetection = useCallback(
+        (args) => {
+            const activeType = activeTypeRef.current || args.active?.data?.current?.type;
+            if (activeType === 'category') {
+                const categoryContainers = args.droppableContainers.filter((container) =>
+                    categoryIds.has(container.id)
+                );
+                if (categoryContainers.length === 0) {
+                    return closestCorners(args);
+                }
+                return closestCenter({
+                    ...args,
+                    droppableContainers: categoryContainers
+                });
+            }
+            return closestCorners(args);
+        },
+        [categoryIds]
+    );
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -195,7 +218,7 @@ export const CategoryList = ({
     return (
         <DndContext
             sensors={sensors}
-            collisionDetection={closestCorners}
+            collisionDetection={collisionDetection}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
